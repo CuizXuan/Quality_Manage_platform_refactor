@@ -27,8 +27,8 @@ app.add_middleware(
 app.include_router(platform_auth.router)
 app.include_router(platform_system.router)
 app.include_router(terminal_router)
-app.include_router(testcase_router)
 app.include_router(case_folder_router)
+app.include_router(testcase_router)
 
 
 @app.on_event("startup")
