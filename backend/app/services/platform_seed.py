@@ -29,6 +29,13 @@ DEFAULT_PERMISSIONS = [
     ("organization", "create"),
     ("organization", "update"),
     ("organization", "delete"),
+    ("terminal", "view"),
+    ("terminal", "debug"),
+    ("case", "view"),
+    ("case", "create"),
+    ("case", "update"),
+    ("case", "delete"),
+    ("case", "run"),
 ]
 
 DEFAULT_MENUS = [
@@ -76,6 +83,24 @@ DEFAULT_MENUS = [
         "component": "MenuManagement",
         "permission_code": "menu:view",
         "sort_order": 50,
+    },
+    {
+        "name": "终端调试台",
+        "code": "terminal",
+        "path": "/terminal",
+        "icon": "Terminal",
+        "component": "Terminal",
+        "permission_code": "terminal:view",
+        "sort_order": 100,
+    },
+    {
+        "name": "用例中心",
+        "code": "case",
+        "path": "/cases",
+        "icon": "FileCheck",
+        "component": "Cases",
+        "permission_code": "case:view",
+        "sort_order": 110,
     },
 ]
 

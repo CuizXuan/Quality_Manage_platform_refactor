@@ -44,22 +44,14 @@ const routes = [
         component: () => import('../views/terminal/Terminal.vue'),
       },
       {
-        path: 'case',
-        name: 'Case',
-        component: () => import('../views/case/Case.vue'),
-        redirect: '/case/api',
-        children: [
-          {
-            path: 'functional',
-            name: 'FunctionalCases',
-            component: () => import('../views/case/functional/FunctionalCase.vue'),
-          },
-          {
-            path: 'api',
-            name: 'ApiCases',
-            component: () => import('../views/case/api/ApiCase.vue'),
-          },
-        ],
+        path: 'case/functional',
+        name: 'FunctionalCases',
+        component: () => import('../views/case/functional/FunctionalCase.vue'),
+      },
+      {
+        path: 'case/api',
+        name: 'ApiCases',
+        component: () => import('../views/case/api/ApiCase.vue'),
       },
     ],
   },

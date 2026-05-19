@@ -108,7 +108,8 @@ const menuList = [
     path: '/tools',
     children: [
       { title: '终端调试台', icon: Connection, path: '/terminal' },
-      { title: '用例中心', icon: DocumentChecked, path: '/case' },
+      { title: '功能测试', icon: DocumentChecked, path: '/case/functional' },
+      { title: '接口测试', icon: DocumentChecked, path: '/case/api' },
     ],
   },
   {
