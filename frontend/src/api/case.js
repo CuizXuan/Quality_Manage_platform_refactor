@@ -1,57 +1,39 @@
 import client from './client'
 
 export const caseApi = {
-  /** List test cases with pagination */
   list(params) {
-    return client.get('/api/testcase', { params })
+    return client.get('/api/case', { params })
   },
-
-  /** Get a test case by ID */
   get(id) {
-    return client.get(`/api/testcase/${id}`)
+    return client.get(`/api/case/${id}`)
   },
-
-  /** Create a test case */
   create(data) {
-    return client.post('/api/testcase', data)
+    return client.post('/api/case', data)
   },
-
-  /** Update a test case */
   update(id, data) {
-    return client.put(`/api/testcase/${id}`, data)
+    return client.put(`/api/case/${id}`, data)
   },
-
-  /** Delete a test case */
   delete(id) {
-    return client.delete(`/api/testcase/${id}`)
+    return client.delete(`/api/case/${id}`)
   },
-
-  /** List variants for a test case */
+  copy(id) {
+    return client.post(`/api/case/${id}/copy`)
+  },
   listVariants(id, params) {
-    return client.get(`/api/testcase/${id}/variant`, { params })
+    return client.get(`/api/case/${id}/variant`, { params })
   },
-
-  /** Create a variant for a test case */
   createVariant(id, data) {
-    return client.post(`/api/testcase/${id}/variant`, data)
+    return client.post(`/api/case/${id}/variant`, data)
   },
-
-  /** List folders */
   listFolders(params) {
     return client.get('/api/case/folders', { params })
   },
-
-  /** Create a folder */
   createFolder(data) {
     return client.post('/api/case/folders', data)
   },
-
-  /** Update a folder */
   updateFolder(id, data) {
     return client.put(`/api/case/folders/${id}`, data)
   },
-
-  /** Delete a folder */
   deleteFolder(id) {
     return client.delete(`/api/case/folders/${id}`)
   },

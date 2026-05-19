@@ -15,25 +15,18 @@ export const useCaseStore = defineStore('case', () => {
   const variantPageSize = ref(20)
   const loading = ref(false)
   const error = ref('')
-  const caseType = ref('api') // 'functional' | 'api'
-  const folders = ref([])
-
-  // Getters
-  const hasCases = computed(() => cases.value.length > 0)
 
   // Actions
   async function fetchCases(params = {}) {
     loading.value = true
     error.value = ''
     try {
-      const queryParams = {
-        case_type: params.case_type || caseType.value,
+      const response = await caseApi.list({
         page: params.page || page.value,
         page_size: params.page_size || pageSize.value,
         ...(params.folder_id && { folder_id: params.folder_id }),
         ...(params.keyword && { keyword: params.keyword }),
-      }
-      const response = await caseApi.list(queryParams)
+      })
       cases.value = response.data.items
       total.value = response.data.total
       page.value = response.data.page
@@ -44,17 +37,6 @@ export const useCaseStore = defineStore('case', () => {
       throw err
     } finally {
       loading.value = false
-    }
-  }
-
-  async function fetchFolders() {
-    try {
-      const response = await caseApi.listFolders({ case_type: caseType.value })
-      folders.value = response.data.items
-      return folders.value
-    } catch (err) {
-      error.value = err.response?.data?.detail || err.message || '获取分类失败'
-      throw err
     }
   }
 
@@ -176,13 +158,8 @@ export const useCaseStore = defineStore('case', () => {
     variantPageSize,
     loading,
     error,
-    caseType,
-    folders,
-    // Getters
-    hasCases,
     // Actions
     fetchCases,
-    fetchFolders,
     fetchCase,
     createCase,
     updateCase,
