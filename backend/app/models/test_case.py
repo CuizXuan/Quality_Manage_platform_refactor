@@ -25,6 +25,7 @@ class TestCase(Base):
 
     variants = relationship("CaseVariant", back_populates="test_case", cascade="all, delete-orphan")
     api_case = relationship("ApiTestCase", back_populates="test_case", uselist=False)
+    functional_case = relationship("FunctionalTestCase", back_populates="test_case", uselist=False)
 
 
 class CaseVariant(Base):
