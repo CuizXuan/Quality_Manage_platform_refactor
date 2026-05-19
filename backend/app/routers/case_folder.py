@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
 from app.database import get_db
+from app.models.case_folder import CaseFolder
 from app.models.platform import PlatformUser
 from app.routers.platform_auth import get_current_platform_user
 from app.schemas.case_folder import (
@@ -23,7 +24,6 @@ def create_folder(
     db: Session = Depends(get_db),
 ):
     """Create a new folder."""
-    from app.models.case_folder import CaseFolder
     db_folder = CaseFolder(**folder.model_dump())
     db.add(db_folder)
     db.commit()
@@ -38,7 +38,6 @@ def list_folders(
     db: Session = Depends(get_db),
 ):
     """List folders."""
-    from app.models.case_folder import CaseFolder
     query = db.query(CaseFolder)
     if case_type:
         query = query.filter(CaseFolder.case_type == case_type)
@@ -53,7 +52,6 @@ def get_folder(
     db: Session = Depends(get_db),
 ):
     """Get a folder by ID."""
-    from app.models.case_folder import CaseFolder
     folder = db.query(CaseFolder).filter(CaseFolder.id == folder_id).first()
     if not folder:
         raise HTTPException(status_code=404, detail="Folder not found")
@@ -68,7 +66,6 @@ def update_folder(
     db: Session = Depends(get_db),
 ):
     """Update a folder."""
-    from app.models.case_folder import CaseFolder
     db_folder = db.query(CaseFolder).filter(CaseFolder.id == folder_id).first()
     if not db_folder:
         raise HTTPException(status_code=404, detail="Folder not found")
@@ -87,7 +84,6 @@ def delete_folder(
     db: Session = Depends(get_db),
 ):
     """Delete a folder."""
-    from app.models.case_folder import CaseFolder
     folder = db.query(CaseFolder).filter(CaseFolder.id == folder_id).first()
     if not folder:
         raise HTTPException(status_code=404, detail="Folder not found")
