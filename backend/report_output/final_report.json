@@ -1,0 +1,418 @@
+{
+  "filters": {
+    "untracked": 12,
+    "total": 12,
+    "passed": 12,
+    "marker_counts": {}
+  },
+  "results": [
+    {
+      "test": "test_create_scenario",
+      "nodeid": "tests/models/test_scenario.py::TestScenario::test_create_scenario",
+      "status": "passed",
+      "duration": 0.017187156998261344,
+      "trace": null,
+      "error": null,
+      "markers": [],
+      "file": "tests/models/test_scenario.py",
+      "line": 36,
+      "stdout": "",
+      "stderr": "",
+      "timestamp": "2026-05-19T15:13:44.732415Z",
+      "screenshot": "screenshots",
+      "logs": [],
+      "worker": "main",
+      "links": [],
+      "attempts": [
+        {
+          "status": "passed",
+          "trace": null,
+          "error": null,
+          "duration": 0.017187156998261344,
+          "timestamp": "2026-05-19T15:13:44.732427Z"
+        }
+      ],
+      "attempt_count": 1,
+      "flaky": false,
+      "attempt_statuses": [
+        "passed"
+      ],
+      "first_failure_index": null,
+      "first_failure": null
+    },
+    {
+      "test": "test_scenario_default_values",
+      "nodeid": "tests/models/test_scenario.py::TestScenario::test_scenario_default_values",
+      "status": "passed",
+      "duration": 0.001578766001330223,
+      "trace": null,
+      "error": null,
+      "markers": [],
+      "file": "tests/models/test_scenario.py",
+      "line": 56,
+      "stdout": "",
+      "stderr": "",
+      "timestamp": "2026-05-19T15:13:44.740016Z",
+      "screenshot": "screenshots",
+      "logs": [],
+      "worker": "main",
+      "links": [],
+      "attempts": [
+        {
+          "status": "passed",
+          "trace": null,
+          "error": null,
+          "duration": 0.001578766001330223,
+          "timestamp": "2026-05-19T15:13:44.740027Z"
+        }
+      ],
+      "attempt_count": 1,
+      "flaky": false,
+      "attempt_statuses": [
+        "passed"
+      ],
+      "first_failure_index": null,
+      "first_failure": null
+    },
+    {
+      "test": "test_create_scenario_step",
+      "nodeid": "tests/models/test_scenario.py::TestScenarioStep::test_create_scenario_step",
+      "status": "passed",
+      "duration": 0.0034728809987427667,
+      "trace": null,
+      "error": null,
+      "markers": [],
+      "file": "tests/models/test_scenario.py",
+      "line": 70,
+      "stdout": "",
+      "stderr": "",
+      "timestamp": "2026-05-19T15:13:44.749424Z",
+      "screenshot": "screenshots",
+      "logs": [],
+      "worker": "main",
+      "links": [],
+      "attempts": [
+        {
+          "status": "passed",
+          "trace": null,
+          "error": null,
+          "duration": 0.0034728809987427667,
+          "timestamp": "2026-05-19T15:13:44.749433Z"
+        }
+      ],
+      "attempt_count": 1,
+      "flaky": false,
+      "attempt_statuses": [
+        "passed"
+      ],
+      "first_failure_index": null,
+      "first_failure": null
+    },
+    {
+      "test": "test_scenario_step_with_variant_id",
+      "nodeid": "tests/models/test_scenario.py::TestScenarioStep::test_scenario_step_with_variant_id",
+      "status": "passed",
+      "duration": 0.0022954220039537176,
+      "trace": null,
+      "error": null,
+      "markers": [],
+      "file": "tests/models/test_scenario.py",
+      "line": 103,
+      "stdout": "",
+      "stderr": "",
+      "timestamp": "2026-05-19T15:13:44.756455Z",
+      "screenshot": "screenshots",
+      "logs": [],
+      "worker": "main",
+      "links": [],
+      "attempts": [
+        {
+          "status": "passed",
+          "trace": null,
+          "error": null,
+          "duration": 0.0022954220039537176,
+          "timestamp": "2026-05-19T15:13:44.756463Z"
+        }
+      ],
+      "attempt_count": 1,
+      "flaky": false,
+      "attempt_statuses": [
+        "passed"
+      ],
+      "first_failure_index": null,
+      "first_failure": null
+    },
+    {
+      "test": "test_scenario_step_failure_strategies",
+      "nodeid": "tests/models/test_scenario.py::TestScenarioStep::test_scenario_step_failure_strategies",
+      "status": "passed",
+      "duration": 0.004453020002983976,
+      "trace": null,
+      "error": null,
+      "markers": [],
+      "file": "tests/models/test_scenario.py",
+      "line": 125,
+      "stdout": "",
+      "stderr": "",
+      "timestamp": "2026-05-19T15:13:44.765486Z",
+      "screenshot": "screenshots",
+      "logs": [],
+      "worker": "main",
+      "links": [],
+      "attempts": [
+        {
+          "status": "passed",
+          "trace": null,
+          "error": null,
+          "duration": 0.004453020002983976,
+          "timestamp": "2026-05-19T15:13:44.765501Z"
+        }
+      ],
+      "attempt_count": 1,
+      "flaky": false,
+      "attempt_statuses": [
+        "passed"
+      ],
+      "first_failure_index": null,
+      "first_failure": null
+    },
+    {
+      "test": "test_extract_rules_default",
+      "nodeid": "tests/models/test_scenario.py::TestScenarioStepExtractInjectRules::test_extract_rules_default",
+      "status": "passed",
+      "duration": 0.002363735002290923,
+      "trace": null,
+      "error": null,
+      "markers": [],
+      "file": "tests/models/test_scenario.py",
+      "line": 153,
+      "stdout": "",
+      "stderr": "",
+      "timestamp": "2026-05-19T15:13:44.772527Z",
+      "screenshot": "screenshots",
+      "logs": [],
+      "worker": "main",
+      "links": [],
+      "attempts": [
+        {
+          "status": "passed",
+          "trace": null,
+          "error": null,
+          "duration": 0.002363735002290923,
+          "timestamp": "2026-05-19T15:13:44.772537Z"
+        }
+      ],
+      "attempt_count": 1,
+      "flaky": false,
+      "attempt_statuses": [
+        "passed"
+      ],
+      "first_failure_index": null,
+      "first_failure": null
+    },
+    {
+      "test": "test_extract_rules_json",
+      "nodeid": "tests/models/test_scenario.py::TestScenarioStepExtractInjectRules::test_extract_rules_json",
+      "status": "passed",
+      "duration": 0.003048058002605103,
+      "trace": null,
+      "error": null,
+      "markers": [],
+      "file": "tests/models/test_scenario.py",
+      "line": 175,
+      "stdout": "",
+      "stderr": "",
+      "timestamp": "2026-05-19T15:13:44.780523Z",
+      "screenshot": "screenshots",
+      "logs": [],
+      "worker": "main",
+      "links": [],
+      "attempts": [
+        {
+          "status": "passed",
+          "trace": null,
+          "error": null,
+          "duration": 0.003048058002605103,
+          "timestamp": "2026-05-19T15:13:44.780534Z"
+        }
+      ],
+      "attempt_count": 1,
+      "flaky": false,
+      "attempt_statuses": [
+        "passed"
+      ],
+      "first_failure_index": null,
+      "first_failure": null
+    },
+    {
+      "test": "test_create_execution_run",
+      "nodeid": "tests/models/test_scenario.py::TestExecutionRun::test_create_execution_run",
+      "status": "passed",
+      "duration": 0.0017382099977112375,
+      "trace": null,
+      "error": null,
+      "markers": [],
+      "file": "tests/models/test_scenario.py",
+      "line": 218,
+      "stdout": "",
+      "stderr": "",
+      "timestamp": "2026-05-19T15:13:44.786947Z",
+      "screenshot": "screenshots",
+      "logs": [],
+      "worker": "main",
+      "links": [],
+      "attempts": [
+        {
+          "status": "passed",
+          "trace": null,
+          "error": null,
+          "duration": 0.0017382099977112375,
+          "timestamp": "2026-05-19T15:13:44.786957Z"
+        }
+      ],
+      "attempt_count": 1,
+      "flaky": false,
+      "attempt_statuses": [
+        "passed"
+      ],
+      "first_failure_index": null,
+      "first_failure": null
+    },
+    {
+      "test": "test_execution_run_types",
+      "nodeid": "tests/models/test_scenario.py::TestExecutionRun::test_execution_run_types",
+      "status": "passed",
+      "duration": 0.0018633419967954978,
+      "trace": null,
+      "error": null,
+      "markers": [],
+      "file": "tests/models/test_scenario.py",
+      "line": 239,
+      "stdout": "",
+      "stderr": "",
+      "timestamp": "2026-05-19T15:13:44.793455Z",
+      "screenshot": "screenshots",
+      "logs": [],
+      "worker": "main",
+      "links": [],
+      "attempts": [
+        {
+          "status": "passed",
+          "trace": null,
+          "error": null,
+          "duration": 0.0018633419967954978,
+          "timestamp": "2026-05-19T15:13:44.793466Z"
+        }
+      ],
+      "attempt_count": 1,
+      "flaky": false,
+      "attempt_statuses": [
+        "passed"
+      ],
+      "first_failure_index": null,
+      "first_failure": null
+    },
+    {
+      "test": "test_execution_run_statuses",
+      "nodeid": "tests/models/test_scenario.py::TestExecutionRun::test_execution_run_statuses",
+      "status": "passed",
+      "duration": 0.0032242879969999194,
+      "trace": null,
+      "error": null,
+      "markers": [],
+      "file": "tests/models/test_scenario.py",
+      "line": 252,
+      "stdout": "",
+      "stderr": "",
+      "timestamp": "2026-05-19T15:13:44.802699Z",
+      "screenshot": "screenshots",
+      "logs": [],
+      "worker": "main",
+      "links": [],
+      "attempts": [
+        {
+          "status": "passed",
+          "trace": null,
+          "error": null,
+          "duration": 0.0032242879969999194,
+          "timestamp": "2026-05-19T15:13:44.802712Z"
+        }
+      ],
+      "attempt_count": 1,
+      "flaky": false,
+      "attempt_statuses": [
+        "passed"
+      ],
+      "first_failure_index": null,
+      "first_failure": null
+    },
+    {
+      "test": "test_execution_run_timing",
+      "nodeid": "tests/models/test_scenario.py::TestExecutionRun::test_execution_run_timing",
+      "status": "passed",
+      "duration": 0.0011916719959117472,
+      "trace": null,
+      "error": null,
+      "markers": [],
+      "file": "tests/models/test_scenario.py",
+      "line": 267,
+      "stdout": "",
+      "stderr": "",
+      "timestamp": "2026-05-19T15:13:44.808103Z",
+      "screenshot": "screenshots",
+      "logs": [],
+      "worker": "main",
+      "links": [],
+      "attempts": [
+        {
+          "status": "passed",
+          "trace": null,
+          "error": null,
+          "duration": 0.0011916719959117472,
+          "timestamp": "2026-05-19T15:13:44.808112Z"
+        }
+      ],
+      "attempt_count": 1,
+      "flaky": false,
+      "attempt_statuses": [
+        "passed"
+      ],
+      "first_failure_index": null,
+      "first_failure": null
+    },
+    {
+      "test": "test_execution_run_summary",
+      "nodeid": "tests/models/test_scenario.py::TestExecutionRun::test_execution_run_summary",
+      "status": "passed",
+      "duration": 0.0015012009971542284,
+      "trace": null,
+      "error": null,
+      "markers": [],
+      "file": "tests/models/test_scenario.py",
+      "line": 288,
+      "stdout": "",
+      "stderr": "",
+      "timestamp": "2026-05-19T15:13:44.813746Z",
+      "screenshot": "screenshots",
+      "logs": [],
+      "worker": "main",
+      "links": [],
+      "attempts": [
+        {
+          "status": "passed",
+          "trace": null,
+          "error": null,
+          "duration": 0.0015012009971542284,
+          "timestamp": "2026-05-19T15:13:44.813757Z"
+        }
+      ],
+      "attempt_count": 1,
+      "flaky": false,
+      "attempt_statuses": [
+        "passed"
+      ],
+      "first_failure_index": null,
+      "first_failure": null
+    }
+  ]
+}

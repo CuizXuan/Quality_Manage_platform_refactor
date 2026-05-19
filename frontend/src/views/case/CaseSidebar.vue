@@ -17,6 +17,7 @@
 
     <div class="folder-tree">
       <el-tree
+        v-if="folderTree.length > 0"
         :data="folderTree"
         :props="{ label: 'name', children: 'children' }"
         node-key="id"
@@ -33,6 +34,7 @@
           </span>
         </template>
       </el-tree>
+      <el-empty v-else description="暂无分类" />
     </div>
 
     <el-dialog v-model="showFolderDialog" title="新建分类" width="400px">
@@ -42,11 +44,13 @@
         </el-form-item>
         <el-form-item label="上级分类">
           <el-tree-select
+            v-if="showFolderDialog"
             v-model="folderForm.parent_id"
             :data="folderTree"
             :props="{ label: 'name', value: 'id' }"
             placeholder="选择上级分类（可选）"
             clearable
+            :render-after-expand="false"
           />
         </el-form-item>
       </el-form>
@@ -59,7 +63,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import { Search, Folder, Plus } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { caseApi } from '@/api/case'
@@ -127,7 +131,9 @@ async function handleDoCreateFolder() {
 }
 
 watch(searchKeyword, (val) => {
-  treeRef.value?.filter(val)
+  if (treeRef.value) {
+    treeRef.value.filter(val)
+  }
 })
 
 onMounted(() => {

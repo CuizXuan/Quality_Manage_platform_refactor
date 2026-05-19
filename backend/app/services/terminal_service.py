@@ -1,10 +1,12 @@
 import json
 import time
 from typing import Any, Dict, Optional, Tuple
+from urllib.parse import urlencode
 
 import httpx
 from sqlalchemy.orm import Session
 
+from app.config import DEBUG_API_ORIGIN, DEBUG_PROXY_ORIGIN
 from app.models.terminal import DebugRequest, DebugResult
 
 
@@ -64,32 +66,52 @@ class TerminalService:
             headers["Authorization"] = f"Basic {base64.b64encode(creds.encode()).decode()}"
 
         # Build URL with query params
-        url = req.url
+        url = self._normalize_debug_url(req.url)
         if query_params:
             separator = "&" if "?" in url else "?"
-            query_parts = [f"{k}={v}" for k, v in query_params.items()]
-            url += separator + "&".join(query_parts)
+            url += separator + urlencode(query_params, doseq=True)
 
         start_time = time.time()
         result = DebugResult(debug_request_id=request_id)
 
         try:
+            request_kwargs = {
+                "method": req.method,
+                "url": url,
+                "headers": headers,
+                "cookies": cookies,
+            }
+
+            if req.body:
+                if req.body_type == "json":
+                    try:
+                        request_kwargs["json"] = json.loads(req.body)
+                    except json.JSONDecodeError:
+                        request_kwargs["content"] = req.body
+                elif req.body_type == "form":
+                    try:
+                        request_kwargs["data"] = json.loads(req.body)
+                    except json.JSONDecodeError:
+                        request_kwargs["content"] = req.body
+                else:
+                    request_kwargs["content"] = req.body
+
             with httpx.Client(timeout=30.0) as client:
-                response = client.request(
-                    method=req.method,
-                    url=url,
-                    headers=headers,
-                    cookies=cookies,
-                    content=req.body if req.body else None,
-                )
+                response = client.request(**request_kwargs)
                 result.status_code = response.status_code
                 result.response_headers = json.dumps(dict(response.headers))
                 result.response_body = response.text
                 result.duration_ms = int((time.time() - start_time) * 1000)
         except httpx.TimeoutException:
+            result.status_code = 0
             result.error_message = "Request timeout"
             result.duration_ms = int((time.time() - start_time) * 1000)
+        except httpx.RequestError as e:
+            result.status_code = 0
+            result.error_message = f"RequestError: {e}"
+            result.duration_ms = int((time.time() - start_time) * 1000)
         except Exception as e:
+            result.status_code = 0
             result.error_message = str(e)
             result.duration_ms = int((time.time() - start_time) * 1000)
 
@@ -97,6 +119,13 @@ class TerminalService:
         self.db.commit()
         self.db.refresh(result)
         return result
+
+    def _normalize_debug_url(self, url: str) -> str:
+        if not url:
+            return url
+        if url.startswith(f"{DEBUG_PROXY_ORIGIN}/api/"):
+            return url.replace(DEBUG_PROXY_ORIGIN, DEBUG_API_ORIGIN, 1)
+        return url
 
     def get_history(
         self,
@@ -132,3 +161,40 @@ class TerminalService:
         self.db.delete(req)
         self.db.commit()
         return True
+
+    def import_openapi_document(
+        self,
+        *,
+        source_url: str = "",
+        raw_content: str = "",
+    ) -> list[dict]:
+        content = raw_content.strip()
+        if source_url:
+            with httpx.Client(timeout=20.0) as client:
+                response = client.get(source_url)
+                response.raise_for_status()
+                content = response.text
+
+        if not content:
+            return []
+
+        document = json.loads(content)
+        paths = document.get("paths", {})
+        items = []
+
+        for path, methods in paths.items():
+            if not isinstance(methods, dict):
+                continue
+            for method, config in methods.items():
+                if method.lower() not in {"get", "post", "put", "delete", "patch", "head", "options"}:
+                    continue
+                summary = ""
+                if isinstance(config, dict):
+                    summary = config.get("summary") or config.get("operationId") or ""
+                items.append({
+                    "method": method.upper(),
+                    "url": path,
+                    "summary": summary,
+                })
+
+        return items

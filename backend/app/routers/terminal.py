@@ -13,6 +13,9 @@ from app.schemas.terminal import (
     DebugRequestCreate,
     DebugRequestResponse,
     DebugResponse,
+    ImportDocumentItem,
+    ImportDocumentRequest,
+    ImportDocumentResponse,
 )
 from app.services.terminal_service import TerminalService
 
@@ -148,3 +151,24 @@ def delete_request(
     if not service.delete_request(request_id):
         raise HTTPException(status_code=404, detail="Request not found")
     return {"message": "Deleted successfully"}
+
+
+@router.post("/import-document", response_model=ImportDocumentResponse)
+def import_document(
+    request: ImportDocumentRequest,
+    current_user: PlatformUser = Depends(get_current_platform_user),
+    db: Session = Depends(get_db),
+):
+    service = TerminalService(db)
+    try:
+      items = service.import_openapi_document(
+          source_url=request.source_url or "",
+          raw_content=request.raw_content or "",
+      )
+    except Exception as e:
+      raise HTTPException(status_code=400, detail=str(e))
+
+    return ImportDocumentResponse(
+        items=[ImportDocumentItem(**item) for item in items],
+        total=len(items),
+    )

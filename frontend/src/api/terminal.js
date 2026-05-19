@@ -6,6 +6,11 @@ export const terminalApi = {
     return client.post('/api/terminal/debug', data)
   },
 
+  /** Import OpenAPI / Swagger document */
+  importDocument(data) {
+    return client.post('/api/terminal/import-document', data)
+  },
+
   /** Get debug history */
   getHistory(params) {
     return client.get('/api/terminal/history', { params })

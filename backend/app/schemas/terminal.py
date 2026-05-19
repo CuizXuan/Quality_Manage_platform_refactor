@@ -67,3 +67,20 @@ class SaveAsCaseRequest(BaseModel):
 class SaveAsCaseResponse(BaseModel):
     case_id: int
     message: str
+
+
+class ImportDocumentRequest(BaseModel):
+    source_url: Optional[str] = None
+    raw_content: str = ""
+    content_type: str = Field(default="openapi", max_length=20)
+
+
+class ImportDocumentItem(BaseModel):
+    method: str
+    url: str
+    summary: str = ""
+
+
+class ImportDocumentResponse(BaseModel):
+    items: List[ImportDocumentItem]
+    total: int

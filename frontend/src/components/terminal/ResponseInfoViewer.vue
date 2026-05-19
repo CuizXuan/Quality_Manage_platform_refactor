@@ -54,7 +54,20 @@ function getStatusClass(code) {
 }
 
 function getStatusText(code) {
-  const map = { 200: 'OK', 201: 'Created', 204: 'No Content', 400: 'Bad Request', 401: 'Unauthorized', 403: 'Forbidden', 404: 'Not Found', 422: 'Unprocessable', 500: 'Server Error' }
+  const map = {
+    0: 'Request Error',
+    200: 'OK',
+    201: 'Created',
+    204: 'No Content',
+    400: 'Bad Request',
+    401: 'Unauthorized',
+    403: 'Forbidden',
+    404: 'Not Found',
+    422: 'Unprocessable',
+    500: 'Server Error',
+    502: 'Bad Gateway',
+    503: 'Unavailable',
+  }
   return map[code] || ''
 }
 

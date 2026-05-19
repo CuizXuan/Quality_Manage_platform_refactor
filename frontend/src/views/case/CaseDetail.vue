@@ -27,6 +27,7 @@
           :props="{ label: 'name', value: 'id' }"
           placeholder="选择分类"
           clearable
+          :render-after-expand="false"
         />
       </el-form-item>
 
@@ -55,8 +56,8 @@
 
       <el-divider content-position="left">类型特有字段</el-divider>
 
-      <ApiCaseForm v-if="caseForm.case_type === 'api'" v-model="caseForm.api_case" />
-      <FunctionalCaseForm v-else v-model="caseForm.functional_case" />
+      <ApiCaseForm v-if="caseForm.case_type === 'api'" :key="'api-' + caseForm.id" v-model="caseForm.api_case" />
+      <FunctionalCaseForm v-else :key="'func-' + caseForm.id" v-model="caseForm.functional_case" />
     </el-form>
   </div>
 </template>

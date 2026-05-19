@@ -15,6 +15,11 @@ from .api_test_case import (
 from .functional_test_case import (
     FunctionalTestCaseCreate, FunctionalTestCaseUpdate, FunctionalTestCaseResponse,
 )
+from .scenario import (
+    ScenarioCreate, ScenarioUpdate, ScenarioResponse,
+    ScenarioStepCreate, ScenarioStepUpdate, ScenarioStepResponse,
+    ExecutionRunResponse,
+)
 
 __all__ = [
     "TokenResponse", "LoginRequest", "RegisterRequest", "RefreshRequest",
@@ -26,4 +31,7 @@ __all__ = [
     "TestCaseListResponse", "DeleteResponse",
     "ApiTestCaseCreate", "ApiTestCaseUpdate", "ApiTestCaseResponse",
     "FunctionalTestCaseCreate", "FunctionalTestCaseUpdate", "FunctionalTestCaseResponse",
+    "ScenarioCreate", "ScenarioUpdate", "ScenarioResponse",
+    "ScenarioStepCreate", "ScenarioStepUpdate", "ScenarioStepResponse",
+    "ExecutionRunResponse",
 ]
