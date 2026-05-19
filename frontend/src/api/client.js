@@ -1,16 +1,17 @@
 import axios from 'axios'
 
 const client = axios.create({
-  baseURL: 'http://localhost:8000',
-  timeout: 60000,
+  baseURL: '',
+  timeout: 30000,
 })
 
-// 请求代理接口
-export const proxyApi = {
-  // 单次请求
-  send: (data) => client.post('/proxy/', data),
-  // 批量请求
-  batchSend: (data) => client.post('/proxy/batch', data),
-}
+client.interceptors.request.use((config) => {
+  const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token')
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`
+  }
+  return config
+})
 
 export default client
+

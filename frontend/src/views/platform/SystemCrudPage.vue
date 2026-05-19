@@ -1,0 +1,99 @@
+<template>
+  <div class="page-stack">
+    <section class="panel">
+      <div class="panel-head">
+        <div>
+          <span class="section-kicker">{{ kicker }}</span>
+          <h2>{{ title }}</h2>
+        </div>
+        <button class="primary-btn" type="button" @click="openCreate">{{ createLabel }}</button>
+      </div>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th v-for="field in visibleFields" :key="field.key">{{ field.label }}</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="item in items" :key="item.id">
+            <td v-for="field in visibleFields" :key="field.key">{{ formatValue(item[field.key]) }}</td>
+            <td class="row-actions">
+              <button type="button" @click="openEdit(item)">编辑</button>
+              <button type="button" @click="$emit('remove', item)">删除</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <div v-if="editing" class="drawer-mask" @click.self="editing = false">
+      <form class="editor-drawer" @submit.prevent="submit">
+        <h3>{{ form.id ? '编辑' : '新建' }}{{ title }}</h3>
+        <label v-for="field in fields" :key="field.key">
+          {{ field.label }}
+          <select v-if="field.type === 'select'" v-model="form[field.key]">
+            <option v-for="option in field.options" :key="option" :value="option">{{ option }}</option>
+          </select>
+          <input
+            v-else
+            v-model="form[field.key]"
+            :disabled="!!form.id && field.createOnly"
+            :required="field.required"
+            :type="field.type || 'text'"
+            :placeholder="field.placeholder || ''"
+          />
+        </label>
+        <div class="drawer-actions">
+          <button type="button" @click="editing = false">取消</button>
+          <button class="primary-btn" type="submit">保存</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { computed, reactive, ref } from 'vue'
+
+const props = defineProps({
+  title: { type: String, required: true },
+  kicker: { type: String, required: true },
+  createLabel: { type: String, required: true },
+  items: { type: Array, required: true },
+  fields: { type: Array, required: true },
+})
+
+const emit = defineEmits(['create', 'update', 'remove'])
+const editing = ref(false)
+const form = reactive({})
+const visibleFields = computed(() => props.fields.filter((field) => !field.hidden).slice(0, 5))
+
+function openCreate() {
+  resetForm()
+  editing.value = true
+}
+
+function openEdit(item) {
+  resetForm(item)
+  editing.value = true
+}
+
+function resetForm(item = {}) {
+  for (const key of Object.keys(form)) delete form[key]
+  Object.assign(form, { status: 'active', sort_order: 0 }, item)
+}
+
+function submit() {
+  emit(form.id ? 'update' : 'create', { ...form })
+  editing.value = false
+}
+
+function formatValue(value) {
+  if (Array.isArray(value)) return value.join(', ')
+  if (typeof value === 'boolean') return value ? '是' : '否'
+  return value ?? '-'
+}
+</script>
+

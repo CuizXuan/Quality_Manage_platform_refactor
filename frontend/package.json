@@ -6,25 +6,16 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview",
-    "test": "vitest",
-    "test:ui": "vitest --ui"
+    "preview": "vite preview"
   },
   "devDependencies": {
-    "@testing-library/jest-dom": "^6.9.1",
-    "@testing-library/vue": "^8.1.0",
-    "@vitest/ui": "^3.2.4",
-    "jsdom": "^27.0.1",
     "typescript": "~6.0.2",
-    "vite": "^8.0.4",
-    "vitest": "^3.2.4"
+    "vite": "^8.0.4"
   },
   "dependencies": {
     "@vitejs/plugin-vue": "^6.0.5",
-    "@vueuse/core": "^14.2.1",
     "axios": "^1.14.0",
     "element-plus": "^2.13.6",
-    "monaco-editor": "^0.55.1",
     "pinia": "^3.0.4",
     "vue-router": "^4.6.4"
   }

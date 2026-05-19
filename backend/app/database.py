@@ -1,5 +1,5 @@
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import Session, sessionmaker
 import os
 
 # 计算 backend 目录的绝对路径
@@ -31,36 +31,14 @@ def get_db():
 
 def init_db():
     from app.models import Base
+    from app.services.platform_seed import seed_platform
+
     Base.metadata.create_all(bind=engine)
-    # 初始化内置角色
-    _seed_roles()
-
-
-def _seed_roles():
-    """初始化内置系统角色"""
-    from sqlalchemy.orm import Session
-    from app.models.tenant import Role
-
     db = Session(bind=engine)
     try:
-        # 检查是否已有角色数据
-        existing = db.query(Role).first()
-        if existing:
-            return  # 已有数据，跳过
-
-        system_roles = [
-            {"name": "Viewer", "description": "只读访问", "is_system": True},
-            {"name": "Admin", "description": "管理员", "is_system": True},
-            {"name": "Editor", "description": "编辑者", "is_system": True},
-            {"name": "SuperAdmin", "description": "超级管理员", "is_system": True},
-        ]
-
-        for role_data in system_roles:
-            role = Role(**role_data)
-            db.add(role)
-
-        db.commit()
+        seed_platform(db)
     except Exception:
         db.rollback()
+        raise
     finally:
         db.close()
