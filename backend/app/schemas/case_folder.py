@@ -1,6 +1,7 @@
+from datetime import datetime
 from typing import List, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 
 class CaseFolderCreate(BaseModel):
@@ -24,6 +25,13 @@ class CaseFolderResponse(BaseModel):
     sort_order: int
     created_at: str
     updated_at: Optional[str] = None
+
+    @field_validator('created_at', 'updated_at', mode='before')
+    @classmethod
+    def parse_datetime(cls, v):
+        if isinstance(v, datetime):
+            return v.isoformat()
+        return v
 
     class Config:
         from_attributes = True

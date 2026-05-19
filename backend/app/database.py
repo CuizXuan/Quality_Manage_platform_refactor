@@ -34,9 +34,30 @@ def init_db():
     from app.services.platform_seed import seed_platform
 
     Base.metadata.create_all(bind=engine)
+    _run_migrations()
     db = Session(bind=engine)
     try:
         seed_platform(db)
+    except Exception:
+        db.rollback()
+        raise
+    finally:
+        db.close()
+
+
+def _run_migrations():
+    """Run one-time migrations for schema changes that require ALTER TABLE."""
+    from sqlalchemy import text
+
+    db = Session(bind=engine)
+    try:
+        # Check if test_cases.case_type column exists
+        result = db.execute(text("PRAGMA table_info(test_cases)"))
+        columns = [row[1] for row in result.fetchall()]
+
+        if 'case_type' not in columns:
+            db.execute(text("ALTER TABLE test_cases ADD COLUMN case_type VARCHAR(20) DEFAULT 'api'"))
+            db.commit()
     except Exception:
         db.rollback()
         raise
