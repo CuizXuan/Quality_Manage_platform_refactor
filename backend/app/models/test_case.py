@@ -24,6 +24,7 @@ class TestCase(Base):
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     variants = relationship("CaseVariant", back_populates="test_case", cascade="all, delete-orphan")
+    api_case = relationship("ApiTestCase", back_populates="test_case", uselist=False)
 
 
 class CaseVariant(Base):
