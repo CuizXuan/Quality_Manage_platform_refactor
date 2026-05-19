@@ -13,11 +13,22 @@ from app.services.platform_auth import PlatformAuthService
 
 DEFAULT_PERMISSIONS = [
     ("system", "view"),
-    ("system", "manage"),
-    ("user", "manage"),
-    ("role", "manage"),
-    ("menu", "manage"),
-    ("organization", "manage"),
+    ("user", "view"),
+    ("user", "create"),
+    ("user", "update"),
+    ("user", "delete"),
+    ("role", "view"),
+    ("role", "create"),
+    ("role", "update"),
+    ("role", "delete"),
+    ("menu", "view"),
+    ("menu", "create"),
+    ("menu", "update"),
+    ("menu", "delete"),
+    ("organization", "view"),
+    ("organization", "create"),
+    ("organization", "update"),
+    ("organization", "delete"),
 ]
 
 DEFAULT_MENUS = [
@@ -36,7 +47,7 @@ DEFAULT_MENUS = [
         "path": "/system/users",
         "icon": "UserRound",
         "component": "UserManagement",
-        "permission_code": "user:manage",
+        "permission_code": "user:view",
         "sort_order": 20,
     },
     {
@@ -45,7 +56,7 @@ DEFAULT_MENUS = [
         "path": "/system/roles",
         "icon": "ShieldCheck",
         "component": "RoleManagement",
-        "permission_code": "role:manage",
+        "permission_code": "role:view",
         "sort_order": 30,
     },
     {
@@ -54,7 +65,7 @@ DEFAULT_MENUS = [
         "path": "/system/organizations",
         "icon": "Network",
         "component": "OrganizationManagement",
-        "permission_code": "organization:manage",
+        "permission_code": "organization:view",
         "sort_order": 40,
     },
     {
@@ -63,7 +74,7 @@ DEFAULT_MENUS = [
         "path": "/system/menus",
         "icon": "PanelLeft",
         "component": "MenuManagement",
-        "permission_code": "menu:manage",
+        "permission_code": "menu:view",
         "sort_order": 50,
     },
 ]
@@ -133,8 +144,11 @@ def _ensure_default_admin(db: Session, organization_id: int, role_id: int) -> No
 
 
 def _ensure_default_menus(db: Session) -> None:
-    existing_codes = {item.code for item in db.query(PlatformMenu).all()}
+    existing_menus = {item.code: item for item in db.query(PlatformMenu).all()}
     for item in DEFAULT_MENUS:
-        if item["code"] not in existing_codes:
+        menu = existing_menus.get(item["code"])
+        if menu:
+            menu.icon = item["icon"]
+            menu.permission_code = item["permission_code"]
+        else:
             db.add(PlatformMenu(**item))
-

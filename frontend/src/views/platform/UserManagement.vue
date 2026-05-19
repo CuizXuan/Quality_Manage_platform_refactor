@@ -4,7 +4,6 @@
       <div class="panel-head">
         <div>
           <span class="section-kicker">Users</span>
-          <h2>用户管理</h2>
         </div>
         <button class="primary-btn" type="button" @click="openCreate">新建用户</button>
       </div>
@@ -23,12 +22,12 @@
         </thead>
         <tbody>
           <tr v-for="item in users" :key="item.id">
-            <td>{{ item.username }}</td>
-            <td>{{ item.display_name || '-' }}</td>
-            <td>{{ item.email }}</td>
-            <td>{{ item.organization_name || '-' }}</td>
-            <td>{{ item.roles.join(', ') || '-' }}</td>
-            <td><span class="status-pill" :class="item.status">{{ item.status }}</span></td>
+            <td><span class="truncate-cell" :title="item.username">{{ item.username }}</span></td>
+            <td><span class="truncate-cell" :title="item.display_name">{{ item.display_name || '-' }}</span></td>
+            <td><span class="truncate-cell" :title="item.email">{{ item.email }}</span></td>
+            <td><span class="truncate-cell" :title="item.organization_name">{{ item.organization_name || '-' }}</span></td>
+            <td><span class="truncate-cell" :title="item.roles.join('，')">{{ item.roles.join('，') || '-' }}</span></td>
+            <td><span class="status-pill" :class="item.status">{{ formatStatus(item.status) }}</span></td>
             <td class="row-actions">
               <button type="button" @click="openEdit(item)">编辑</button>
               <button type="button" @click="removeUser(item)">删除</button>
@@ -54,8 +53,8 @@
         </label>
         <label>状态
           <select v-model="form.status">
-            <option value="active">active</option>
-            <option value="disabled">disabled</option>
+            <option value="active">启用</option>
+            <option value="disabled">停用</option>
           </select>
         </label>
         <div class="check-grid">
@@ -76,6 +75,7 @@
 <script setup>
 import { onMounted, reactive, ref } from 'vue'
 import { systemApi } from '@/api/system'
+import { formatStatus } from './statusOptions'
 
 const users = ref([])
 const roles = ref([])
@@ -146,4 +146,3 @@ async function removeUser(user) {
 
 onMounted(loadData)
 </script>
-

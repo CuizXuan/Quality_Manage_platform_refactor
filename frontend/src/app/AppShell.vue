@@ -10,10 +10,19 @@
       </div>
 
       <nav class="nav-list">
-        <RouterLink v-for="item in navItems" :key="item.path" :to="item.path" class="nav-item">
-          <span class="nav-icon">{{ item.icon }}</span>
-          <span>{{ item.label }}</span>
-        </RouterLink>
+        <div v-for="group in navItems" :key="group.label" class="nav-group">
+          <button class="nav-group-title" type="button" @click="toggleGroup(group.label)">
+            <span class="nav-icon">{{ getMenuIcon(group.icon).symbol }}</span>
+            <span class="truncate-cell" :title="group.label">{{ group.label }}</span>
+            <ArrowDown class="nav-arrow" :class="{ collapsed: isCollapsed(group.label) }" />
+          </button>
+          <div v-show="!isCollapsed(group.label)" class="nav-children">
+            <RouterLink v-for="item in group.children" :key="item.path" :to="item.path" class="nav-item">
+              <span class="nav-icon">{{ getMenuIcon(item.icon).symbol }}</span>
+              <span class="truncate-cell" :title="item.label">{{ item.label }}</span>
+            </RouterLink>
+          </div>
+        </div>
       </nav>
     </aside>
 
@@ -24,13 +33,16 @@
           <h1>{{ currentTitle }}</h1>
         </div>
         <div class="topbar-actions">
-          <button class="theme-toggle" type="button" @click="toggleTheme">
-            {{ theme === 'dark' ? '浅色' : '深色' }}
+          <button class="icon-btn" type="button" :title="theme === 'dark' ? '切换浅色主题' : '切换深色主题'" @click="toggleTheme">
+            <Sunny v-if="theme === 'dark'" />
+            <Moon v-else />
           </button>
-          <div class="user-chip">
-            <span>{{ authStore.currentUsername || '用户' }}</span>
-            <button type="button" @click="handleLogout">退出</button>
-          </div>
+          <button class="icon-btn" type="button" :title="`个人中心：${authStore.currentUsername || '用户'}`">
+            <User />
+          </button>
+          <button class="icon-btn danger-btn" type="button" title="退出登录" @click="handleLogout">
+            <SwitchButton />
+          </button>
         </div>
       </header>
 
@@ -42,25 +54,39 @@
 </template>
 
 <script setup>
+import { ArrowDown, Moon, Sunny, SwitchButton, User } from '@element-plus/icons-vue'
 import { computed, ref, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { getMenuIcon } from '@/views/platform/menuIconLibrary'
 
 const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
 const theme = ref(localStorage.getItem('platform_theme') || 'dark')
+const collapsedGroups = ref(new Set())
 
 const navItems = [
-  { label: '工作台', path: '/', icon: '▦' },
-  { label: '用户管理', path: '/system/users', icon: '◎' },
-  { label: '角色管理', path: '/system/roles', icon: '◇' },
-  { label: '组织管理', path: '/system/organizations', icon: '⌘' },
-  { label: '菜单管理', path: '/system/menus', icon: '☰' },
+  {
+    label: '平台总览',
+    icon: 'Monitor',
+    children: [{ label: '工作台', path: '/', icon: 'Monitor' }],
+  },
+  {
+    label: '系统管理',
+    icon: 'Settings',
+    children: [
+      { label: '用户管理', path: '/system/users', icon: 'UserRound' },
+      { label: '角色管理', path: '/system/roles', icon: 'ShieldCheck' },
+      { label: '组织管理', path: '/system/organizations', icon: 'Network' },
+      { label: '菜单管理', path: '/system/menus', icon: 'PanelLeft' },
+    ],
+  },
 ]
 
+const flatNavItems = computed(() => navItems.flatMap((group) => group.children))
 const currentTitle = computed(() => {
-  const found = navItems.find((item) => item.path === route.path)
+  const found = flatNavItems.value.find((item) => item.path === route.path)
   return found?.label || '工作台'
 })
 
@@ -76,8 +102,21 @@ function handleLogout() {
   router.push('/login')
 }
 
+function isCollapsed(label) {
+  return collapsedGroups.value.has(label)
+}
+
+function toggleGroup(label) {
+  const next = new Set(collapsedGroups.value)
+  if (next.has(label)) {
+    next.delete(label)
+  } else {
+    next.add(label)
+  }
+  collapsedGroups.value = next
+}
+
 watchEffect(() => {
   document.documentElement.dataset.platformTheme = theme.value
 })
 </script>
-
