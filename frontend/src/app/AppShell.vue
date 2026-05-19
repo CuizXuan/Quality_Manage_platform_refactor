@@ -1,100 +1,165 @@
 <template>
-  <div class="platform-shell" :class="themeClass">
-    <aside class="platform-sidebar">
-      <div class="brand">
-        <div class="brand-mark">Q</div>
-        <div>
+  <el-container class="app-shell">
+    <el-aside :width="sidebarWidth" class="app-sidebar">
+      <div class="brand" :class="{ 'brand--collapsed': isCollapse }">
+        <div class="brand__mark">Q</div>
+        <div v-if="!isCollapse" class="brand__text">
           <strong>Quality Platform</strong>
           <span>Command Center</span>
         </div>
       </div>
 
-      <nav class="nav-list">
-        <div v-for="group in navItems" :key="group.label" class="nav-group">
-          <button class="nav-group-title" type="button" @click="toggleGroup(group.label)">
-            <span class="nav-icon">{{ getMenuIcon(group.icon).symbol }}</span>
-            <span class="truncate-cell" :title="group.label">{{ group.label }}</span>
-            <ArrowDown class="nav-arrow" :class="{ collapsed: isCollapsed(group.label) }" />
-          </button>
-          <div v-show="!isCollapsed(group.label)" class="nav-children">
-            <RouterLink v-for="item in group.children" :key="item.path" :to="item.path" class="nav-item">
-              <span class="nav-icon">{{ getMenuIcon(item.icon).symbol }}</span>
-              <span class="truncate-cell" :title="item.label">{{ item.label }}</span>
-            </RouterLink>
+      <el-menu
+        :collapse="isCollapse"
+        :default-active="activeMenu"
+        :router="true"
+        :unique-opened="true"
+        background-color="var(--bg-sidebar)"
+        text-color="var(--text-primary)"
+        active-text-color="var(--el-color-primary)"
+        class="menu-sidebar"
+      >
+        <template v-for="item in menuList" :key="item.path">
+          <el-menu-item v-if="!item.children?.length" :index="item.path">
+            <el-icon><component :is="item.icon" /></el-icon>
+            <template #title>{{ item.title }}</template>
+          </el-menu-item>
+          <el-sub-menu v-else :index="item.path">
+            <template #title>
+              <el-icon><component :is="item.icon" /></el-icon>
+              <span>{{ item.title }}</span>
+            </template>
+            <el-menu-item v-for="child in item.children" :key="child.path" :index="child.path">
+              <el-icon><component :is="child.icon" /></el-icon>
+              <template #title>{{ child.title }}</template>
+            </el-menu-item>
+          </el-sub-menu>
+        </template>
+      </el-menu>
+    </el-aside>
+
+    <el-container direction="vertical" class="app-content">
+      <el-header height="var(--header-height)" class="app-header">
+        <div class="header-left">
+          <el-button text :icon="FoldIcon" @click="toggleCollapse" />
+          <el-breadcrumb separator="/" class="header-breadcrumb">
+            <el-breadcrumb-item v-for="crumb in breadcrumbs" :key="crumb">{{ crumb }}</el-breadcrumb-item>
+          </el-breadcrumb>
+        </div>
+
+        <div class="header-right">
+          <div class="environment-switch">
+            <span>环境</span>
+            <el-select v-model="currentEnvironment" size="small" :teleported="true">
+              <el-option label="本地环境" value="local" />
+              <el-option label="开发环境" value="dev" />
+              <el-option label="测试环境" value="test" />
+              <el-option label="预生产" value="staging" />
+            </el-select>
           </div>
+          <el-button text :icon="isDark ? Sunny : Moon" @click="toggleTheme" />
+          <el-button text :icon="User" :title="`个人中心：${authStore.currentUsername || '用户'}`" />
+          <el-button text type="danger" :icon="SwitchButton" title="退出登录" @click="handleLogout" />
         </div>
-      </nav>
-    </aside>
+      </el-header>
 
-    <section class="platform-main">
-      <header class="platform-topbar">
-        <div>
-          <span class="topbar-kicker">SYSTEM SCAFFOLD</span>
-          <h1>{{ currentTitle }}</h1>
-        </div>
-        <div class="topbar-actions">
-          <button class="icon-btn" type="button" :title="theme === 'dark' ? '切换浅色主题' : '切换深色主题'" @click="toggleTheme">
-            <Sunny v-if="theme === 'dark'" />
-            <Moon v-else />
-          </button>
-          <button class="icon-btn" type="button" :title="`个人中心：${authStore.currentUsername || '用户'}`">
-            <User />
-          </button>
-          <button class="icon-btn danger-btn" type="button" title="退出登录" @click="handleLogout">
-            <SwitchButton />
-          </button>
-        </div>
-      </header>
-
-      <main class="workspace">
-        <RouterView />
-      </main>
-    </section>
-  </div>
+      <el-main class="app-main" :class="{ 'app-main--full': isFullBleed }">
+        <RouterView v-slot="{ Component }">
+          <keep-alive>
+            <component :is="Component" />
+          </keep-alive>
+        </RouterView>
+      </el-main>
+    </el-container>
+  </el-container>
 </template>
 
 <script setup>
-import { ArrowDown, Moon, Sunny, SwitchButton, User } from '@element-plus/icons-vue'
-import { computed, ref, watchEffect } from 'vue'
+import {
+  Connection,
+  Document,
+  DocumentChecked,
+  Expand,
+  Fold,
+  Menu as MenuIcon,
+  Monitor,
+  Moon,
+  Setting,
+  SwitchButton,
+  Sunny,
+  User,
+} from '@element-plus/icons-vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import { getMenuIcon } from '@/views/platform/menuIconLibrary'
 
 const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
-const theme = ref(localStorage.getItem('platform_theme') || 'dark')
-const collapsedGroups = ref(new Set())
+const isDark = ref((localStorage.getItem('theme') || 'dark') === 'dark')
+const isCollapse = ref(localStorage.getItem('sidebar_collapse') === 'true')
+const currentEnvironment = ref(localStorage.getItem('platform_environment') || 'local')
 
-const navItems = [
+const menuList = [
+  { title: '工作台', icon: Monitor, path: '/' },
   {
-    label: '平台总览',
-    icon: 'Monitor',
-    children: [{ label: '工作台', path: '/', icon: 'Monitor' }],
+    title: '工具',
+    icon: MenuIcon,
+    path: '/tools',
+    children: [
+      { title: '终端调试台', icon: Connection, path: '/terminal' },
+      { title: '用例中心', icon: DocumentChecked, path: '/case' },
+    ],
   },
   {
-    label: '系统管理',
-    icon: 'Settings',
+    title: '系统管理',
+    icon: Setting,
+    path: '/system',
     children: [
-      { label: '用户管理', path: '/system/users', icon: 'UserRound' },
-      { label: '角色管理', path: '/system/roles', icon: 'ShieldCheck' },
-      { label: '组织管理', path: '/system/organizations', icon: 'Network' },
-      { label: '菜单管理', path: '/system/menus', icon: 'PanelLeft' },
+      { title: '用户管理', icon: User, path: '/system/users' },
+      { title: '角色管理', icon: Document, path: '/system/roles' },
+      { title: '组织管理', icon: Monitor, path: '/system/organizations' },
+      { title: '菜单管理', icon: MenuIcon, path: '/system/menus' },
     ],
   },
 ]
 
-const flatNavItems = computed(() => navItems.flatMap((group) => group.children))
-const currentTitle = computed(() => {
-  const found = flatNavItems.value.find((item) => item.path === route.path)
-  return found?.label || '工作台'
+const flatMenu = computed(() => {
+  return menuList.flatMap((item) => item.children?.length ? item.children : [item])
 })
 
-const themeClass = computed(() => `theme-${theme.value}`)
+const activeMenu = computed(() => {
+  const normalizedPath = route.path === '/' ? '/' : route.path.replace(/\/$/, '')
+  const exact = flatMenu.value.find((item) => item.path === normalizedPath)
+  if (exact) return exact.path
+  const parent = flatMenu.value.find((item) => normalizedPath.startsWith(`${item.path}/`))
+  return parent?.path || '/'
+})
+
+const breadcrumbs = computed(() => {
+  const current = flatMenu.value.find((item) => item.path === activeMenu.value)
+  const parent = menuList.find((item) => item.children?.some((child) => child.path === current?.path))
+  if (!current) return ['工作台']
+  return parent ? [parent.title, current.title] : [current.title]
+})
+
+const sidebarWidth = computed(() => isCollapse.value ? 'var(--sidebar-width-collapsed)' : 'var(--sidebar-width)')
+const FoldIcon = computed(() => isCollapse.value ? Expand : Fold)
+const isFullBleed = computed(() => route.name === 'Terminal')
 
 function toggleTheme() {
-  theme.value = theme.value === 'dark' ? 'light' : 'dark'
-  localStorage.setItem('platform_theme', theme.value)
+  setTheme(!isDark.value)
+}
+
+function setTheme(dark) {
+  isDark.value = dark
+  document.documentElement.classList.toggle('dark', dark)
+  localStorage.setItem('theme', dark ? 'dark' : 'light')
+}
+
+function toggleCollapse() {
+  isCollapse.value = !isCollapse.value
+  localStorage.setItem('sidebar_collapse', String(isCollapse.value))
 }
 
 function handleLogout() {
@@ -102,21 +167,134 @@ function handleLogout() {
   router.push('/login')
 }
 
-function isCollapsed(label) {
-  return collapsedGroups.value.has(label)
-}
+onMounted(() => {
+  setTheme(isDark.value)
+})
 
-function toggleGroup(label) {
-  const next = new Set(collapsedGroups.value)
-  if (next.has(label)) {
-    next.delete(label)
-  } else {
-    next.add(label)
-  }
-  collapsedGroups.value = next
-}
-
-watchEffect(() => {
-  document.documentElement.dataset.platformTheme = theme.value
+watch(currentEnvironment, (value) => {
+  localStorage.setItem('platform_environment', value)
 })
 </script>
+
+<style scoped>
+.app-shell {
+  height: 100vh;
+  background: var(--bg-page);
+  color: var(--text-primary);
+}
+
+.app-sidebar {
+  background: var(--bg-sidebar);
+  border-right: 1px solid var(--border-color);
+  transition: width 0.2s ease;
+  overflow: hidden;
+}
+
+.brand {
+  display: flex;
+  gap: var(--spacing-sm);
+  align-items: center;
+  height: var(--header-height);
+  padding: 0 var(--spacing-md);
+}
+
+.brand--collapsed {
+  justify-content: center;
+  padding: 0;
+}
+
+.brand__mark {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  place-items: center;
+  border-radius: var(--border-radius-base);
+  color: var(--text-inverse);
+  background: var(--brand-gradient);
+  font-weight: 900;
+}
+
+.brand__text {
+  min-width: 0;
+}
+
+.brand__text strong,
+.brand__text span {
+  display: block;
+}
+
+.brand__text strong {
+  color: var(--text-strong);
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+.brand__text span {
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.menu-sidebar {
+  padding: 0 var(--spacing-sm);
+}
+
+.app-content {
+  min-width: 0;
+}
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  align-items: center;
+  padding: 0 var(--spacing-md);
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bg-container);
+}
+
+.header-left,
+.header-right,
+.environment-switch {
+  display: flex;
+  align-items: center;
+}
+
+.header-left {
+  min-width: 0;
+  gap: var(--spacing-sm);
+}
+
+.header-right {
+  gap: var(--spacing-sm);
+}
+
+.header-breadcrumb {
+  min-width: 0;
+}
+
+.environment-switch {
+  gap: var(--spacing-sm);
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.environment-switch .el-select {
+  width: 132px;
+}
+
+.app-main {
+  min-height: 0;
+  padding: var(--spacing-md);
+  background: var(--bg-page);
+  overflow: auto;
+}
+
+.app-main--full {
+  padding: 0;
+  overflow: hidden;
+}
+</style>

@@ -57,12 +57,16 @@ function handleSaved() {
   width: 240px;
   border-right: 1px solid var(--border-color);
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .case-list {
   flex: 1;
   min-width: 400px;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .case-detail {
