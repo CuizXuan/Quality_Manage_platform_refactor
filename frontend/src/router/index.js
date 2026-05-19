@@ -38,6 +38,29 @@ const routes = [
         name: 'SystemMenus',
         component: () => import('../views/platform/MenuManagement.vue'),
       },
+      {
+        path: 'terminal',
+        name: 'Terminal',
+        component: () => import('../views/terminal/Terminal.vue'),
+      },
+      {
+        path: 'case',
+        name: 'Case',
+        component: () => import('../views/case/Case.vue'),
+        redirect: '/case/api',
+        children: [
+          {
+            path: 'functional',
+            name: 'FunctionalCases',
+            component: () => import('../views/case/functional/FunctionalCase.vue'),
+          },
+          {
+            path: 'api',
+            name: 'ApiCases',
+            component: () => import('../views/case/api/ApiCase.vue'),
+          },
+        ],
+      },
     ],
   },
   {
