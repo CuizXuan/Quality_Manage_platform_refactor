@@ -36,6 +36,24 @@ DEFAULT_PERMISSIONS = [
     ("case", "update"),
     ("case", "delete"),
     ("case", "run"),
+    # Phase04 - 场景编排
+    ("scenario", "view"),
+    ("scenario", "create"),
+    ("scenario", "update"),
+    ("scenario", "delete"),
+    ("scenario", "execute"),
+    # Phase05 - 报告/缺陷/门禁
+    ("report", "view"),
+    ("report", "generate"),
+    ("defect", "view"),
+    ("defect", "create"),
+    ("defect", "update"),
+    ("defect", "delete"),
+    ("quality_gate", "view"),
+    ("quality_gate", "create"),
+    ("quality_gate", "update"),
+    ("quality_gate", "delete"),
+    ("quality_gate", "evaluate"),
 ]
 
 DEFAULT_MENUS = [
@@ -101,6 +119,44 @@ DEFAULT_MENUS = [
         "component": "CaseManagement",
         "permission_code": "case:view",
         "sort_order": 110,
+    },
+    # === Phase04 场景编排 ===
+    {
+        "name": "场景管理",
+        "code": "scenario",
+        "path": "/scenario",
+        "icon": "GitBranch",
+        "component": "ScenarioList",
+        "permission_code": "scenario:view",
+        "sort_order": 115,
+    },
+    # === Phase05 报告/缺陷/门禁 ===
+    {
+        "name": "报告中心",
+        "code": "report",
+        "path": "/report",
+        "icon": "FileText",
+        "component": "ReportList",
+        "permission_code": "report:view",
+        "sort_order": 120,
+    },
+    {
+        "name": "缺陷中心",
+        "code": "defect",
+        "path": "/defect",
+        "icon": "Bug",
+        "component": "DefectList",
+        "permission_code": "defect:view",
+        "sort_order": 125,
+    },
+    {
+        "name": "门禁管理",
+        "code": "quality_gate",
+        "path": "/quality-gate",
+        "icon": "Shield",
+        "component": "QualityGate",
+        "permission_code": "quality_gate:view",
+        "sort_order": 130,
     },
 ]
 
