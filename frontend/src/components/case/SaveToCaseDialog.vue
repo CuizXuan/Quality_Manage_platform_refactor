@@ -90,10 +90,11 @@ const saving = ref(false)
 
 watch(() => props.requestData, (newData) => {
   if (newData) {
+    const shouldUpdateName = !form.value.name || form.value.name === extractNameFromUrl(newData.url)
     form.value = {
       ...form.value,
       ...newData,
-      name: newData.url ? extractNameFromUrl(newData.url) : '',
+      name: shouldUpdateName && newData.url ? extractNameFromUrl(newData.url) : form.value.name,
     }
   }
 }, { immediate: true })

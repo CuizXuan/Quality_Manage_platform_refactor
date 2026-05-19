@@ -223,7 +223,7 @@
 
     <SaveToCaseDialog
       v-model="showSaveToCaseDialog"
-      :request-data="getRequestDataForCase()"
+      :request-data="requestDataForCase"
       @success="handleSaveToCaseSuccess"
     />
   </div>
@@ -460,20 +460,18 @@ function downloadResponse() {
   ElMessage.success('下载成功')
 }
 
-function getRequestDataForCase() {
-  return {
-    method: requestForm.value.method,
-    url: requestForm.value.url,
-    query_params: Object.fromEntries(requestForm.value.queryParams.filter(p => p.key).map(p => [p.key, p.value])),
-    headers: Object.fromEntries(requestForm.value.headers.filter(h => h.key).map(h => [h.key, h.value])),
-    cookies: Object.fromEntries(requestForm.value.cookies.filter(c => c.key).map(c => [c.key, c.value])),
-    body_type: requestForm.value.bodyType,
-    body: requestForm.value.body,
-    auth_config: requestForm.value.authConfig,
-    expected_status: responseData.value?.status_code,
-    source_debug_id: currentRequestId.value,
-  }
-}
+const requestDataForCase = computed(() => ({
+  method: requestForm.value.method,
+  url: requestForm.value.url,
+  query_params: Object.fromEntries(requestForm.value.queryParams.filter(p => p.key).map(p => [p.key, p.value])),
+  headers: Object.fromEntries(requestForm.value.headers.filter(h => h.key).map(h => [h.key, h.value])),
+  cookies: Object.fromEntries(requestForm.value.cookies.filter(c => c.key).map(c => [c.key, c.value])),
+  body_type: requestForm.value.bodyType,
+  body: requestForm.value.body,
+  auth_config: requestForm.value.authConfig,
+  expected_status: responseData.value?.status_code,
+  source_debug_id: currentRequestId.value,
+}))
 
 function handleSaveToCaseSuccess() {
   showSaveToCaseDialog.value = false
