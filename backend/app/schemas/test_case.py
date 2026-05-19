@@ -1,10 +1,10 @@
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Literal, Optional
 
 from pydantic import BaseModel, Field
 
 
 class TestCaseCreate(BaseModel):
-    case_type: str = Field(default="api", max_length=20)  # 'functional' | 'api'
+    case_type: Literal["functional", "api"] = Field(default="api")
     folder_id: Optional[int] = None
     name: str = Field(..., max_length=200)
     description: str = ""
@@ -21,7 +21,7 @@ class TestCaseCreate(BaseModel):
 
 
 class TestCaseUpdate(BaseModel):
-    case_type: Optional[str] = Field(None, max_length=20)
+    case_type: Optional[Literal["functional", "api"]] = Field(None)
     folder_id: Optional[int] = None
     name: Optional[str] = Field(None, max_length=200)
     description: Optional[str] = None
@@ -39,7 +39,7 @@ class TestCaseUpdate(BaseModel):
 
 class TestCaseResponse(BaseModel):
     id: int
-    case_type: str
+    case_type: Literal["functional", "api"]
     folder_id: Optional[int] = None
     name: str
     description: str = ""
