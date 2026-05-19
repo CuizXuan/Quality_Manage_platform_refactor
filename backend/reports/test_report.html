@@ -1,0 +1,3037 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quality_Manage_platform - SRE监控仪表盘</title>
+    <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --bg-card: #1c2128;
+            --border-color: #30363d;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --text-muted: #6e7681;
+            
+            --success: #238636;
+            --success-light: #2ea043;
+            --success-glow: rgba(46, 160, 67, 0.4);
+            
+            --danger: #da3633;
+            --danger-light: #f85149;
+            --danger-glow: rgba(248, 81, 73, 0.4);
+            
+            --warning: #9e6a03;
+            --warning-light: #d29922;
+            --warning-glow: rgba(210, 153, 34, 0.4);
+            
+            --info: #388bfd;
+            --info-light: #58a6ff;
+            
+            --purple: #a371f7;
+            --cyan: #39c5cf;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
+
+        .dashboard-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 1.5rem;
+        }
+
+        .dashboard-header {
+            background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 1.5rem;
+            margin: -1.5rem -1.5rem 1.5rem -1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--info) 0%, var(--purple) 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .header-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg-tertiary);
+            border-radius: 2rem;
+            font-size: 0.875rem;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .status-dot.healthy {
+            background: var(--success-light);
+            box-shadow: 0 0 8px var(--success-glow);
+        }
+
+        .status-dot.degraded {
+            background: var(--warning-light);
+            box-shadow: 0 0 8px var(--warning-glow);
+        }
+
+        .status-dot.down {
+            background: var(--danger-light);
+            box-shadow: 0 0 8px var(--danger-glow);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .health-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .health-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.25rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .health-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+        }
+
+        .health-card.total::before { background: linear-gradient(90deg, var(--info), var(--purple)); }
+        .health-card.passed::before { background: linear-gradient(90deg, var(--success), var(--success-light)); }
+        .health-card.failed::before { background: linear-gradient(90deg, var(--danger), var(--danger-light)); }
+        .health-card.skipped::before { background: linear-gradient(90deg, var(--warning), var(--warning-light)); }
+
+        .health-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+
+        .health-card-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+        }
+
+        .health-card-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .health-card.total .health-card-icon { background: rgba(56, 139, 253, 0.15); color: var(--info-light); }
+        .health-card.passed .health-card-icon { background: rgba(46, 160, 67, 0.15); color: var(--success-light); }
+        .health-card.failed .health-card-icon { background: rgba(248, 81, 73, 0.15); color: var(--danger-light); }
+        .health-card.skipped .health-card-icon { background: rgba(210, 153, 34, 0.15); color: var(--warning-light); }
+
+        .health-card-value {
+            font-size: 2.25rem;
+            font-weight: 700;
+            line-height: 1;
+            margin-bottom: 0.25rem;
+        }
+
+        .health-card-trend {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .metrics-row {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (max-width: 1024px) {
+            .metrics-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .pass-rate-gauge {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .gauge-header {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .gauge-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 1rem;
+        }
+
+        .gauge-svg {
+            transform: rotate(-90deg);
+        }
+
+        .gauge-bg {
+            fill: none;
+            stroke: var(--bg-tertiary);
+            stroke-width: 12;
+        }
+
+        .gauge-fill {
+            fill: none;
+            stroke-width: 12;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 1s ease;
+        }
+
+        .gauge-fill.excellent { stroke: var(--success-light); }
+        .gauge-fill.good { stroke: var(--info-light); }
+        .gauge-fill.warning { stroke: var(--warning-light); }
+        .gauge-fill.critical { stroke: var(--danger-light); }
+
+        .gauge-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .gauge-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .gauge-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+
+        .gauge-status {
+            text-align: center;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .gauge-status.excellent { background: rgba(46, 160, 67, 0.15); color: var(--success-light); }
+        .gauge-status.good { background: rgba(56, 139, 253, 0.15); color: var(--info-light); }
+        .gauge-status.warning { background: rgba(210, 153, 34, 0.15); color: var(--warning-light); }
+        .gauge-status.critical { background: rgba(248, 81, 73, 0.15); color: var(--danger-light); }
+
+        .module-health {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .section-header {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .module-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 1rem;
+        }
+
+        .module-item {
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            border: 1px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .module-item:hover {
+            border-color: var(--border-color);
+            transform: translateY(-2px);
+        }
+
+        .module-item.healthy {
+            border-left: 3px solid var(--success-light);
+        }
+
+        .module-item.degraded {
+            border-left: 3px solid var(--warning-light);
+        }
+
+        .module-item.down {
+            border-left: 3px solid var(--danger-light);
+        }
+
+        .module-name {
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .module-stats {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .module-stats span {
+            margin: 0 0.25rem;
+        }
+
+        .module-rate {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-top: 0.5rem;
+        }
+
+        .error-budget {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .budget-bar-container {
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            height: 24px;
+            overflow: hidden;
+            position: relative;
+            margin: 1rem 0;
+        }
+
+        .budget-bar-used {
+            height: 100%;
+            background: linear-gradient(90deg, var(--danger), var(--danger-light));
+            transition: width 1s ease;
+        }
+
+        .budget-bar-remaining {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success), var(--success-light));
+            position: absolute;
+            right: 0;
+            top: 0;
+            transition: width 1s ease;
+        }
+
+        .budget-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .alerts-panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+
+        .alerts-header {
+            padding: 1rem 1.5rem;
+            background: rgba(248, 81, 73, 0.1);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .alert-icon {
+            width: 24px;
+            height: 24px;
+            background: var(--danger);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .alerts-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--danger-light);
+        }
+
+        .alerts-count {
+            margin-left: auto;
+            background: var(--danger);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .alert-item {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+        .alert-item:last-child {
+            border-bottom: none;
+        }
+
+        .alert-severity {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.625rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .alert-severity.critical {
+            background: rgba(248, 81, 73, 0.2);
+            color: var(--danger-light);
+        }
+
+        .alert-severity.warning {
+            background: rgba(210, 153, 34, 0.2);
+            color: var(--warning-light);
+        }
+
+        .alert-content {
+            flex: 1;
+        }
+
+        .alert-test-name {
+            font-weight: 600;
+            font-size: 0.875rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .alert-message {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            font-family: 'Monaco', 'Menlo', monospace;
+            background: var(--bg-tertiary);
+            padding: 0.5rem;
+            border-radius: 4px;
+            margin-top: 0.5rem;
+            overflow-x: auto;
+        }
+
+        .tests-table-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .tests-table-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .tests-table-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        .filter-btn.active {
+            background: var(--info);
+            border-color: var(--info);
+            color: white;
+        }
+
+        .tests-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .tests-table th {
+            text-align: left;
+            padding: 0.75rem 1rem;
+            background: var(--bg-tertiary);
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .tests-table td {
+            padding: 0.875rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.875rem;
+        }
+
+        .tests-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .tests-table tr:hover td {
+            background: var(--bg-tertiary);
+        }
+
+        .test-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .test-status.passed {
+            background: rgba(46, 160, 67, 0.15);
+            color: var(--success-light);
+        }
+
+        .test-status.failed {
+            background: rgba(248, 81, 73, 0.15);
+            color: var(--danger-light);
+        }
+
+        .test-status.skipped {
+            background: rgba(210, 153, 34, 0.15);
+            color: var(--warning-light);
+        }
+
+        .test-status.error {
+            background: rgba(248, 81, 73, 0.15);
+            color: var(--danger-light);
+        }
+
+        .test-name {
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.8125rem;
+        }
+
+        .test-description {
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+        }
+
+        .test-duration {
+            font-family: 'Monaco', 'Menlo', monospace;
+            color: var(--text-muted);
+        }
+
+        .metadata-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .metadata-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+
+        .metadata-label {
+            font-size: 0.625rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 0.25rem;
+        }
+
+        .metadata-value {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 1rem;
+            }
+            
+            .dashboard-header {
+                flex-direction: column;
+                gap: 1rem;
+                margin: -1rem -1rem 1rem -1rem;
+                padding: 1rem;
+            }
+            
+            .health-overview {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .health-card-value {
+                font-size: 1.75rem;
+            }
+            
+            .tests-table {
+                font-size: 0.75rem;
+            }
+            
+            .tests-table th, .tests-table td {
+                padding: 0.5rem;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .dashboard-header, .health-overview, .metrics-row, .error-budget, .alerts-panel, .tests-table-container {
+            animation: fadeIn 0.5s ease;
+        }
+
+        .health-card:nth-child(1) { animation-delay: 0.05s; }
+        .health-card:nth-child(2) { animation-delay: 0.1s; }
+        .health-card:nth-child(3) { animation-delay: 0.15s; }
+        .health-card:nth-child(4) { animation-delay: 0.2s; }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <header class="dashboard-header">
+            <div class="header-left">
+                <div class="logo">
+                    <div class="logo-icon">📊</div>
+                    Quality_Manage_platform
+                </div>
+                <div class="header-status">
+                    <span class="status-dot degraded"></span>
+                    性能下降
+                </div>
+            </div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">
+                Generated: 2026-04-30 20:16:10
+            </div>
+        </header>
+
+        <div class="health-overview">
+            <div class="health-card total">
+                <div class="health-card-header">
+                    <div class="health-card-title">总测试数</div>
+                    <div class="health-card-icon">📋</div>
+                </div>
+                <div class="health-card-value">189</div>
+                <div class="health-card-trend">Test Cases</div>
+            </div>
+            <div class="health-card passed">
+                <div class="health-card-header">
+                    <div class="health-card-title">通过</div>
+                    <div class="health-card-icon">✓</div>
+                </div>
+                <div class="health-card-value">181</div>
+                <div class="health-card-trend">95.8% 通过率</div>
+            </div>
+            <div class="health-card failed">
+                <div class="health-card-header">
+                    <div class="health-card-title">失败</div>
+                    <div class="health-card-icon">✗</div>
+                </div>
+                <div class="health-card-value">8</div>
+                <div class="health-card-trend">需关注</div>
+            </div>
+            <div class="health-card skipped">
+                <div class="health-card-header">
+                    <div class="health-card-title">错误</div>
+                    <div class="health-card-icon">⚠</div>
+                </div>
+                <div class="health-card-value">3</div>
+                <div class="health-card-trend">测试异常</div>
+            </div>
+        </div>
+
+        <div class="metrics-row">
+            <div class="pass-rate-gauge">
+                <div class="gauge-header">📈 通过率</div>
+                <div class="gauge-container">
+                    <svg class="gauge-svg" width="200" height="200" viewBox="0 0 200 200">
+                        <circle class="gauge-bg" cx="100" cy="100" r="85"/>
+                        <circle class="gauge-fill good" cx="100" cy="100" r="85" 
+                            stroke-dasharray="534" stroke-dashoffset="22"/>
+                    </svg>
+                    <div class="gauge-center">
+                        <div class="gauge-value">95.8%</div>
+                        <div class="gauge-label">Pass Rate</div>
+                    </div>
+                </div>
+                <div class="gauge-status good">
+                    良好 - 错误预算充足
+                </div>
+            </div>
+
+            <div class="module-health">
+                <div class="section-header">🏥 模块健康度</div>
+                <div class="module-grid">
+                    
+                <div class="module-item healthy">
+                    <div class="module-name">cases</div>
+                    <div class="module-stats">
+                        <span style="color: var(--success-light)">27✓</span>
+                        <span style="color: var(--danger-light)">0✗</span>
+                        <span style="color: var(--warning-light)">0○</span>
+                    </div>
+                    <div class="module-rate" style="color: var(--success-light)">100%</div>
+                </div>
+            
+                <div class="module-item healthy">
+                    <div class="module-name">coverage</div>
+                    <div class="module-stats">
+                        <span style="color: var(--success-light)">12✓</span>
+                        <span style="color: var(--danger-light)">0✗</span>
+                        <span style="color: var(--warning-light)">0○</span>
+                    </div>
+                    <div class="module-rate" style="color: var(--success-light)">100%</div>
+                </div>
+            
+                <div class="module-item healthy">
+                    <div class="module-name">datasets</div>
+                    <div class="module-stats">
+                        <span style="color: var(--success-light)">21✓</span>
+                        <span style="color: var(--danger-light)">0✗</span>
+                        <span style="color: var(--warning-light)">0○</span>
+                    </div>
+                    <div class="module-rate" style="color: var(--success-light)">100%</div>
+                </div>
+            
+                <div class="module-item degraded">
+                    <div class="module-name">defects</div>
+                    <div class="module-stats">
+                        <span style="color: var(--success-light)">26✓</span>
+                        <span style="color: var(--danger-light)">2✗</span>
+                        <span style="color: var(--warning-light)">0○</span>
+                    </div>
+                    <div class="module-rate" style="color: var(--warning-light)">93%</div>
+                </div>
+            
+                <div class="module-item healthy">
+                    <div class="module-name">environments</div>
+                    <div class="module-stats">
+                        <span style="color: var(--success-light)">21✓</span>
+                        <span style="color: var(--danger-light)">0✗</span>
+                        <span style="color: var(--warning-light)">0○</span>
+                    </div>
+                    <div class="module-rate" style="color: var(--success-light)">100%</div>
+                </div>
+            
+                <div class="module-item degraded">
+                    <div class="module-name">logs</div>
+                    <div class="module-stats">
+                        <span style="color: var(--success-light)">14✓</span>
+                        <span style="color: var(--danger-light)">2✗</span>
+                        <span style="color: var(--warning-light)">0○</span>
+                    </div>
+                    <div class="module-rate" style="color: var(--warning-light)">87.5%</div>
+                </div>
+            
+                <div class="module-item healthy">
+                    <div class="module-name">mocks</div>
+                    <div class="module-stats">
+                        <span style="color: var(--success-light)">29✓</span>
+                        <span style="color: var(--danger-light)">0✗</span>
+                        <span style="color: var(--warning-light)">0○</span>
+                    </div>
+                    <div class="module-rate" style="color: var(--success-light)">100%</div>
+                </div>
+            
+                <div class="module-item down">
+                    <div class="module-name">projects</div>
+                    <div class="module-stats">
+                        <span style="color: var(--success-light)">4✓</span>
+                        <span style="color: var(--danger-light)">4✗</span>
+                        <span style="color: var(--warning-light)">2!</span>
+                    </div>
+                    <div class="module-rate" style="color: var(--danger-light)">40%</div>
+                </div>
+            
+                <div class="module-item healthy">
+                    <div class="module-name">reports</div>
+                    <div class="module-stats">
+                        <span style="color: var(--success-light)">21✓</span>
+                        <span style="color: var(--danger-light)">0✗</span>
+                        <span style="color: var(--warning-light)">0○</span>
+                    </div>
+                    <div class="module-rate" style="color: var(--success-light)">100%</div>
+                </div>
+            
+                <div class="module-item healthy">
+                    <div class="module-name">scenarios</div>
+                    <div class="module-stats">
+                        <span style="color: var(--success-light)">3✓</span>
+                        <span style="color: var(--danger-light)">0✗</span>
+                        <span style="color: var(--warning-light)">0○</span>
+                    </div>
+                    <div class="module-rate" style="color: var(--success-light)">100%</div>
+                </div>
+            
+                </div>
+            </div>
+        </div>
+
+        <div class="error-budget">
+            <div class="section-header">⚠️ 错误预算 (Error Budget)</div>
+            <div class="budget-bar-container">
+                <div class="budget-bar-used" style="width: 4.232624728182065%"></div>
+                <div class="budget-bar-remaining" style="width: 95.76737527181794%"></div>
+            </div>
+            <div class="budget-labels">
+                <span>已消耗: 8 (4.2%)</span>
+                <span>剩余: 181 (95.8%)</span>
+            </div>
+        </div>
+
+        <div class="alerts-panel">
+            <div class="alerts-header">
+                <div class="alert-icon">!</div>
+                <div class="alerts-title">检测到 8 个失败测试, 3 个错误</div>
+                <div class="alerts-count">11</div>
+            </div>
+            
+                <div class="alert-item">
+                    <span class="alert-severity warning">FAILED</span>
+                    <div class="alert-content">
+                        <div class="alert-test-name">test_stats_summary_normal</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">
+                            defects • 0.83s
+                        </div>
+                        <div class="alert-message">P1_D015: 统计看板-正常</div>
+                    </div>
+                </div>
+            
+                <div class="alert-item">
+                    <span class="alert-severity warning">FAILED</span>
+                    <div class="alert-content">
+                        <div class="alert-test-name">test_stats_summary_empty</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">
+                            defects • 0.15s
+                        </div>
+                        <div class="alert-message">P1_D016: 统计看板-空数据</div>
+                    </div>
+                </div>
+            
+                <div class="alert-item">
+                    <span class="alert-severity warning">FAILED</span>
+                    <div class="alert-content">
+                        <div class="alert-test-name">test_batch_delete_logs_success</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">
+                            logs • -
+                        </div>
+                        <div class="alert-message">批量删除日志测试</div>
+                    </div>
+                </div>
+            
+                <div class="alert-item">
+                    <span class="alert-severity warning">FAILED</span>
+                    <div class="alert-content">
+                        <div class="alert-test-name">test_batch_delete_logs_empty_list</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">
+                            logs • -
+                        </div>
+                        <div class="alert-message">批量删除空列表测试</div>
+                    </div>
+                </div>
+            
+                <div class="alert-item">
+                    <span class="alert-severity critical">FAILED</span>
+                    <div class="alert-content">
+                        <div class="alert-test-name">test_create_project</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">
+                            projects • 0.15s
+                        </div>
+                        <div class="alert-message">测试创建项目</div>
+                    </div>
+                </div>
+            
+                <div class="alert-item">
+                    <span class="alert-severity critical">FAILED</span>
+                    <div class="alert-content">
+                        <div class="alert-test-name">test_get_single_project</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">
+                            projects • 0.15s
+                        </div>
+                        <div class="alert-message">测试获取单个项目</div>
+                    </div>
+                </div>
+            
+                <div class="alert-item">
+                    <span class="alert-severity critical">FAILED</span>
+                    <div class="alert-content">
+                        <div class="alert-test-name">test_delete_project</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">
+                            projects • 0.15s
+                        </div>
+                        <div class="alert-message">测试删除项目</div>
+                    </div>
+                </div>
+            
+                <div class="alert-item">
+                    <span class="alert-severity critical">FAILED</span>
+                    <div class="alert-content">
+                        <div class="alert-test-name">test_create_project_duplicate_key</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">
+                            projects • 0.13s
+                        </div>
+                        <div class="alert-message">测试创建重复key的项目</div>
+                    </div>
+                </div>
+            
+                <div class="alert-item">
+                    <span class="alert-severity critical">ERROR</span>
+                    <div class="alert-content">
+                        <div class="alert-test-name">test_get_projects_authorized</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">
+                            projects • -
+                        </div>
+                        <div class="alert-message">测试获取项目列表（已授权）- ERROR</div>
+                    </div>
+                </div>
+            
+                <div class="alert-item">
+                    <span class="alert-severity critical">ERROR</span>
+                    <div class="alert-content">
+                        <div class="alert-test-name">test_create_project</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">
+                            projects • -
+                        </div>
+                        <div class="alert-message">测试创建项目 - ERROR</div>
+                    </div>
+                </div>
+            
+                <div class="alert-item">
+                    <span class="alert-severity critical">ERROR</span>
+                    <div class="alert-content">
+                        <div class="alert-test-name">test_create_project_duplicate_key</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">
+                            projects • -
+                        </div>
+                        <div class="alert-message">测试创建重复key的项目 - ERROR</div>
+                    </div>
+                </div>
+            
+        </div>
+
+        <div class="metadata-grid">
+            <div class="metadata-item">
+                <div class="metadata-label">项目版本</div>
+                <div class="metadata-value">v1.0.0</div>
+            </div>
+            <div class="metadata-item">
+                <div class="metadata-label">测试环境</div>
+                <div class="metadata-value">测试环境</div>
+            </div>
+            <div class="metadata-item">
+                <div class="metadata-label">开始时间</div>
+                <div class="metadata-value">2026-04-30 20:14:32</div>
+            </div>
+            <div class="metadata-item">
+                <div class="metadata-label">执行时长</div>
+                <div class="metadata-value">108.2s</div>
+            </div>
+            <div class="metadata-item">
+                <div class="metadata-label">Python版本</div>
+                <div class="metadata-value">3.13.9</div>
+            </div>
+            <div class="metadata-item">
+                <div class="metadata-label">Pytest版本</div>
+                <div class="metadata-value">9.0.3</div>
+            </div>
+        </div>
+
+        <div class="tests-table-container">
+            <div class="tests-table-header">
+                <div class="tests-table-title">📜 测试详情 (189 tests)</div>
+                <div class="filter-buttons">
+                    <button class="filter-btn active" data-filter="all">全部 (189)</button>
+                    <button class="filter-btn" data-filter="passed">通过 (181)</button>
+                    <button class="filter-btn" data-filter="failed">失败 (8)</button>
+                    <button class="filter-btn" data-filter="skipped">跳过 (0)</button>
+                </div>
+            </div>
+            <table class="tests-table">
+                <thead>
+                    <tr>
+                        <th>状态</th>
+                        <th>测试用例</th>
+                        <th>模块</th>
+                        <th>耗时</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_case_create_full_params</div>
+                        <div class="test-description">P0_TC001: 创建用例-完整参数</div>
+                    </td>
+                    <td>cases</td>
+                    <td class="test-duration">0.407s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_case_list_pagination</div>
+                        <div class="test-description">P0_TC002: 获取用例列表-分页</div>
+                    </td>
+                    <td>cases</td>
+                    <td class="test-duration">1.422s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_case_get_single_exists</div>
+                        <div class="test-description">P0_TC003: 获取单个用例-存在</div>
+                    </td>
+                    <td>cases</td>
+                    <td class="test-duration">0.278s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_case_update_exists</div>
+                        <div class="test-description">P0_TC004: 更新用例-存在</div>
+                    </td>
+                    <td>cases</td>
+                    <td class="test-duration">0.410s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_case_delete_exists</div>
+                        <div class="test-description">P0_TC005: 删除用例-存在</div>
+                    </td>
+                    <td>cases</td>
+                    <td class="test-duration">0.528s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_case_run_normal</div>
+                        <div class="test-description">P0_TC006: 执行用例-正常</div>
+                    </td>
+                    <td>cases</td>
+                    <td class="test-duration">1.394s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_case_batch_delete</div>
+                        <div class="test-description">P0_TC007: 批量删除用例-正常</div>
+                    </td>
+                    <td>cases</td>
+                    <td class="test-duration">1.068s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_case_run_default_environment</div>
+                        <div class="test-description">P0_TC008: 执行用例-使用默认环境</div>
+                    </td>
+                    <td>cases</td>
+                    <td class="test-duration">1.411s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_case_run_record_saved</div>
+                        <div class="test-description">P0_TC009: 执行用例-记录保存验证</div>
+                    </td>
+                    <td>cases</td>
+                    <td class="test-duration">1.605s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_case_list_filter_folder</div>
+                        <div class="test-description">P1_TC001: 列表-按folder过滤</div>
+                    </td>
+                    <td>cases</td>
+                    <td class="test-duration">0.540s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_case_list_filter_method</div>
+                        <div class="test-description">P1_TC002: 列表-按method过滤</div>
+                    </td>
+                    <td>cases</td>
+                    <td class="test-duration">0.548s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_case_list_keyword_search</div>
+                        <div class="test-description">P1_TC003: 列表-关键词搜索</div>
+                    </td>
+                    <td>cases</td>
+                    <td class="test-duration">0.421s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_case_list_multi_filter</div>
+                        <div class="test-description">P1_TC004: 列表-多条件组合过滤</div>
+                    </td>
+                    <td>cases</td>
+                    <td class="test-duration">0.414s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_case_list_sorted</div>
+                        <div class="test-description">P1_TC005: 列表-按folder和sort_order排序</div>
+                    </td>
+                    <td>cases</td>
+                    <td class="test-duration">0.570s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_case_duplicate_normal</div>
+                        <div class="test-description">P1_TC006: 复制用例-正常</div>
+                    </td>
+                    <td>cases</td>
+                    <td class="test-duration">0.430s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_case_duplicate_folder_same</div>
+                        <div class="test-description">P1_TC007: 复制用例-folder保持一致</div>
+                    </td>
+                    <td>cases</td>
+                    <td class="test-duration">0.404s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_case_update_headers</div>
+                        <div class="test-description">P1_TC008: 更新用例-headers</div>
+                    </td>
+                    <td>cases</td>
+                    <td class="test-duration">0.426s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_case_update_assertions</div>
+                        <div class="test-description">P1_TC009: 更新用例-断言规则</div>
+                    </td>
+                    <td>cases</td>
+                    <td class="test-duration">0.384s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_case_update_auth</div>
+                        <div class="test-description">P1_TC010: 更新用例-认证信息</div>
+                    </td>
+                    <td>cases</td>
+                    <td class="test-duration">0.342s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_case_run_get_method</div>
+                        <div class="test-description">P1_TC011: 执行用例-GET方法</div>
+                    </td>
+                    <td>cases</td>
+                    <td class="test-duration">1.460s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_case_run_post_with_json</div>
+                        <div class="test-description">P1_TC012: 执行用例-POST方法带JSON</div>
+                    </td>
+                    <td>cases</td>
+                    <td class="test-duration">1.426s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_case_run_no_default_env</div>
+                        <div class="test-description">P1_TC014: 执行用例-无默认环境</div>
+                    </td>
+                    <td>cases</td>
+                    <td class="test-duration">1.467s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_case_get_not_exists</div>
+                        <div class="test-description">P1_TC015: 获取单个用例-不存在</div>
+                    </td>
+                    <td>cases</td>
+                    <td class="test-duration">0.267s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_case_update_not_exists</div>
+                        <div class="test-description">P1_TC016: 更新用例-不存在</div>
+                    </td>
+                    <td>cases</td>
+                    <td class="test-duration">0.141s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_case_delete_not_exists</div>
+                        <div class="test-description">P1_TC017: 删除用例-不存在</div>
+                    </td>
+                    <td>cases</td>
+                    <td class="test-duration">0.141s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_case_duplicate_not_exists</div>
+                        <div class="test-description">P1_TC018: 复制用例-不存在</div>
+                    </td>
+                    <td>cases</td>
+                    <td class="test-duration">0.174s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_case_run_not_exists</div>
+                        <div class="test-description">P1_TC019: 执行用例-用例不存在</div>
+                    </td>
+                    <td>cases</td>
+                    <td class="test-duration">0.135s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_get_coverage_summary_no_data</div>
+                        <div class="test-description">覆盖率汇总-无数据</div>
+                    </td>
+                    <td>coverage</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_get_coverage_summary_with_data</div>
+                        <div class="test-description">覆盖率汇总-有数据</div>
+                    </td>
+                    <td>coverage</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_get_coverage_summary_by_repository</div>
+                        <div class="test-description">覆盖率汇总-按仓库</div>
+                    </td>
+                    <td>coverage</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_get_coverage_summary_by_commit</div>
+                        <div class="test-description">覆盖率汇总-按提交</div>
+                    </td>
+                    <td>coverage</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_get_file_coverage_list</div>
+                        <div class="test-description">文件覆盖率列表</div>
+                    </td>
+                    <td>coverage</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_get_file_coverage_list_empty</div>
+                        <div class="test-description">文件覆盖率列表-空</div>
+                    </td>
+                    <td>coverage</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_upload_coverage_lcov_format</div>
+                        <div class="test-description">上传覆盖率-lcov格式</div>
+                    </td>
+                    <td>coverage</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_upload_coverage_invalid_format</div>
+                        <div class="test-description">上传覆盖率-无效格式</div>
+                    </td>
+                    <td>coverage</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_coverage_percentage_calculation</div>
+                        <div class="test-description">覆盖率百分比计算</div>
+                    </td>
+                    <td>coverage</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_coverage_zero_lines</div>
+                        <div class="test-description">覆盖率-零行</div>
+                    </td>
+                    <td>coverage</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_coverage_repository_association</div>
+                        <div class="test-description">覆盖率仓库关联</div>
+                    </td>
+                    <td>coverage</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_coverage_multiple_commits</div>
+                        <div class="test-description">覆盖率-多次提交</div>
+                    </td>
+                    <td>coverage</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_list_datasets_empty</div>
+                        <div class="test-description">数据集列表-空</div>
+                    </td>
+                    <td>datasets</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_list_datasets_multiple</div>
+                        <div class="test-description">数据集列表-多个</div>
+                    </td>
+                    <td>datasets</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_list_datasets_keyword_filter</div>
+                        <div class="test-description">数据集列表-关键词过滤</div>
+                    </td>
+                    <td>datasets</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_list_datasets_pagination</div>
+                        <div class="test-description">数据集列表-分页</div>
+                    </td>
+                    <td>datasets</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_create_dataset_json</div>
+                        <div class="test-description">创建数据集-JSON</div>
+                    </td>
+                    <td>datasets</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_create_dataset_csv</div>
+                        <div class="test-description">创建数据集-CSV</div>
+                    </td>
+                    <td>datasets</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_create_dataset_minimal</div>
+                        <div class="test-description">创建数据集-最小</div>
+                    </td>
+                    <td>datasets</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_get_dataset_exists</div>
+                        <div class="test-description">获取数据集-存在</div>
+                    </td>
+                    <td>datasets</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_get_dataset_not_exists</div>
+                        <div class="test-description">获取数据集-不存在</div>
+                    </td>
+                    <td>datasets</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_update_dataset_name</div>
+                        <div class="test-description">更新数据集-名称</div>
+                    </td>
+                    <td>datasets</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_update_dataset_content</div>
+                        <div class="test-description">更新数据集-内容</div>
+                    </td>
+                    <td>datasets</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_delete_dataset_success</div>
+                        <div class="test-description">删除数据集-成功</div>
+                    </td>
+                    <td>datasets</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_delete_dataset_not_exists</div>
+                        <div class="test-description">删除数据集-不存在</div>
+                    </td>
+                    <td>datasets</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_list_dataset_rows</div>
+                        <div class="test-description">数据集行列表</div>
+                    </td>
+                    <td>datasets</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_list_dataset_rows_enabled_only</div>
+                        <div class="test-description">数据集行列表-仅启用</div>
+                    </td>
+                    <td>datasets</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_create_dataset_row</div>
+                        <div class="test-description">创建数据集行</div>
+                    </td>
+                    <td>datasets</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_create_dataset_row_dataset_not_exists</div>
+                        <div class="test-description">创建数据集行-数据集不存在</div>
+                    </td>
+                    <td>datasets</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_update_dataset_row</div>
+                        <div class="test-description">更新数据集行</div>
+                    </td>
+                    <td>datasets</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_delete_dataset_row</div>
+                        <div class="test-description">删除数据集行</div>
+                    </td>
+                    <td>datasets</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_import_json</div>
+                        <div class="test-description">导入JSON</div>
+                    </td>
+                    <td>datasets</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_import_csv</div>
+                        <div class="test-description">导入CSV</div>
+                    </td>
+                    <td>datasets</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_import_invalid_json</div>
+                        <div class="test-description">导入无效JSON</div>
+                    </td>
+                    <td>datasets</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_import_replaces_existing_rows</div>
+                        <div class="test-description">导入替换现有行</div>
+                    </td>
+                    <td>datasets</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_dataset_test_endpoint</div>
+                        <div class="test-description">数据集测试端点</div>
+                    </td>
+                    <td>datasets</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_dataset_test_specific_rows</div>
+                        <div class="test-description">数据集测试特定行</div>
+                    </td>
+                    <td>datasets</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_defect_create_full_params</div>
+                        <div class="test-description">P0_D001: 创建缺陷-完整参数</div>
+                    </td>
+                    <td>defects</td>
+                    <td class="test-duration">0.265s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_defect_create_minimal_params</div>
+                        <div class="test-description">P0_D002: 创建缺陷-必填字段最小化</div>
+                    </td>
+                    <td>defects</td>
+                    <td class="test-duration">0.271s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_defect_get_detail_with_comments_attachments</div>
+                        <div class="test-description">P0_D003: 获取缺陷详情-包含关联数据</div>
+                    </td>
+                    <td>defects</td>
+                    <td class="test-duration">0.557s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_defect_update_status_to_resolved</div>
+                        <div class="test-description">P0_D004: 更新缺陷-状态变更为resolved</div>
+                    </td>
+                    <td>defects</td>
+                    <td class="test-duration">0.362s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_defect_delete_cascade</div>
+                        <div class="test-description">P0_D005: 删除缺陷-级联删除</div>
+                    </td>
+                    <td>defects</td>
+                    <td class="test-duration">0.757s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_defect_full_lifecycle</div>
+                        <div class="test-description">P0_D006: 缺陷完整生命周期流转</div>
+                    </td>
+                    <td>defects</td>
+                    <td class="test-duration">0.812s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_defect_list_filter_by_status</div>
+                        <div class="test-description">P1_D001: 列表查询-按状态过滤</div>
+                    </td>
+                    <td>defects</td>
+                    <td class="test-duration">0.633s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_defect_list_filter_by_severity</div>
+                        <div class="test-description">P1_D002: 列表查询-按严重程度过滤</div>
+                    </td>
+                    <td>defects</td>
+                    <td class="test-duration">0.550s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_defect_list_filter_by_assignee</div>
+                        <div class="test-description">P1_D003: 列表查询-按指派人过滤</div>
+                    </td>
+                    <td>defects</td>
+                    <td class="test-duration">0.399s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_defect_list_keyword_search</div>
+                        <div class="test-description">P1_D004: 列表查询-关键词搜索</div>
+                    </td>
+                    <td>defects</td>
+                    <td class="test-duration">0.391s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_defect_list_multi_filter</div>
+                        <div class="test-description">P1_D005: 列表查询-多条件组合</div>
+                    </td>
+                    <td>defects</td>
+                    <td class="test-duration">0.483s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_defect_list_sorted</div>
+                        <div class="test-description">P1_D006: 列表查询-返回结果排序</div>
+                    </td>
+                    <td>defects</td>
+                    <td class="test-duration">0.624s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_comment_add_normal</div>
+                        <div class="test-description">P1_D007: 添加评论-正常</div>
+                    </td>
+                    <td>defects</td>
+                    <td class="test-duration">0.365s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_comment_add_defect_not_exists</div>
+                        <div class="test-description">P1_D008: 添加评论-缺陷不存在</div>
+                    </td>
+                    <td>defects</td>
+                    <td class="test-duration">0.150s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_comment_list_ordered_by_time</div>
+                        <div class="test-description">P1_D009: 获取评论-时间顺序</div>
+                    </td>
+                    <td>defects</td>
+                    <td class="test-duration">0.614s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_attachment_upload_normal</div>
+                        <div class="test-description">P1_D010: 上传附件-正常</div>
+                    </td>
+                    <td>defects</td>
+                    <td class="test-duration">0.424s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_attachment_upload_defect_not_exists</div>
+                        <div class="test-description">P1_D011: 上传附件-缺陷不存在</div>
+                    </td>
+                    <td>defects</td>
+                    <td class="test-duration">0.142s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_attachment_list_in_defect_detail</div>
+                        <div class="test-description">P1_D012: 获取附件列表</div>
+                    </td>
+                    <td>defects</td>
+                    <td class="test-duration">0.374s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_create_from_execution_normal</div>
+                        <div class="test-description">P1_D013: 从执行记录创建-正常</div>
+                    </td>
+                    <td>defects</td>
+                    <td class="test-duration">0.374s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_create_from_execution_log_not_exists</div>
+                        <div class="test-description">P1_D014: 从执行记录创建-执行记录不存在</div>
+                    </td>
+                    <td>defects</td>
+                    <td class="test-duration">0.278s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="failed">
+                    <td><span class="test-status failed">✗ FAILED</span></td>
+                    <td>
+                        <div class="test-name">test_stats_summary_normal</div>
+                        <div class="test-description">P1_D015: 统计看板-正常</div>
+                    </td>
+                    <td>defects</td>
+                    <td class="test-duration">0.832s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="failed">
+                    <td><span class="test-status failed">✗ FAILED</span></td>
+                    <td>
+                        <div class="test-name">test_stats_summary_empty</div>
+                        <div class="test-description">P1_D016: 统计看板-空数据</div>
+                    </td>
+                    <td>defects</td>
+                    <td class="test-duration">0.148s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_update_defect_severity</div>
+                        <div class="test-description">P1_D017: 更新缺陷-修改严重程度</div>
+                    </td>
+                    <td>defects</td>
+                    <td class="test-duration">0.381s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_update_defect_priority</div>
+                        <div class="test-description">P1_D018: 更新缺陷-修改优先级</div>
+                    </td>
+                    <td>defects</td>
+                    <td class="test-duration">0.381s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_update_defect_assignee</div>
+                        <div class="test-description">P1_D019: 更新缺陷-修改指派人</div>
+                    </td>
+                    <td>defects</td>
+                    <td class="test-duration">0.356s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_update_defect_external_id</div>
+                        <div class="test-description">P1_D020: 更新缺陷-关联外部系统</div>
+                    </td>
+                    <td>defects</td>
+                    <td class="test-duration">0.382s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_update_defect_not_exists</div>
+                        <div class="test-description">P1_D021: 更新缺陷-缺陷不存在</div>
+                    </td>
+                    <td>defects</td>
+                    <td class="test-duration">0.151s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_delete_defect_not_exists</div>
+                        <div class="test-description">P1_D022: 删除缺陷-缺陷不存在</div>
+                    </td>
+                    <td>defects</td>
+                    <td class="test-duration">0.148s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_list_environments_empty</div>
+                        <div class="test-description">环境列表-空</div>
+                    </td>
+                    <td>environments</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_list_environments_multiple</div>
+                        <div class="test-description">环境列表-多个</div>
+                    </td>
+                    <td>environments</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_list_environments_sorted</div>
+                        <div class="test-description">环境列表-排序</div>
+                    </td>
+                    <td>environments</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_create_environment_full_params</div>
+                        <div class="test-description">创建环境-完整参数</div>
+                    </td>
+                    <td>environments</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_create_environment_minimal_params</div>
+                        <div class="test-description">创建环境-最小参数</div>
+                    </td>
+                    <td>environments</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_create_environment_set_as_default</div>
+                        <div class="test-description">创建环境-设为默认</div>
+                    </td>
+                    <td>environments</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_create_environment_with_variables</div>
+                        <div class="test-description">创建环境-带变量</div>
+                    </td>
+                    <td>environments</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_get_environment_exists</div>
+                        <div class="test-description">获取环境-存在</div>
+                    </td>
+                    <td>environments</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_get_environment_not_exists</div>
+                        <div class="test-description">获取环境-不存在</div>
+                    </td>
+                    <td>environments</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_update_environment_name</div>
+                        <div class="test-description">更新环境-名称</div>
+                    </td>
+                    <td>environments</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_update_environment_variables</div>
+                        <div class="test-description">更新环境-变量</div>
+                    </td>
+                    <td>environments</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_update_environment_set_default</div>
+                        <div class="test-description">更新环境-设为默认</div>
+                    </td>
+                    <td>environments</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_update_environment_unset_default</div>
+                        <div class="test-description">更新环境-取消默认</div>
+                    </td>
+                    <td>environments</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_delete_environment_success</div>
+                        <div class="test-description">删除环境-成功</div>
+                    </td>
+                    <td>environments</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_delete_environment_not_exists</div>
+                        <div class="test-description">删除环境-不存在</div>
+                    </td>
+                    <td>environments</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_delete_default_environment</div>
+                        <div class="test-description">删除环境-默认环境</div>
+                    </td>
+                    <td>environments</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_set_default_environment_success</div>
+                        <div class="test-description">设置默认环境-成功</div>
+                    </td>
+                    <td>environments</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_set_default_environment_not_exists</div>
+                        <div class="test-description">设置默认环境-不存在</div>
+                    </td>
+                    <td>environments</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_environments_isolated</div>
+                        <div class="test-description">环境隔离</div>
+                    </td>
+                    <td>environments</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_default_environment_priority</div>
+                        <div class="test-description">默认环境优先级</div>
+                    </td>
+                    <td>environments</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_list_logs_empty</div>
+                        <div class="test-description">日志列表-空</div>
+                    </td>
+                    <td>logs</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_list_logs_multiple</div>
+                        <div class="test-description">日志列表-多个</div>
+                    </td>
+                    <td>logs</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_list_logs_filter_by_case_id</div>
+                        <div class="test-description">日志列表-按用例ID过滤</div>
+                    </td>
+                    <td>logs</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_list_logs_filter_by_status</div>
+                        <div class="test-description">日志列表-按状态过滤</div>
+                    </td>
+                    <td>logs</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_list_logs_pagination</div>
+                        <div class="test-description">日志列表-分页</div>
+                    </td>
+                    <td>logs</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_list_logs_order_by_created_at_desc</div>
+                        <div class="test-description">日志列表-按创建时间倒序</div>
+                    </td>
+                    <td>logs</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_get_log_exists</div>
+                        <div class="test-description">获取日志-存在</div>
+                    </td>
+                    <td>logs</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_get_log_not_exists</div>
+                        <div class="test-description">获取日志-不存在</div>
+                    </td>
+                    <td>logs</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_delete_log_success</div>
+                        <div class="test-description">删除日志-成功</div>
+                    </td>
+                    <td>logs</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_delete_log_not_exists</div>
+                        <div class="test-description">删除日志-不存在</div>
+                    </td>
+                    <td>logs</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="failed">
+                    <td><span class="test-status failed">✗ FAILED</span></td>
+                    <td>
+                        <div class="test-name">test_batch_delete_logs_success</div>
+                        <div class="test-description">批量删除日志-成功</div>
+                    </td>
+                    <td>logs</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="failed">
+                    <td><span class="test-status failed">✗ FAILED</span></td>
+                    <td>
+                        <div class="test-name">test_batch_delete_logs_empty_list</div>
+                        <div class="test-description">批量删除日志-空列表</div>
+                    </td>
+                    <td>logs</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_log_response_parsing</div>
+                        <div class="test-description">日志响应解析</div>
+                    </td>
+                    <td>logs</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_log_case_association</div>
+                        <div class="test-description">日志用例关联</div>
+                    </td>
+                    <td>logs</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_log_scenario_association</div>
+                        <div class="test-description">日志场景关联</div>
+                    </td>
+                    <td>logs</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_list_mock_rules_empty</div>
+                        <div class="test-description">Mock规则列表-空</div>
+                    </td>
+                    <td>mocks</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_list_mock_rules_multiple</div>
+                        <div class="test-description">Mock规则列表-多个</div>
+                    </td>
+                    <td>mocks</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_list_mock_rules_filter_by_enabled</div>
+                        <div class="test-description">Mock规则列表-按启用状态过滤</div>
+                    </td>
+                    <td>mocks</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_list_mock_rules_filter_by_method</div>
+                        <div class="test-description">Mock规则列表-按方法过滤</div>
+                    </td>
+                    <td>mocks</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_list_mock_rules_keyword_filter</div>
+                        <div class="test-description">Mock规则列表-关键词过滤</div>
+                    </td>
+                    <td>mocks</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_create_mock_rule_full_params</div>
+                        <div class="test-description">创建Mock规则-完整参数</div>
+                    </td>
+                    <td>mocks</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_create_mock_rule_minimal_params</div>
+                        <div class="test-description">创建Mock规则-最小参数</div>
+                    </td>
+                    <td>mocks</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_create_mock_rule_method_uppercase</div>
+                        <div class="test-description">创建Mock规则-方法大写</div>
+                    </td>
+                    <td>mocks</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_get_mock_rule_exists</div>
+                        <div class="test-description">获取Mock规则-存在</div>
+                    </td>
+                    <td>mocks</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_get_mock_rule_not_exists</div>
+                        <div class="test-description">获取Mock规则-不存在</div>
+                    </td>
+                    <td>mocks</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_update_mock_rule_name</div>
+                        <div class="test-description">更新Mock规则-名称</div>
+                    </td>
+                    <td>mocks</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_update_mock_rule_response</div>
+                        <div class="test-description">更新Mock规则-响应</div>
+                    </td>
+                    <td>mocks</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_update_mock_rule_toggle_enabled</div>
+                        <div class="test-description">更新Mock规则-切换启用</div>
+                    </td>
+                    <td>mocks</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_update_mock_rule_not_exists</div>
+                        <div class="test-description">更新Mock规则-不存在</div>
+                    </td>
+                    <td>mocks</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_delete_mock_rule_success</div>
+                        <div class="test-description">删除Mock规则-成功</div>
+                    </td>
+                    <td>mocks</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_delete_mock_rule_not_exists</div>
+                        <div class="test-description">删除Mock规则-不存在</div>
+                    </td>
+                    <td>mocks</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_toggle_mock_rule_enable_to_disable</div>
+                        <div class="test-description">切换Mock规则-启用到禁用</div>
+                    </td>
+                    <td>mocks</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_toggle_mock_rule_disable_to_enable</div>
+                        <div class="test-description">切换Mock规则-禁用到启用</div>
+                    </td>
+                    <td>mocks</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_toggle_mock_rule_not_exists</div>
+                        <div class="test-description">切换Mock规则-不存在</div>
+                    </td>
+                    <td>mocks</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_mock_entry_match_rule</div>
+                        <div class="test-description">Mock匹配-匹配规则</div>
+                    </td>
+                    <td>mocks</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_mock_entry_not_found</div>
+                        <div class="test-description">Mock匹配-未找到</div>
+                    </td>
+                    <td>mocks</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_mock_entry_disabled_rule</div>
+                        <div class="test-description">Mock匹配-禁用规则</div>
+                    </td>
+                    <td>mocks</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_mock_entry_delay</div>
+                        <div class="test-description">Mock匹配-延迟</div>
+                    </td>
+                    <td>mocks</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_mock_entry_post_method</div>
+                        <div class="test-description">Mock匹配-POST方法</div>
+                    </td>
+                    <td>mocks</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_mock_hit_count_increments</div>
+                        <div class="test-description">Mock命中计数递增</div>
+                    </td>
+                    <td>mocks</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_health_check</div>
+                        <div class="test-description">测试健康检查端点</div>
+                    </td>
+                    <td>projects</td>
+                    <td class="test-duration">0.007s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_get_projects_unauthorized</div>
+                        <div class="test-description">测试未授权访问项目列表</div>
+                    </td>
+                    <td>projects</td>
+                    <td class="test-duration">0.141s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="error">
+                    <td><span class="test-status error">⚠ ERROR</span></td>
+                    <td>
+                        <div class="test-name">test_get_projects_authorized</div>
+                        <div class="test-description">测试获取项目列表（已授权）</div>
+                    </td>
+                    <td>projects</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="error">
+                    <td><span class="test-status error">⚠ ERROR</span></td>
+                    <td>
+                        <div class="test-name">test_create_project</div>
+                        <div class="test-description">测试创建项目</div>
+                    </td>
+                    <td>projects</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="failed">
+                    <td><span class="test-status failed">✗ FAILED</span></td>
+                    <td>
+                        <div class="test-name">test_create_project</div>
+                        <div class="test-description">测试创建项目</div>
+                    </td>
+                    <td>projects</td>
+                    <td class="test-duration">0.150s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="error">
+                    <td><span class="test-status error">⚠ ERROR</span></td>
+                    <td>
+                        <div class="test-name">test_create_project_duplicate_key</div>
+                        <div class="test-description">测试创建重复key的项目</div>
+                    </td>
+                    <td>projects</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="failed">
+                    <td><span class="test-status failed">✗ FAILED</span></td>
+                    <td>
+                        <div class="test-name">test_get_single_project</div>
+                        <div class="test-description">测试获取单个项目</div>
+                    </td>
+                    <td>projects</td>
+                    <td class="test-duration">0.148s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_get_nonexistent_project</div>
+                        <div class="test-description">测试获取不存在的项目</div>
+                    </td>
+                    <td>projects</td>
+                    <td class="test-duration">0.148s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="failed">
+                    <td><span class="test-status failed">✗ FAILED</span></td>
+                    <td>
+                        <div class="test-name">test_delete_project</div>
+                        <div class="test-description">测试删除项目</div>
+                    </td>
+                    <td>projects</td>
+                    <td class="test-duration">0.149s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="failed">
+                    <td><span class="test-status failed">✗ FAILED</span></td>
+                    <td>
+                        <div class="test-name">test_create_project_duplicate_key</div>
+                        <div class="test-description">测试创建重复key的项目</div>
+                    </td>
+                    <td>projects</td>
+                    <td class="test-duration">0.132s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_list_templates_empty</div>
+                        <div class="test-description">模板列表-空</div>
+                    </td>
+                    <td>reports</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_list_templates_multiple</div>
+                        <div class="test-description">模板列表-多个</div>
+                    </td>
+                    <td>reports</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_list_templates_pagination</div>
+                        <div class="test-description">模板列表-分页</div>
+                    </td>
+                    <td>reports</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_create_template_html</div>
+                        <div class="test-description">创建模板-HTML</div>
+                    </td>
+                    <td>reports</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_create_template_markdown</div>
+                        <div class="test-description">创建模板-Markdown</div>
+                    </td>
+                    <td>reports</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_create_template_set_as_default</div>
+                        <div class="test-description">创建模板-设为默认</div>
+                    </td>
+                    <td>reports</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_get_template_exists</div>
+                        <div class="test-description">获取模板-存在</div>
+                    </td>
+                    <td>reports</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_get_template_not_exists</div>
+                        <div class="test-description">获取模板-不存在</div>
+                    </td>
+                    <td>reports</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_update_template_name</div>
+                        <div class="test-description">更新模板-名称</div>
+                    </td>
+                    <td>reports</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_update_template_content</div>
+                        <div class="test-description">更新模板-内容</div>
+                    </td>
+                    <td>reports</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_update_template_not_exists</div>
+                        <div class="test-description">更新模板-不存在</div>
+                    </td>
+                    <td>reports</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_delete_template_success</div>
+                        <div class="test-description">删除模板-成功</div>
+                    </td>
+                    <td>reports</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_delete_template_not_exists</div>
+                        <div class="test-description">删除模板-不存在</div>
+                    </td>
+                    <td>reports</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_list_reports_empty</div>
+                        <div class="test-description">报告列表-空</div>
+                    </td>
+                    <td>reports</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_list_reports_with_logs</div>
+                        <div class="test-description">报告列表-有日志</div>
+                    </td>
+                    <td>reports</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_list_reports_pagination</div>
+                        <div class="test-description">报告列表-分页</div>
+                    </td>
+                    <td>reports</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_delete_report_success</div>
+                        <div class="test-description">删除报告-成功</div>
+                    </td>
+                    <td>reports</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_download_report_exists</div>
+                        <div class="test-description">下载报告-存在</div>
+                    </td>
+                    <td>reports</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_download_report_not_exists</div>
+                        <div class="test-description">下载报告-不存在</div>
+                    </td>
+                    <td>reports</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_generate_report_by_execution_ids</div>
+                        <div class="test-description">生成报告-按执行ID</div>
+                    </td>
+                    <td>reports</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_generate_report_by_time_range</div>
+                        <div class="test-description">生成报告-按时间范围</div>
+                    </td>
+                    <td>reports</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_generate_report_with_template</div>
+                        <div class="test-description">生成报告-带模板</div>
+                    </td>
+                    <td>reports</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_generate_report_markdown_type</div>
+                        <div class="test-description">生成报告-Markdown类型</div>
+                    </td>
+                    <td>reports</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_generate_report_empty_execution_ids</div>
+                        <div class="test-description">生成报告-空执行ID</div>
+                    </td>
+                    <td>reports</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_report_pass_rate_calculation</div>
+                        <div class="test-description">报告通过率计算</div>
+                    </td>
+                    <td>reports</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_report_no_execution_logs</div>
+                        <div class="test-description">报告无执行日志</div>
+                    </td>
+                    <td>reports</td>
+                    <td class="test-duration">-</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_get_scenarios_unauthorized</div>
+                        <div class="test-description">测试未授权访问场景列表</div>
+                    </td>
+                    <td>scenarios</td>
+                    <td class="test-duration">0.123s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_get_scenarios_authorized</div>
+                        <div class="test-description">测试获取场景列表（已授权）</div>
+                    </td>
+                    <td>scenarios</td>
+                    <td class="test-duration">0.169s</td>
+                </tr>
+            
+                <tr class="test-row" data-status="passed">
+                    <td><span class="test-status passed">✓ PASSED</span></td>
+                    <td>
+                        <div class="test-name">test_create_scenario</div>
+                        <div class="test-description">测试创建场景</div>
+                    </td>
+                    <td>scenarios</td>
+                    <td class="test-duration">0.273s</td>
+                </tr>
+            
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                const filter = this.dataset.filter;
+                const rows = document.querySelectorAll('.test-row');
+                
+                rows.forEach(row => {
+                    if (filter === 'all' || row.dataset.status === filter) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        document.querySelectorAll('.budget-bar-used, .budget-bar-remaining').forEach(bar => {
+            const width = bar.style.width;
+            bar.style.width = '0%';
+            setTimeout(() => {
+                bar.style.width = width;
+            }, 100);
+        });
+    </script>
+</body>
+</html>

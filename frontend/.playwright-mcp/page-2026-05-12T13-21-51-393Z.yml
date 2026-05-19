@@ -1,0 +1,57 @@
+- generic [ref=e4]:
+  - generic [ref=e5]:
+    - generic [ref=e6]:
+      - generic [ref=e9]: Quality Metrics
+      - generic [ref=e11]:
+        - generic [ref=e12]: 测试覆盖率
+        - generic [ref=e13]: 92%
+    - generic [ref=e16]:
+      - generic [ref=e19]: Risk Analysis
+      - generic [ref=e20]:
+        - generic [ref=e21]:
+          - generic [ref=e22]: Bug 趋势
+          - generic [ref=e23]: Low
+        - img [ref=e25]
+    - generic [ref=e27]:
+      - generic [ref=e30]: Automation
+      - generic [ref=e32]:
+        - generic [ref=e33]: 自动化率
+        - generic [ref=e34]: 78%
+    - generic [ref=e37]:
+      - generic [ref=e38]: AI Quality Operating System
+      - heading "智能驱动的新一代 质量保障平台" [level=1] [ref=e39]:
+        - text: 智能驱动的新一代
+        - text: 质量保障平台
+      - paragraph [ref=e40]:
+        - text: 融合智能测试、风险分析与自动化执行，
+        - text: 构建企业级 AI Quality Engineering 中台。
+    - generic [ref=e41]:
+      - generic [ref=e42]: Activity
+      - generic [ref=e43]:
+        - generic [ref=e46]: 回归测试已完成
+        - generic [ref=e49]: AI 检测到异常
+        - generic [ref=e52]: "覆盖率: 92%"
+  - generic [ref=e55]:
+    - generic [ref=e56]:
+      - img [ref=e58]
+      - heading "灵测 AI" [level=2] [ref=e64]
+      - paragraph [ref=e65]: AI-Driven Quality Assurance
+    - generic [ref=e66]:
+      - heading "Sign in" [level=3] [ref=e67]
+      - generic [ref=e68]:
+        - generic [ref=e69]:
+          - img [ref=e71]
+          - textbox "Username" [ref=e74]
+        - generic [ref=e75]:
+          - img [ref=e77]
+          - textbox "Password" [ref=e80]
+          - button [ref=e81] [cursor=pointer]:
+            - img [ref=e82]
+        - button "Continue" [ref=e85] [cursor=pointer]
+      - generic [ref=e86]:
+        - text: 没有账号？
+        - link "创建账号" [ref=e87] [cursor=pointer]:
+          - /url: javascript:void(0)
+    - generic [ref=e88]:
+      - text: "Demo account:"
+      - code [ref=e89]: admin / admin123

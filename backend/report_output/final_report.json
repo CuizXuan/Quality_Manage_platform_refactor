@@ -1,0 +1,935 @@
+{
+  "filters": {
+    "untracked": 27,
+    "failed": 1,
+    "total": 27,
+    "passed": 26,
+    "marker_counts": {}
+  },
+  "results": [
+    {
+      "test": "test_case_create_full_params",
+      "nodeid": "routers/test_cases.py::TestCaseP0CRUD::test_case_create_full_params",
+      "status": "passed",
+      "duration": 0.3764564059965778,
+      "trace": null,
+      "error": null,
+      "markers": [],
+      "file": "routers/test_cases.py",
+      "line": 186,
+      "stdout": "",
+      "stderr": "INFO - HTTP Request: POST http://testserver/api/cases \"HTTP/1.1 200 OK\"\n",
+      "timestamp": "2026-05-06T16:15:55.326516Z",
+      "screenshot": "screenshots",
+      "logs": "HTTP Request: POST http://testserver/api/cases \"HTTP/1.1 200 OK\"",
+      "worker": "main",
+      "links": [],
+      "attempts": [
+        {
+          "status": "passed",
+          "trace": null,
+          "error": null,
+          "duration": 0.3764564059965778,
+          "timestamp": "2026-05-06T16:15:55.326536Z"
+        }
+      ],
+      "attempt_count": 1,
+      "flaky": false,
+      "attempt_statuses": [
+        "passed"
+      ],
+      "first_failure_index": null,
+      "first_failure": null
+    },
+    {
+      "test": "test_case_list_pagination",
+      "nodeid": "routers/test_cases.py::TestCaseP0CRUD::test_case_list_pagination",
+      "status": "passed",
+      "duration": 1.6401817590085557,
+      "trace": null,
+      "error": null,
+      "markers": [],
+      "file": "routers/test_cases.py",
+      "line": 222,
+      "stdout": "",
+      "stderr": "INFO - HTTP Request: GET http://testserver/api/cases?skip=0&limit=10 \"HTTP/1.1 200 OK\"\n",
+      "timestamp": "2026-05-06T16:15:56.979849Z",
+      "screenshot": "screenshots",
+      "logs": "HTTP Request: GET http://testserver/api/cases?skip=0&limit=10 \"HTTP/1.1 200 OK\"",
+      "worker": "main",
+      "links": [],
+      "attempts": [
+        {
+          "status": "passed",
+          "trace": null,
+          "error": null,
+          "duration": 1.6401817590085557,
+          "timestamp": "2026-05-06T16:15:56.979860Z"
+        }
+      ],
+      "attempt_count": 1,
+      "flaky": false,
+      "attempt_statuses": [
+        "passed"
+      ],
+      "first_failure_index": null,
+      "first_failure": null
+    },
+    {
+      "test": "test_case_get_single_exists",
+      "nodeid": "routers/test_cases.py::TestCaseP0CRUD::test_case_get_single_exists",
+      "status": "passed",
+      "duration": 0.579511457006447,
+      "trace": null,
+      "error": null,
+      "markers": [],
+      "file": "routers/test_cases.py",
+      "line": 245,
+      "stdout": "",
+      "stderr": "INFO - HTTP Request: GET http://testserver/api/cases/597 \"HTTP/1.1 200 OK\"\n",
+      "timestamp": "2026-05-06T16:15:57.566956Z",
+      "screenshot": "screenshots",
+      "logs": "HTTP Request: GET http://testserver/api/cases/597 \"HTTP/1.1 200 OK\"",
+      "worker": "main",
+      "links": [],
+      "attempts": [
+        {
+          "status": "passed",
+          "trace": null,
+          "error": null,
+          "duration": 0.579511457006447,
+          "timestamp": "2026-05-06T16:15:57.566972Z"
+        }
+      ],
+      "attempt_count": 1,
+      "flaky": false,
+      "attempt_statuses": [
+        "passed"
+      ],
+      "first_failure_index": null,
+      "first_failure": null
+    },
+    {
+      "test": "test_case_update_exists",
+      "nodeid": "routers/test_cases.py::TestCaseP0CRUD::test_case_update_exists",
+      "status": "passed",
+      "duration": 0.3155222560017137,
+      "trace": null,
+      "error": null,
+      "markers": [],
+      "file": "routers/test_cases.py",
+      "line": 263,
+      "stdout": "",
+      "stderr": "INFO - HTTP Request: PUT http://testserver/api/cases/597 \"HTTP/1.1 200 OK\"\n",
+      "timestamp": "2026-05-06T16:15:57.999473Z",
+      "screenshot": "screenshots",
+      "logs": "HTTP Request: PUT http://testserver/api/cases/597 \"HTTP/1.1 200 OK\"",
+      "worker": "main",
+      "links": [],
+      "attempts": [
+        {
+          "status": "passed",
+          "trace": null,
+          "error": null,
+          "duration": 0.3155222560017137,
+          "timestamp": "2026-05-06T16:15:57.999485Z"
+        }
+      ],
+      "attempt_count": 1,
+      "flaky": false,
+      "attempt_statuses": [
+        "passed"
+      ],
+      "first_failure_index": null,
+      "first_failure": null
+    },
+    {
+      "test": "test_case_delete_exists",
+      "nodeid": "routers/test_cases.py::TestCaseP0CRUD::test_case_delete_exists",
+      "status": "passed",
+      "duration": 0.5010518979979679,
+      "trace": null,
+      "error": null,
+      "markers": [],
+      "file": "routers/test_cases.py",
+      "line": 282,
+      "stdout": "",
+      "stderr": "INFO - HTTP Request: DELETE http://testserver/api/cases/598 \"HTTP/1.1 200 OK\"\nINFO - HTTP Request: GET http://testserver/api/cases/598 \"HTTP/1.1 404 Not Found\"\n",
+      "timestamp": "2026-05-06T16:15:58.507683Z",
+      "screenshot": "screenshots",
+      "logs": "HTTP Request: DELETE http://testserver/api/cases/598 \"HTTP/1.1 200 OK\"\nHTTP Request: GET http://testserver/api/cases/598 \"HTTP/1.1 404 Not Found\"",
+      "worker": "main",
+      "links": [],
+      "attempts": [
+        {
+          "status": "passed",
+          "trace": null,
+          "error": null,
+          "duration": 0.5010518979979679,
+          "timestamp": "2026-05-06T16:15:58.507694Z"
+        }
+      ],
+      "attempt_count": 1,
+      "flaky": false,
+      "attempt_statuses": [
+        "passed"
+      ],
+      "first_failure_index": null,
+      "first_failure": null
+    },
+    {
+      "test": "test_case_run_normal",
+      "nodeid": "routers/test_cases.py::TestCaseP0CRUD::test_case_run_normal",
+      "status": "passed",
+      "duration": 2.1363459959975444,
+      "trace": null,
+      "error": null,
+      "markers": [],
+      "file": "routers/test_cases.py",
+      "line": 307,
+      "stdout": "",
+      "stderr": "INFO - HTTP Request: GET https://httpbin.org/get \"HTTP/1.1 200 OK\"\nINFO - HTTP Request: POST http://testserver/api/cases/598/run \"HTTP/1.1 200 OK\"\n",
+      "timestamp": "2026-05-06T16:16:00.651739Z",
+      "screenshot": "screenshots",
+      "logs": "HTTP Request: GET https://httpbin.org/get \"HTTP/1.1 200 OK\"\nHTTP Request: POST http://testserver/api/cases/598/run \"HTTP/1.1 200 OK\"",
+      "worker": "main",
+      "links": [],
+      "attempts": [
+        {
+          "status": "passed",
+          "trace": null,
+          "error": null,
+          "duration": 2.1363459959975444,
+          "timestamp": "2026-05-06T16:16:00.651750Z"
+        }
+      ],
+      "attempt_count": 1,
+      "flaky": false,
+      "attempt_statuses": [
+        "passed"
+      ],
+      "first_failure_index": null,
+      "first_failure": null
+    },
+    {
+      "test": "test_case_batch_delete",
+      "nodeid": "routers/test_cases.py::TestCaseP0CRUD::test_case_batch_delete",
+      "status": "failed",
+      "duration": 0.4480001459887717,
+      "trace": "tests/routers/test_cases.py:359: in test_case_batch_delete\n    assert response.status_code == 200, f\"\u6279\u91cf\u5220\u9664\u7528\u4f8b\u5931\u8d25: {response.text}\"",
+      "error": "E   AssertionError: \u6279\u91cf\u5220\u9664\u7528\u4f8b\u5931\u8d25: {\"detail\":[{\"type\":\"model_attributes_type\",\"loc\":[\"body\"],\"msg\":\"Input should be a valid dictionary or object to extract fields from\",\"input\":[598,599,600]}]}\nE   assert 422 == 200\nE    +  where 422 = <Response [422 Unprocessable Entity]>.status_code",
+      "markers": [],
+      "file": "routers/test_cases.py",
+      "line": 342,
+      "stdout": "",
+      "stderr": "INFO - HTTP Request: POST http://testserver/api/cases/batch-delete \"HTTP/1.1 422 Unprocessable Entity\"\n",
+      "timestamp": "2026-05-06T16:16:01.616645Z",
+      "screenshot": "screenshots",
+      "logs": "HTTP Request: POST http://testserver/api/cases/batch-delete \"HTTP/1.1 422 Unprocessable Entity\"",
+      "worker": "main",
+      "links": [],
+      "attempts": [
+        {
+          "status": "failed",
+          "trace": "tests/routers/test_cases.py:359: in test_case_batch_delete\n    assert response.status_code == 200, f\"\u6279\u91cf\u5220\u9664\u7528\u4f8b\u5931\u8d25: {response.text}\"",
+          "error": "E   AssertionError: \u6279\u91cf\u5220\u9664\u7528\u4f8b\u5931\u8d25: {\"detail\":[{\"type\":\"model_attributes_type\",\"loc\":[\"body\"],\"msg\":\"Input should be a valid dictionary or object to extract fields from\",\"input\":[598,599,600]}]}\nE   assert 422 == 200\nE    +  where 422 = <Response [422 Unprocessable Entity]>.status_code",
+          "duration": 0.4480001459887717,
+          "timestamp": "2026-05-06T16:16:01.616656Z"
+        }
+      ],
+      "attempt_count": 1,
+      "flaky": false,
+      "attempt_statuses": [
+        "failed"
+      ],
+      "first_failure_index": 0,
+      "first_failure": {
+        "status": "failed",
+        "trace": "tests/routers/test_cases.py:359: in test_case_batch_delete\n    assert response.status_code == 200, f\"\u6279\u91cf\u5220\u9664\u7528\u4f8b\u5931\u8d25: {response.text}\"",
+        "error": "E   AssertionError: \u6279\u91cf\u5220\u9664\u7528\u4f8b\u5931\u8d25: {\"detail\":[{\"type\":\"model_attributes_type\",\"loc\":[\"body\"],\"msg\":\"Input should be a valid dictionary or object to extract fields from\",\"input\":[598,599,600]}]}\nE   assert 422 == 200\nE    +  where 422 = <Response [422 Unprocessable Entity]>.status_code",
+        "duration": 0.4480001459887717,
+        "timestamp": "2026-05-06T16:16:01.616656Z"
+      }
+    },
+    {
+      "test": "test_case_run_default_environment",
+      "nodeid": "routers/test_cases.py::TestCaseP0Run::test_case_run_default_environment",
+      "status": "passed",
+      "duration": 3.4839435419999063,
+      "trace": null,
+      "error": null,
+      "markers": [],
+      "file": "routers/test_cases.py",
+      "line": 375,
+      "stdout": "",
+      "stderr": "INFO - HTTP Request: GET https://httpbin.org/get \"HTTP/1.1 200 OK\"\nINFO - HTTP Request: POST http://testserver/api/cases/601/run \"HTTP/1.1 200 OK\"\n",
+      "timestamp": "2026-05-06T16:16:05.107002Z",
+      "screenshot": "screenshots",
+      "logs": "HTTP Request: GET https://httpbin.org/get \"HTTP/1.1 200 OK\"\nHTTP Request: POST http://testserver/api/cases/601/run \"HTTP/1.1 200 OK\"",
+      "worker": "main",
+      "links": [],
+      "attempts": [
+        {
+          "status": "passed",
+          "trace": null,
+          "error": null,
+          "duration": 3.4839435419999063,
+          "timestamp": "2026-05-06T16:16:05.107011Z"
+        }
+      ],
+      "attempt_count": 1,
+      "flaky": false,
+      "attempt_statuses": [
+        "passed"
+      ],
+      "first_failure_index": null,
+      "first_failure": null
+    },
+    {
+      "test": "test_case_run_record_saved",
+      "nodeid": "routers/test_cases.py::TestCaseP0Run::test_case_run_record_saved",
+      "status": "passed",
+      "duration": 2.7965209029935068,
+      "trace": null,
+      "error": null,
+      "markers": [],
+      "file": "routers/test_cases.py",
+      "line": 404,
+      "stdout": "",
+      "stderr": "INFO - HTTP Request: GET https://httpbin.org/get \"HTTP/1.1 200 OK\"\nINFO - HTTP Request: POST http://testserver/api/cases/601/run \"HTTP/1.1 200 OK\"\n",
+      "timestamp": "2026-05-06T16:16:08.028676Z",
+      "screenshot": "screenshots",
+      "logs": "HTTP Request: GET https://httpbin.org/get \"HTTP/1.1 200 OK\"\nHTTP Request: POST http://testserver/api/cases/601/run \"HTTP/1.1 200 OK\"",
+      "worker": "main",
+      "links": [],
+      "attempts": [
+        {
+          "status": "passed",
+          "trace": null,
+          "error": null,
+          "duration": 2.7965209029935068,
+          "timestamp": "2026-05-06T16:16:08.028686Z"
+        }
+      ],
+      "attempt_count": 1,
+      "flaky": false,
+      "attempt_statuses": [
+        "passed"
+      ],
+      "first_failure_index": null,
+      "first_failure": null
+    },
+    {
+      "test": "test_case_list_filter_folder",
+      "nodeid": "routers/test_cases.py::TestCaseP1List::test_case_list_filter_folder",
+      "status": "passed",
+      "duration": 0.4834904019953683,
+      "trace": null,
+      "error": null,
+      "markers": [],
+      "file": "routers/test_cases.py",
+      "line": 453,
+      "stdout": "",
+      "stderr": "INFO - HTTP Request: GET http://testserver/api/cases?folder=/api/user \"HTTP/1.1 200 OK\"\n",
+      "timestamp": "2026-05-06T16:16:08.630865Z",
+      "screenshot": "screenshots",
+      "logs": "HTTP Request: GET http://testserver/api/cases?folder=/api/user \"HTTP/1.1 200 OK\"",
+      "worker": "main",
+      "links": [],
+      "attempts": [
+        {
+          "status": "passed",
+          "trace": null,
+          "error": null,
+          "duration": 0.4834904019953683,
+          "timestamp": "2026-05-06T16:16:08.630876Z"
+        }
+      ],
+      "attempt_count": 1,
+      "flaky": false,
+      "attempt_statuses": [
+        "passed"
+      ],
+      "first_failure_index": null,
+      "first_failure": null
+    },
+    {
+      "test": "test_case_list_filter_method",
+      "nodeid": "routers/test_cases.py::TestCaseP1List::test_case_list_filter_method",
+      "status": "passed",
+      "duration": 0.8417188089952106,
+      "trace": null,
+      "error": null,
+      "markers": [],
+      "file": "routers/test_cases.py",
+      "line": 472,
+      "stdout": "",
+      "stderr": "INFO - HTTP Request: GET http://testserver/api/cases?method=POST \"HTTP/1.1 200 OK\"\n",
+      "timestamp": "2026-05-06T16:16:09.479232Z",
+      "screenshot": "screenshots",
+      "logs": "HTTP Request: GET http://testserver/api/cases?method=POST \"HTTP/1.1 200 OK\"",
+      "worker": "main",
+      "links": [],
+      "attempts": [
+        {
+          "status": "passed",
+          "trace": null,
+          "error": null,
+          "duration": 0.8417188089952106,
+          "timestamp": "2026-05-06T16:16:09.479242Z"
+        }
+      ],
+      "attempt_count": 1,
+      "flaky": false,
+      "attempt_statuses": [
+        "passed"
+      ],
+      "first_failure_index": null,
+      "first_failure": null
+    },
+    {
+      "test": "test_case_list_keyword_search",
+      "nodeid": "routers/test_cases.py::TestCaseP1List::test_case_list_keyword_search",
+      "status": "passed",
+      "duration": 0.3682148029911332,
+      "trace": null,
+      "error": null,
+      "markers": [],
+      "file": "routers/test_cases.py",
+      "line": 491,
+      "stdout": "",
+      "stderr": "INFO - HTTP Request: GET http://testserver/api/cases?keyword=%E7%99%BB%E5%BD%95 \"HTTP/1.1 200 OK\"\n",
+      "timestamp": "2026-05-06T16:16:09.855029Z",
+      "screenshot": "screenshots",
+      "logs": "HTTP Request: GET http://testserver/api/cases?keyword=%E7%99%BB%E5%BD%95 \"HTTP/1.1 200 OK\"",
+      "worker": "main",
+      "links": [],
+      "attempts": [
+        {
+          "status": "passed",
+          "trace": null,
+          "error": null,
+          "duration": 0.3682148029911332,
+          "timestamp": "2026-05-06T16:16:09.855039Z"
+        }
+      ],
+      "attempt_count": 1,
+      "flaky": false,
+      "attempt_statuses": [
+        "passed"
+      ],
+      "first_failure_index": null,
+      "first_failure": null
+    },
+    {
+      "test": "test_case_list_multi_filter",
+      "nodeid": "routers/test_cases.py::TestCaseP1List::test_case_list_multi_filter",
+      "status": "passed",
+      "duration": 0.3523749250016408,
+      "trace": null,
+      "error": null,
+      "markers": [],
+      "file": "routers/test_cases.py",
+      "line": 510,
+      "stdout": "",
+      "stderr": "INFO - HTTP Request: GET http://testserver/api/cases?folder=/api/user&method=POST&keyword=%E7%99%BB%E5%BD%95 \"HTTP/1.1 200 OK\"\n",
+      "timestamp": "2026-05-06T16:16:10.214360Z",
+      "screenshot": "screenshots",
+      "logs": "HTTP Request: GET http://testserver/api/cases?folder=/api/user&method=POST&keyword=%E7%99%BB%E5%BD%95 \"HTTP/1.1 200 OK\"",
+      "worker": "main",
+      "links": [],
+      "attempts": [
+        {
+          "status": "passed",
+          "trace": null,
+          "error": null,
+          "duration": 0.3523749250016408,
+          "timestamp": "2026-05-06T16:16:10.214369Z"
+        }
+      ],
+      "attempt_count": 1,
+      "flaky": false,
+      "attempt_statuses": [
+        "passed"
+      ],
+      "first_failure_index": null,
+      "first_failure": null
+    },
+    {
+      "test": "test_case_list_sorted",
+      "nodeid": "routers/test_cases.py::TestCaseP1List::test_case_list_sorted",
+      "status": "passed",
+      "duration": 0.8242677559901495,
+      "trace": null,
+      "error": null,
+      "markers": [],
+      "file": "routers/test_cases.py",
+      "line": 540,
+      "stdout": "",
+      "stderr": "INFO - HTTP Request: GET http://testserver/api/cases?limit=10 \"HTTP/1.1 200 OK\"\n",
+      "timestamp": "2026-05-06T16:16:11.045787Z",
+      "screenshot": "screenshots",
+      "logs": "HTTP Request: GET http://testserver/api/cases?limit=10 \"HTTP/1.1 200 OK\"",
+      "worker": "main",
+      "links": [],
+      "attempts": [
+        {
+          "status": "passed",
+          "trace": null,
+          "error": null,
+          "duration": 0.8242677559901495,
+          "timestamp": "2026-05-06T16:16:11.045796Z"
+        }
+      ],
+      "attempt_count": 1,
+      "flaky": false,
+      "attempt_statuses": [
+        "passed"
+      ],
+      "first_failure_index": null,
+      "first_failure": null
+    },
+    {
+      "test": "test_case_duplicate_normal",
+      "nodeid": "routers/test_cases.py::TestCaseP1DuplicateUpdate::test_case_duplicate_normal",
+      "status": "passed",
+      "duration": 0.3347808190010255,
+      "trace": null,
+      "error": null,
+      "markers": [],
+      "file": "routers/test_cases.py",
+      "line": 563,
+      "stdout": "",
+      "stderr": "INFO - HTTP Request: POST http://testserver/api/cases/614/duplicate \"HTTP/1.1 200 OK\"\n",
+      "timestamp": "2026-05-06T16:16:11.387423Z",
+      "screenshot": "screenshots",
+      "logs": "HTTP Request: POST http://testserver/api/cases/614/duplicate \"HTTP/1.1 200 OK\"",
+      "worker": "main",
+      "links": [],
+      "attempts": [
+        {
+          "status": "passed",
+          "trace": null,
+          "error": null,
+          "duration": 0.3347808190010255,
+          "timestamp": "2026-05-06T16:16:11.387432Z"
+        }
+      ],
+      "attempt_count": 1,
+      "flaky": false,
+      "attempt_statuses": [
+        "passed"
+      ],
+      "first_failure_index": null,
+      "first_failure": null
+    },
+    {
+      "test": "test_case_duplicate_folder_same",
+      "nodeid": "routers/test_cases.py::TestCaseP1DuplicateUpdate::test_case_duplicate_folder_same",
+      "status": "passed",
+      "duration": 0.718473984990851,
+      "trace": null,
+      "error": null,
+      "markers": [],
+      "file": "routers/test_cases.py",
+      "line": 580,
+      "stdout": "",
+      "stderr": "INFO - HTTP Request: POST http://testserver/api/cases/616/duplicate \"HTTP/1.1 200 OK\"\n",
+      "timestamp": "2026-05-06T16:16:12.112975Z",
+      "screenshot": "screenshots",
+      "logs": "HTTP Request: POST http://testserver/api/cases/616/duplicate \"HTTP/1.1 200 OK\"",
+      "worker": "main",
+      "links": [],
+      "attempts": [
+        {
+          "status": "passed",
+          "trace": null,
+          "error": null,
+          "duration": 0.718473984990851,
+          "timestamp": "2026-05-06T16:16:12.112984Z"
+        }
+      ],
+      "attempt_count": 1,
+      "flaky": false,
+      "attempt_statuses": [
+        "passed"
+      ],
+      "first_failure_index": null,
+      "first_failure": null
+    },
+    {
+      "test": "test_case_update_headers",
+      "nodeid": "routers/test_cases.py::TestCaseP1DuplicateUpdate::test_case_update_headers",
+      "status": "passed",
+      "duration": 0.34917016900726594,
+      "trace": null,
+      "error": null,
+      "markers": [],
+      "file": "routers/test_cases.py",
+      "line": 596,
+      "stdout": "",
+      "stderr": "INFO - HTTP Request: PUT http://testserver/api/cases/618 \"HTTP/1.1 200 OK\"\n",
+      "timestamp": "2026-05-06T16:16:12.588179Z",
+      "screenshot": "screenshots",
+      "logs": "HTTP Request: PUT http://testserver/api/cases/618 \"HTTP/1.1 200 OK\"",
+      "worker": "main",
+      "links": [],
+      "attempts": [
+        {
+          "status": "passed",
+          "trace": null,
+          "error": null,
+          "duration": 0.34917016900726594,
+          "timestamp": "2026-05-06T16:16:12.588189Z"
+        }
+      ],
+      "attempt_count": 1,
+      "flaky": false,
+      "attempt_statuses": [
+        "passed"
+      ],
+      "first_failure_index": null,
+      "first_failure": null
+    },
+    {
+      "test": "test_case_update_assertions",
+      "nodeid": "routers/test_cases.py::TestCaseP1DuplicateUpdate::test_case_update_assertions",
+      "status": "passed",
+      "duration": 0.357732891003252,
+      "trace": null,
+      "error": null,
+      "markers": [],
+      "file": "routers/test_cases.py",
+      "line": 613,
+      "stdout": "",
+      "stderr": "INFO - HTTP Request: PUT http://testserver/api/cases/618 \"HTTP/1.1 200 OK\"\n",
+      "timestamp": "2026-05-06T16:16:13.071082Z",
+      "screenshot": "screenshots",
+      "logs": "HTTP Request: PUT http://testserver/api/cases/618 \"HTTP/1.1 200 OK\"",
+      "worker": "main",
+      "links": [],
+      "attempts": [
+        {
+          "status": "passed",
+          "trace": null,
+          "error": null,
+          "duration": 0.357732891003252,
+          "timestamp": "2026-05-06T16:16:13.071092Z"
+        }
+      ],
+      "attempt_count": 1,
+      "flaky": false,
+      "attempt_statuses": [
+        "passed"
+      ],
+      "first_failure_index": null,
+      "first_failure": null
+    },
+    {
+      "test": "test_case_update_auth",
+      "nodeid": "routers/test_cases.py::TestCaseP1DuplicateUpdate::test_case_update_auth",
+      "status": "passed",
+      "duration": 0.3491775659931591,
+      "trace": null,
+      "error": null,
+      "markers": [],
+      "file": "routers/test_cases.py",
+      "line": 635,
+      "stdout": "",
+      "stderr": "INFO - HTTP Request: PUT http://testserver/api/cases/618 \"HTTP/1.1 200 OK\"\n",
+      "timestamp": "2026-05-06T16:16:13.864503Z",
+      "screenshot": "screenshots",
+      "logs": "HTTP Request: PUT http://testserver/api/cases/618 \"HTTP/1.1 200 OK\"",
+      "worker": "main",
+      "links": [],
+      "attempts": [
+        {
+          "status": "passed",
+          "trace": null,
+          "error": null,
+          "duration": 0.3491775659931591,
+          "timestamp": "2026-05-06T16:16:13.864512Z"
+        }
+      ],
+      "attempt_count": 1,
+      "flaky": false,
+      "attempt_statuses": [
+        "passed"
+      ],
+      "first_failure_index": null,
+      "first_failure": null
+    },
+    {
+      "test": "test_case_run_get_method",
+      "nodeid": "routers/test_cases.py::TestCaseP1Run::test_case_run_get_method",
+      "status": "passed",
+      "duration": 1.3570406580111012,
+      "trace": null,
+      "error": null,
+      "markers": [],
+      "file": "routers/test_cases.py",
+      "line": 660,
+      "stdout": "",
+      "stderr": "INFO - HTTP Request: GET https://httpbin.org/get \"HTTP/1.1 200 OK\"\nINFO - HTTP Request: POST http://testserver/api/cases/618/run \"HTTP/1.1 200 OK\"\n",
+      "timestamp": "2026-05-06T16:16:15.329184Z",
+      "screenshot": "screenshots",
+      "logs": "HTTP Request: GET https://httpbin.org/get \"HTTP/1.1 200 OK\"\nHTTP Request: POST http://testserver/api/cases/618/run \"HTTP/1.1 200 OK\"",
+      "worker": "main",
+      "links": [],
+      "attempts": [
+        {
+          "status": "passed",
+          "trace": null,
+          "error": null,
+          "duration": 1.3570406580111012,
+          "timestamp": "2026-05-06T16:16:15.329193Z"
+        }
+      ],
+      "attempt_count": 1,
+      "flaky": false,
+      "attempt_statuses": [
+        "passed"
+      ],
+      "first_failure_index": null,
+      "first_failure": null
+    },
+    {
+      "test": "test_case_run_post_with_json",
+      "nodeid": "routers/test_cases.py::TestCaseP1Run::test_case_run_post_with_json",
+      "status": "passed",
+      "duration": 1.5074672379996628,
+      "trace": null,
+      "error": null,
+      "markers": [],
+      "file": "routers/test_cases.py",
+      "line": 685,
+      "stdout": "",
+      "stderr": "INFO - HTTP Request: POST https://httpbin.org/post \"HTTP/1.1 200 OK\"\nINFO - HTTP Request: POST http://testserver/api/cases/618/run \"HTTP/1.1 200 OK\"\n",
+      "timestamp": "2026-05-06T16:16:16.944978Z",
+      "screenshot": "screenshots",
+      "logs": "HTTP Request: POST https://httpbin.org/post \"HTTP/1.1 200 OK\"\nHTTP Request: POST http://testserver/api/cases/618/run \"HTTP/1.1 200 OK\"",
+      "worker": "main",
+      "links": [],
+      "attempts": [
+        {
+          "status": "passed",
+          "trace": null,
+          "error": null,
+          "duration": 1.5074672379996628,
+          "timestamp": "2026-05-06T16:16:16.944987Z"
+        }
+      ],
+      "attempt_count": 1,
+      "flaky": false,
+      "attempt_statuses": [
+        "passed"
+      ],
+      "first_failure_index": null,
+      "first_failure": null
+    },
+    {
+      "test": "test_case_run_no_default_env",
+      "nodeid": "routers/test_cases.py::TestCaseP1Run::test_case_run_no_default_env",
+      "status": "passed",
+      "duration": 1.866135457996279,
+      "trace": null,
+      "error": null,
+      "markers": [],
+      "file": "routers/test_cases.py",
+      "line": 708,
+      "stdout": "",
+      "stderr": "INFO - HTTP Request: GET https://httpbin.org/get \"HTTP/1.1 200 OK\"\nINFO - HTTP Request: POST http://testserver/api/cases/618/run \"HTTP/1.1 200 OK\"\n",
+      "timestamp": "2026-05-06T16:16:18.928862Z",
+      "screenshot": "screenshots",
+      "logs": "HTTP Request: GET https://httpbin.org/get \"HTTP/1.1 200 OK\"\nHTTP Request: POST http://testserver/api/cases/618/run \"HTTP/1.1 200 OK\"",
+      "worker": "main",
+      "links": [],
+      "attempts": [
+        {
+          "status": "passed",
+          "trace": null,
+          "error": null,
+          "duration": 1.866135457996279,
+          "timestamp": "2026-05-06T16:16:18.928873Z"
+        }
+      ],
+      "attempt_count": 1,
+      "flaky": false,
+      "attempt_statuses": [
+        "passed"
+      ],
+      "first_failure_index": null,
+      "first_failure": null
+    },
+    {
+      "test": "test_case_get_not_exists",
+      "nodeid": "routers/test_cases.py::TestCaseP1NotFound::test_case_get_not_exists",
+      "status": "passed",
+      "duration": 0.13903203399968334,
+      "trace": null,
+      "error": null,
+      "markers": [],
+      "file": "routers/test_cases.py",
+      "line": 732,
+      "stdout": "",
+      "stderr": "INFO - HTTP Request: GET http://testserver/api/cases/99999 \"HTTP/1.1 404 Not Found\"\n",
+      "timestamp": "2026-05-06T16:16:19.519276Z",
+      "screenshot": "screenshots",
+      "logs": "HTTP Request: GET http://testserver/api/cases/99999 \"HTTP/1.1 404 Not Found\"",
+      "worker": "main",
+      "links": [],
+      "attempts": [
+        {
+          "status": "passed",
+          "trace": null,
+          "error": null,
+          "duration": 0.13903203399968334,
+          "timestamp": "2026-05-06T16:16:19.519286Z"
+        }
+      ],
+      "attempt_count": 1,
+      "flaky": false,
+      "attempt_statuses": [
+        "passed"
+      ],
+      "first_failure_index": null,
+      "first_failure": null
+    },
+    {
+      "test": "test_case_update_not_exists",
+      "nodeid": "routers/test_cases.py::TestCaseP1NotFound::test_case_update_not_exists",
+      "status": "passed",
+      "duration": 0.13116450198867824,
+      "trace": null,
+      "error": null,
+      "markers": [],
+      "file": "routers/test_cases.py",
+      "line": 744,
+      "stdout": "",
+      "stderr": "INFO - HTTP Request: PUT http://testserver/api/cases/99999 \"HTTP/1.1 404 Not Found\"\n",
+      "timestamp": "2026-05-06T16:16:19.652214Z",
+      "screenshot": "screenshots",
+      "logs": "HTTP Request: PUT http://testserver/api/cases/99999 \"HTTP/1.1 404 Not Found\"",
+      "worker": "main",
+      "links": [],
+      "attempts": [
+        {
+          "status": "passed",
+          "trace": null,
+          "error": null,
+          "duration": 0.13116450198867824,
+          "timestamp": "2026-05-06T16:16:19.652226Z"
+        }
+      ],
+      "attempt_count": 1,
+      "flaky": false,
+      "attempt_statuses": [
+        "passed"
+      ],
+      "first_failure_index": null,
+      "first_failure": null
+    },
+    {
+      "test": "test_case_delete_not_exists",
+      "nodeid": "routers/test_cases.py::TestCaseP1NotFound::test_case_delete_not_exists",
+      "status": "passed",
+      "duration": 0.1316653160029091,
+      "trace": null,
+      "error": null,
+      "markers": [],
+      "file": "routers/test_cases.py",
+      "line": 757,
+      "stdout": "",
+      "stderr": "INFO - HTTP Request: DELETE http://testserver/api/cases/99999 \"HTTP/1.1 404 Not Found\"\n",
+      "timestamp": "2026-05-06T16:16:19.785853Z",
+      "screenshot": "screenshots",
+      "logs": "HTTP Request: DELETE http://testserver/api/cases/99999 \"HTTP/1.1 404 Not Found\"",
+      "worker": "main",
+      "links": [],
+      "attempts": [
+        {
+          "status": "passed",
+          "trace": null,
+          "error": null,
+          "duration": 0.1316653160029091,
+          "timestamp": "2026-05-06T16:16:19.785865Z"
+        }
+      ],
+      "attempt_count": 1,
+      "flaky": false,
+      "attempt_statuses": [
+        "passed"
+      ],
+      "first_failure_index": null,
+      "first_failure": null
+    },
+    {
+      "test": "test_case_duplicate_not_exists",
+      "nodeid": "routers/test_cases.py::TestCaseP1NotFound::test_case_duplicate_not_exists",
+      "status": "passed",
+      "duration": 0.11659903899999335,
+      "trace": null,
+      "error": null,
+      "markers": [],
+      "file": "routers/test_cases.py",
+      "line": 769,
+      "stdout": "",
+      "stderr": "INFO - HTTP Request: POST http://testserver/api/cases/99999/duplicate \"HTTP/1.1 404 Not Found\"\n",
+      "timestamp": "2026-05-06T16:16:19.904376Z",
+      "screenshot": "screenshots",
+      "logs": "HTTP Request: POST http://testserver/api/cases/99999/duplicate \"HTTP/1.1 404 Not Found\"",
+      "worker": "main",
+      "links": [],
+      "attempts": [
+        {
+          "status": "passed",
+          "trace": null,
+          "error": null,
+          "duration": 0.11659903899999335,
+          "timestamp": "2026-05-06T16:16:19.904391Z"
+        }
+      ],
+      "attempt_count": 1,
+      "flaky": false,
+      "attempt_statuses": [
+        "passed"
+      ],
+      "first_failure_index": null,
+      "first_failure": null
+    },
+    {
+      "test": "test_case_run_not_exists",
+      "nodeid": "routers/test_cases.py::TestCaseP1NotFound::test_case_run_not_exists",
+      "status": "passed",
+      "duration": 0.15455288800876588,
+      "trace": null,
+      "error": null,
+      "markers": [],
+      "file": "routers/test_cases.py",
+      "line": 781,
+      "stdout": "",
+      "stderr": "INFO - HTTP Request: POST http://testserver/api/cases/99999/run \"HTTP/1.1 404 Not Found\"\n",
+      "timestamp": "2026-05-06T16:16:20.061051Z",
+      "screenshot": "screenshots",
+      "logs": "HTTP Request: POST http://testserver/api/cases/99999/run \"HTTP/1.1 404 Not Found\"",
+      "worker": "main",
+      "links": [],
+      "attempts": [
+        {
+          "status": "passed",
+          "trace": null,
+          "error": null,
+          "duration": 0.15455288800876588,
+          "timestamp": "2026-05-06T16:16:20.061060Z"
+        }
+      ],
+      "attempt_count": 1,
+      "flaky": false,
+      "attempt_statuses": [
+        "passed"
+      ],
+      "first_failure_index": null,
+      "first_failure": null
+    }
+  ]
+}

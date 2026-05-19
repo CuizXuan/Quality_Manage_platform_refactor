@@ -1,0 +1,72 @@
+:root {
+  /* 品牌主色 */
+  --primary: #094f9d;
+  --primary-hover: #074080;
+  --primary-active-bg: #fff2f0;
+  --primary-active-text: #ff7875;
+
+  /* 背景色 */
+  --bg: #ffffff;
+  --bg-secondary: #f5f5f5;
+  --bg-tertiary: #f0f0f0;
+  --bg-hover: #e8e8e8;
+
+  /* 文字色 */
+  --text-h: rgba(0, 0, 0, 0.88);
+  --text: rgba(0, 0, 0, 0.65);
+  --text-muted: rgba(0, 0, 0, 0.45);
+
+  /* 边框 */
+  --border: #d9d9d9;
+  --border-focus: #4096ff;
+
+  /* 代码/输入背景 */
+  --code-bg: #ffffff;
+
+  /* 阴影 */
+  --shadow-btn: rgba(37, 67, 100, 0.5) 0px 0px 1px 0px;
+  --shadow-focus: rgba(255, 215, 5, 0.1) 0px 0px 0px 2px;
+
+  /* 字体 */
+  --sans: 'Alibaba PuHuiTi', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+  --heading: 'Alibaba PuHuiTi', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --mono: 'Alibaba PuHuiTi', ui-monospace, Consolas, 'Courier New', monospace;
+
+  font: 16px/1.5 var(--sans);
+  color: var(--text);
+  background: var(--bg);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* 功能性尺寸变量（保留） */
+  --sidebar-width: 260px;
+  --sidebar-collapsed-width: 48px;
+  --header-height: 48px;
+  --status-bar-height: 32px;
+
+  /* 方法颜色 */
+  --method-get: #52c41a;
+  --method-post: #fa8c16;
+  --method-put: #1890ff;
+  --method-delete: #ff4d4f;
+  --method-patch: #722ed1;
+  --method-options: #13c2c2;
+  --method-head: #8c8c8c;
+
+  /* 状态颜色 */
+  --success: #52c41a;
+  --warning: #fa8c16;
+  --danger: #ff4d4f;
+  --info: #1890ff;
+
+  /* 圆角 */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+
+  /* 动效 */
+  --transition-fast: 100ms ease;
+  --transition-normal: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}

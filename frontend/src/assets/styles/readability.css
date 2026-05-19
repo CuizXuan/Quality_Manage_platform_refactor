@@ -1,0 +1,328 @@
+/* ========================================
+   Readability Layer
+   Ant Design inspired typography scale with restrained AI accents.
+   Keep this file imported after theme files.
+   ======================================== */
+
+:root {
+  --font-title: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif;
+  --font-mono: 'SF Mono', 'Fira Code', 'Cascadia Mono', Consolas, monospace;
+
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-tertiary: #94a3b8;
+  --text-muted: #64748b;
+
+  --readable-xs: 12px;
+  --readable-sm: 13px;
+  --readable-md: 14px;
+  --readable-lg: 15px;
+  --readable-xl: 18px;
+  --readable-2xl: 22px;
+
+  --readable-weight-normal: 400;
+  --readable-weight-medium: 500;
+  --readable-weight-strong: 600;
+  --readable-letter-tight: 0;
+  --readable-letter-tech: 0.02em;
+}
+
+.theme-light {
+  --text-primary: #0f172a;
+  --text-secondary: #334155;
+  --text-tertiary: #64748b;
+  --text-muted: #94a3b8;
+}
+
+html,
+body,
+#app {
+  font-family: var(--font-body) !important;
+  font-size: var(--readable-lg) !important;
+  line-height: 1.58;
+  font-weight: var(--readable-weight-normal);
+  text-rendering: optimizeLegibility;
+}
+
+body,
+button,
+input,
+textarea,
+select {
+  font-family: var(--font-body) !important;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-title) !important;
+  font-weight: var(--readable-weight-strong) !important;
+  letter-spacing: var(--readable-letter-tight) !important;
+  text-transform: none !important;
+}
+
+button,
+.btn,
+.btn-primary,
+.btn-secondary,
+button[class*="btn"] {
+  min-height: 34px;
+  font-size: var(--readable-md) !important;
+  font-weight: var(--readable-weight-medium) !important;
+  letter-spacing: var(--readable-letter-tight) !important;
+  line-height: 1.35;
+}
+
+input,
+textarea,
+select,
+.el-input__inner,
+.el-textarea__inner {
+  font-size: var(--readable-md) !important;
+  font-weight: var(--readable-weight-normal) !important;
+  letter-spacing: var(--readable-letter-tight) !important;
+  line-height: 1.5 !important;
+}
+
+input,
+select,
+.el-input__wrapper {
+  min-height: 36px;
+}
+
+textarea,
+.el-textarea__inner {
+  min-height: 72px;
+}
+
+label,
+.form-label,
+.form-group label,
+.el-form-item__label {
+  font-size: var(--readable-sm) !important;
+  font-weight: var(--readable-weight-strong) !important;
+  letter-spacing: var(--readable-letter-tight) !important;
+  line-height: 1.45 !important;
+  color: var(--text-secondary) !important;
+}
+
+.page-title {
+  font-size: var(--readable-xl) !important;
+  font-weight: 700 !important;
+  letter-spacing: var(--readable-letter-tech) !important;
+  text-shadow: 0 0 12px color-mix(in srgb, var(--neon-cyan) 30%, transparent) !important;
+}
+
+.panel-title,
+.table-header,
+.el-tabs__item,
+.tab-btn,
+.config-tabs button {
+  font-family: var(--font-body) !important;
+  font-size: var(--readable-sm) !important;
+  font-weight: var(--readable-weight-strong) !important;
+  letter-spacing: var(--readable-letter-tech) !important;
+}
+
+.table-row,
+.table-row span,
+.tree-item,
+.empty,
+.loading {
+  font-size: var(--readable-md) !important;
+  font-weight: var(--readable-weight-normal) !important;
+  letter-spacing: var(--readable-letter-tight) !important;
+  line-height: 1.55 !important;
+}
+
+.method-badge,
+.status-badge,
+.badge {
+  font-size: var(--readable-xs) !important;
+  font-weight: 700 !important;
+  letter-spacing: var(--readable-letter-tech) !important;
+}
+
+body .app-header .nav-item,
+body .app-header .dropdown-item,
+body .app-header .env-option,
+body .app-header .user-name {
+  font-size: var(--readable-md) !important;
+  font-weight: var(--readable-weight-medium) !important;
+}
+
+body .app-header .env-label,
+body .app-header .user-workspace,
+body .app-header .dropdown-user-email {
+  font-size: var(--readable-xs) !important;
+  font-weight: var(--readable-weight-medium) !important;
+}
+
+body .sidebar,
+body .sidebar-tabs button,
+body .sidebar-input,
+body .sidebar .collection-name,
+body .sidebar .request-name {
+  font-size: var(--readable-md) !important;
+  font-weight: var(--readable-weight-medium) !important;
+}
+
+body .case-management .search-input,
+body .case-management .form-input,
+body .case-management .form-select,
+body .case-management .form-textarea {
+  font-size: var(--readable-md) !important;
+  font-weight: var(--readable-weight-normal) !important;
+  letter-spacing: var(--readable-letter-tight) !important;
+}
+
+body .case-management .table-header {
+  font-size: var(--readable-sm) !important;
+}
+
+body .case-management .table-row {
+  min-height: 42px;
+  font-size: var(--readable-md) !important;
+}
+
+body .case-management .col-path,
+body .case-management .col-time {
+  font-size: var(--readable-sm) !important;
+  color: var(--text-secondary) !important;
+}
+
+body .cyber-modal,
+body .cyber-drawer {
+  font-family: var(--font-body) !important;
+  color: var(--modal-text-primary);
+}
+
+body .cyber-modal__title,
+body .cyber-drawer__title {
+  font-size: var(--readable-xl) !important;
+  font-weight: 700 !important;
+  letter-spacing: var(--readable-letter-tech) !important;
+}
+
+body .cyber-modal__subtitle {
+  font-size: var(--readable-sm) !important;
+  font-weight: var(--readable-weight-medium) !important;
+  line-height: 1.55 !important;
+}
+
+body .cyber-modal__body,
+body .cyber-drawer__body {
+  font-size: var(--readable-lg) !important;
+  line-height: 1.6 !important;
+}
+
+body .cyber-modal__btn {
+  min-height: 38px;
+  font-size: var(--readable-md) !important;
+  font-weight: var(--readable-weight-strong) !important;
+  letter-spacing: var(--readable-letter-tight) !important;
+  text-transform: none !important;
+}
+
+body .cyber-modal__close,
+body .cyber-drawer__close,
+body .icon-btn {
+  min-width: 32px;
+  min-height: 32px;
+  font-size: var(--readable-md) !important;
+}
+
+body .el-button {
+  min-height: 34px;
+  font-size: var(--readable-md) !important;
+  font-weight: var(--readable-weight-medium) !important;
+}
+
+body .el-select-dropdown__item {
+  font-size: var(--readable-md) !important;
+  font-weight: var(--readable-weight-medium) !important;
+}
+
+/* Case module sort dropdowns are teleported to body by Element Plus. */
+.case-sort-select-popper.el-popper,
+.case-sort-select-popper.el-select__popper {
+  background: var(--bg-panel, #0d0d14) !important;
+  border: 1px solid var(--border-default, rgba(0, 255, 255, 0.2)) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.42), 0 0 18px rgba(0, 255, 255, 0.12) !important;
+  overflow: hidden;
+}
+
+.case-sort-select-popper .el-select-dropdown,
+.case-sort-select-popper .el-select-dropdown__wrap,
+.case-sort-select-popper .el-scrollbar,
+.case-sort-select-popper .el-scrollbar__view {
+  background: var(--bg-panel, #0d0d14) !important;
+}
+
+.case-sort-select-popper .el-select-dropdown__item {
+  height: 40px !important;
+  line-height: 40px !important;
+  padding: 0 18px !important;
+  background: transparent !important;
+  color: var(--text-secondary, #cbd5e1) !important;
+  font-size: var(--readable-md) !important;
+  font-weight: var(--readable-weight-medium) !important;
+}
+
+.case-sort-select-popper .el-select-dropdown__item:hover,
+.case-sort-select-popper .el-select-dropdown__item.is-hovering {
+  background: rgba(0, 255, 255, 0.1) !important;
+  color: var(--neon-cyan, #0ff) !important;
+}
+
+.case-sort-select-popper .el-select-dropdown__item.is-selected {
+  background: rgba(0, 255, 255, 0.16) !important;
+  color: var(--neon-cyan, #0ff) !important;
+  font-weight: 700 !important;
+}
+
+.case-sort-select-popper .el-popper__arrow,
+.case-sort-select-popper .el-popper__arrow::before {
+  background: var(--bg-panel, #0d0d14) !important;
+  border-color: var(--border-default, rgba(0, 255, 255, 0.2)) !important;
+}
+
+.theme-light .case-sort-select-popper.el-popper,
+.theme-light .case-sort-select-popper.el-select__popper {
+  background: #ffffff !important;
+  border-color: rgba(6, 182, 212, 0.24) !important;
+  box-shadow: 0 16px 44px rgba(15, 23, 42, 0.14), 0 0 18px rgba(6, 182, 212, 0.1) !important;
+}
+
+.theme-light .case-sort-select-popper .el-select-dropdown,
+.theme-light .case-sort-select-popper .el-select-dropdown__wrap,
+.theme-light .case-sort-select-popper .el-scrollbar,
+.theme-light .case-sort-select-popper .el-scrollbar__view {
+  background: #ffffff !important;
+}
+
+.theme-light .case-sort-select-popper .el-select-dropdown__item {
+  color: var(--text-secondary, #334155) !important;
+}
+
+.theme-light .case-sort-select-popper .el-select-dropdown__item:hover,
+.theme-light .case-sort-select-popper .el-select-dropdown__item.is-hovering {
+  background: rgba(6, 182, 212, 0.08) !important;
+  color: var(--modal-ai-accent, #0891b2) !important;
+}
+
+.theme-light .case-sort-select-popper .el-select-dropdown__item.is-selected {
+  background: rgba(6, 182, 212, 0.12) !important;
+  color: var(--modal-ai-accent, #0891b2) !important;
+}
+
+.theme-light .case-sort-select-popper .el-popper__arrow,
+.theme-light .case-sort-select-popper .el-popper__arrow::before {
+  background: #ffffff !important;
+  border-color: rgba(6, 182, 212, 0.24) !important;
+}

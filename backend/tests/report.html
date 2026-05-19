@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>测试报告</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            padding: 40px;
+            color: #fff;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        h1 { 
+            text-align: center; 
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #00d9ff, #00ff87);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .timestamp { text-align: center; color: #888; margin-bottom: 40px; }
+        .summary { 
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .stat-card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .stat-card.passed { border-left: 4px solid #00ff87; }
+        .stat-card.failed { border-left: 4px solid #ff4757; }
+        .stat-card.error { border-left: 4px solid #ffa502; }
+        .stat-card.total { border-left: 4px solid #00d9ff; }
+        .stat-number { font-size: 3em; font-weight: bold; }
+        .stat-label { color: #888; margin-top: 8px; }
+        .passed .stat-number { color: #00ff87; }
+        .failed .stat-number { color: #ff4757; }
+        .error .stat-number { color: #ffa502; }
+        .total .stat-number { color: #00d9ff; }
+        .rate {
+            font-size: 1.2em;
+            margin-top: 16px;
+            padding: 12px 24px;
+            background: rgba(0,255,135,0.2);
+            border-radius: 30px;
+            display: inline-block;
+        }
+        .rate.warning { background: rgba(255,165,2,0.2); color: #ffa502; }
+        .rate.danger { background: rgba(255,71,87,0.2); color: #ff4757; }
+        h2 { 
+            margin: 30px 0 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(255,255,255,0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        th, td {
+            padding: 16px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        th {
+            background: rgba(255,255,255,0.1);
+            font-weight: 600;
+            color: #00d9ff;
+        }
+        tr:last-child td { border-bottom: none; }
+        .badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+        .badge-pass { background: rgba(0,255,135,0.2); color: #00ff87; }
+        .badge-fail { background: rgba(255,71,87,0.2); color: #ff4757; }
+        .badge-error { background: rgba(255,165,2,0.2); color: #ffa502; }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #666;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Quality Manage Platform</h1>
+        <p class="timestamp">API 自动化测试报告 | 2026-04-30</p>
+        
+        <div class="summary">
+            <div class="stat-card total">
+                <div class="stat-number">189</div>
+                <div class="stat-label">总测试数</div>
+            </div>
+            <div class="stat-card passed">
+                <div class="stat-number">181</div>
+                <div class="stat-label">通过</div>
+            </div>
+            <div class="stat-card failed">
+                <div class="stat-number">8</div>
+                <div class="stat-label">失败</div>
+            </div>
+            <div class="stat-card error">
+                <div class="stat-number">3</div>
+                <div class="stat-label">错误</div>
+            </div>
+        </div>
+        
+        <div style="text-align: center;">
+            <span class="rate" style="background: rgba(0,255,135,0.2); color: #00ff87;">
+                ✨ 通过率 95.8%
+            </span>
+        </div>
+        
+        <h2>📊 模块测试详情</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>模块</th>
+                    <th>通过</th>
+                    <th>失败</th>
+                    <th>错误</th>
+                    <th>总计</th>
+                    <th>状态</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>environments</td>
+                    <td style="color:#00ff87;">20</td>
+                    <td style="color:#ff4757;">0</td>
+                    <td style="color:#ffa502;">0</td>
+                    <td>20</td>
+                    <td><span class="badge badge-pass">✅ 通过</span></td>
+                </tr>
+                <tr>
+                    <td>logs</td>
+                    <td style="color:#00ff87;">13</td>
+                    <td style="color:#ff4757;">2</td>
+                    <td style="color:#ffa502;">0</td>
+                    <td>15</td>
+                    <td><span class="badge badge-fail">⚠️ 2个失败</span></td>
+                </tr>
+                <tr>
+                    <td>datasets</td>
+                    <td style="color:#00ff87;">25</td>
+                    <td style="color:#ff4757;">0</td>
+                    <td style="color:#ffa502;">0</td>
+                    <td>25</td>
+                    <td><span class="badge badge-pass">✅ 通过</span></td>
+                </tr>
+                <tr>
+                    <td>mocks</td>
+                    <td style="color:#00ff87;">25</td>
+                    <td style="color:#ff4757;">0</td>
+                    <td style="color:#ffa502;">0</td>
+                    <td>25</td>
+                    <td><span class="badge badge-pass">✅ 通过</span></td>
+                </tr>
+                <tr>
+                    <td>reports</td>
+                    <td style="color:#00ff87;">26</td>
+                    <td style="color:#ff4757;">0</td>
+                    <td style="color:#ffa502;">0</td>
+                    <td>26</td>
+                    <td><span class="badge badge-pass">✅ 通过</span></td>
+                </tr>
+                <tr>
+                    <td>coverage</td>
+                    <td style="color:#00ff87;">12</td>
+                    <td style="color:#ff4757;">0</td>
+                    <td style="color:#ffa502;">0</td>
+                    <td>12</td>
+                    <td><span class="badge badge-pass">✅ 通过</span></td>
+                </tr>
+                <tr>
+                    <td>cases</td>
+                    <td style="color:#00ff87;">27</td>
+                    <td style="color:#ff4757;">0</td>
+                    <td style="color:#ffa502;">0</td>
+                    <td>27</td>
+                    <td><span class="badge badge-pass">✅ 通过</span></td>
+                </tr>
+                <tr>
+                    <td>scenarios</td>
+                    <td style="color:#00ff87;">3</td>
+                    <td style="color:#ff4757;">0</td>
+                    <td style="color:#ffa502;">0</td>
+                    <td>3</td>
+                    <td><span class="badge badge-pass">✅ 通过</span></td>
+                </tr>
+                <tr>
+                    <td>defects</td>
+                    <td style="color:#00ff87;">11</td>
+                    <td style="color:#ff4757;">2</td>
+                    <td style="color:#ffa502;">0</td>
+                    <td>13</td>
+                    <td><span class="badge badge-fail">⚠️ 2个失败</span></td>
+                </tr>
+                <tr>
+                    <td>projects</td>
+                    <td style="color:#00ff87;">19</td>
+                    <td style="color:#ff4757;">4</td>
+                    <td style="color:#ffa502;">3</td>
+                    <td>26</td>
+                    <td><span class="badge badge-error">❌ 需修复</span></td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <h2>❌ 失败测试列表</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>模块</th>
+                    <th>测试</th>
+                    <th>原因</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>logs</td>
+                    <td>test_batch_delete_logs_success</td>
+                    <td>API路由bug - 路径匹配问题</td>
+                </tr>
+                <tr>
+                    <td>logs</td>
+                    <td>test_batch_delete_logs_empty_list</td>
+                    <td>API路由bug - 路径匹配问题</td>
+                </tr>
+                <tr>
+                    <td>defects</td>
+                    <td>test_stats_summary_normal</td>
+                    <td>断言失败 - 数据不匹配</td>
+                </tr>
+                <tr>
+                    <td>defects</td>
+                    <td>test_stats_summary_empty</td>
+                    <td>断言失败 - 数据不匹配</td>
+                </tr>
+                <tr>
+                    <td>projects</td>
+                    <td>test_create_project (4个)</td>
+                    <td>API参数问题 + 数据库约束</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div class="footer">
+            <p>Generated by pytest | Quality Manage Platform</p>
+        </div>
+    </div>
+</body>
+</html>
