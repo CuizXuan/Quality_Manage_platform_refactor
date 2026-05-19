@@ -44,14 +44,9 @@ const routes = [
         component: () => import('../views/terminal/Terminal.vue'),
       },
       {
-        path: 'case/functional',
-        name: 'FunctionalCases',
-        component: () => import('../views/case/functional/FunctionalCase.vue'),
-      },
-      {
-        path: 'case/api',
-        name: 'ApiCases',
-        component: () => import('../views/case/api/ApiCase.vue'),
+        path: 'case',
+        name: 'CaseManagement',
+        component: () => import('../views/case/CaseManagement.vue'),
       },
     ],
   },
@@ -79,4 +74,3 @@ router.beforeEach(async (to) => {
 })
 
 export default router
-
