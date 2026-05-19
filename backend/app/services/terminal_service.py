@@ -133,7 +133,7 @@ class TerminalService:
         page_size: int = 20,
         created_by: Optional[int] = None,
     ) -> Tuple[list, int]:
-        query = self.db.query(DebugRequest).filter(DebugRequest.status == "active")
+        query = self.db.query(DebugRequest).filter(DebugRequest.status.in_(["active", "favorite"]))
         if created_by:
             query = query.filter(DebugRequest.created_by == created_by)
         query = query.order_by(DebugRequest.created_at.desc())

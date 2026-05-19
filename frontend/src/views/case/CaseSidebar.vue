@@ -75,6 +75,7 @@ const folderTree = ref([])
 const treeRef = ref(null)
 const showFolderDialog = ref(false)
 const folderForm = ref({ name: '', parent_id: null })
+const selectedFolderId = ref(null)
 
 async function loadFolders() {
   try {
@@ -107,7 +108,11 @@ function filterNode(keyword, data) {
 }
 
 function handleNodeClick(data) {
-  emit('folder-selected', data.id)
+  // Only emit if clicking a different folder, ignore if same folder clicked
+  if (selectedFolderId.value !== data.id) {
+    selectedFolderId.value = data.id
+    emit('folder-selected', data.id)
+  }
 }
 
 function handleCreateFolder() {

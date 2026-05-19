@@ -32,12 +32,14 @@ def get_db():
 def init_db():
     from app.models import Base
     from app.services.platform_seed import seed_platform
+    from app.services.dictionary_seed import seed_dictionaries
 
     Base.metadata.create_all(bind=engine)
     _run_migrations()
     db = Session(bind=engine)
     try:
         seed_platform(db)
+        seed_dictionaries(db)
     except Exception:
         db.rollback()
         raise

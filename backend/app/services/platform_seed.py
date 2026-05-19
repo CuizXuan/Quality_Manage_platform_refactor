@@ -25,6 +25,10 @@ DEFAULT_PERMISSIONS = [
     ("menu", "create"),
     ("menu", "update"),
     ("menu", "delete"),
+    ("dictionary", "view"),
+    ("dictionary", "create"),
+    ("dictionary", "update"),
+    ("dictionary", "delete"),
     ("organization", "view"),
     ("organization", "create"),
     ("organization", "update"),
@@ -54,6 +58,11 @@ DEFAULT_PERMISSIONS = [
     ("quality_gate", "update"),
     ("quality_gate", "delete"),
     ("quality_gate", "evaluate"),
+    # Phase06 - AI中枢
+    ("ai", "view"),
+    ("ai", "generate"),
+    ("ai", "accept"),
+    ("ai", "config"),
 ]
 
 DEFAULT_MENUS = [
@@ -101,6 +110,15 @@ DEFAULT_MENUS = [
         "component": "MenuManagement",
         "permission_code": "menu:view",
         "sort_order": 50,
+    },
+    {
+        "name": "字典管理",
+        "code": "system_dictionaries",
+        "path": "/system/dictionaries",
+        "icon": "BookMarked",
+        "component": "DictionaryManagement",
+        "permission_code": "dictionary:view",
+        "sort_order": 55,
     },
     {
         "name": "终端调试台",
@@ -157,6 +175,16 @@ DEFAULT_MENUS = [
         "component": "QualityGate",
         "permission_code": "quality_gate:view",
         "sort_order": 130,
+    },
+    # === Phase06 AI中枢 ===
+    {
+        "name": "AI中枢",
+        "code": "ai",
+        "path": "/ai",
+        "icon": "TrendCharts",
+        "component": "AIModelConfig",
+        "permission_code": "ai:view",
+        "sort_order": 140,
     },
 ]
 

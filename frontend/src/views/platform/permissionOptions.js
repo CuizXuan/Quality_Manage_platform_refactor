@@ -11,6 +11,7 @@ export const permissionResources = [
   { key: 'role', label: '角色管理', actions: ['view', 'create', 'update', 'delete'] },
   { key: 'organization', label: '组织管理', actions: ['view', 'create', 'update', 'delete'] },
   { key: 'menu', label: '菜单管理', actions: ['view', 'create', 'update', 'delete'] },
+  { key: 'dictionary', label: '字典管理', actions: ['view', 'create', 'update', 'delete'] },
   { key: 'terminal', label: '终端调试台', actions: ['view', 'debug'] },
   { key: 'case', label: '用例中心', actions: ['view', 'create', 'update', 'delete', 'run'] },
 ]

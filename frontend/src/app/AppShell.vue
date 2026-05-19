@@ -77,6 +77,7 @@
 <script setup>
 import {
   Connection,
+  CopyDocument,
   Document,
   DocumentChecked,
   Expand,
@@ -88,6 +89,14 @@ import {
   SwitchButton,
   Sunny,
   User,
+  Folder,
+  List,
+  Warning,
+  CircleCheck,
+  Bell,
+  Key,
+  VideoPlay,
+  TrendCharts,
 } from '@element-plus/icons-vue'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -109,6 +118,39 @@ const menuList = [
     children: [
       { title: '终端调试台', icon: Connection, path: '/terminal' },
       { title: '用例管理', icon: DocumentChecked, path: '/case' },
+    ],
+  },
+  {
+    title: '测试执行',
+    icon: VideoPlay,
+    path: '/execution',
+    children: [
+      { title: '场景管理', icon: Folder, path: '/scenario' },
+      { title: '执行历史', icon: List, path: '/scenario/executions' },
+    ],
+  },
+  {
+    title: '质量中心',
+    icon: CircleCheck,
+    path: '/quality',
+    children: [
+      { title: '报告中心', icon: Document, path: '/report' },
+      { title: '缺陷中心', icon: Warning, path: '/defect' },
+      { title: '门禁管理', icon: Key, path: '/quality-gate' },
+    ],
+  },
+  {
+    title: 'AI 中枢',
+    icon: TrendCharts,
+    path: '/ai',
+    children: [
+      { title: '模型配置', icon: Setting, path: '/ai/config' },
+      { title: 'Prompt模板', icon: Document, path: '/ai/templates' },
+      { title: '变体生成', icon: CopyDocument, path: '/ai/variant-generator' },
+      { title: '断言生成', icon: CircleCheck, path: '/ai/assertion-generator' },
+      { title: '失败归因', icon: Warning, path: '/ai/failure-analyzer' },
+      { title: '报告总结', icon: Document, path: '/ai/report-summarizer' },
+      { title: '采纳历史', icon: List, path: '/ai/suggestion-history' },
     ],
   },
   {

@@ -12,7 +12,13 @@
       </el-form-item>
 
       <el-form-item label="请求头">
-        <div class="kv-editor">
+        <div class="input-mode-toggle">
+          <el-radio-group v-model="headersInputMode" size="small">
+            <el-radio-button label="row">行输入</el-radio-button>
+            <el-radio-button label="json">JSON</el-radio-button>
+          </el-radio-group>
+        </div>
+        <div v-if="headersInputMode === 'row'" class="kv-editor">
           <div v-for="(item, index) in formData.headers" :key="index" class="kv-row">
             <el-input v-model="item.key" placeholder="参数名" size="small" />
             <el-input v-model="item.value" placeholder="参数值" size="small" />
@@ -20,16 +26,42 @@
           </div>
           <el-button :icon="Plus" size="small" @click="addHeader">添加请求头</el-button>
         </div>
+        <div v-else class="json-editor">
+          <el-input
+            v-model="headersJson"
+            type="textarea"
+            :rows="4"
+            placeholder='{"Content-Type": "application/json"}'
+            @blur="parseHeadersJson"
+          />
+          <div v-if="headersJsonError" class="json-error">{{ headersJsonError }}</div>
+        </div>
       </el-form-item>
 
       <el-form-item label="Query 参数">
-        <div class="kv-editor">
+        <div class="input-mode-toggle">
+          <el-radio-group v-model="paramsInputMode" size="small">
+            <el-radio-button label="row">行输入</el-radio-button>
+            <el-radio-button label="json">JSON</el-radio-button>
+          </el-radio-group>
+        </div>
+        <div v-if="paramsInputMode === 'row'" class="kv-editor">
           <div v-for="(item, index) in formData.params" :key="index" class="kv-row">
             <el-input v-model="item.key" placeholder="参数名" size="small" />
             <el-input v-model="item.value" placeholder="参数值" size="small" />
             <el-button type="danger" :icon="Delete" size="small" @click="removeParam(index)" />
           </div>
           <el-button :icon="Plus" size="small" @click="addParam">添加参数</el-button>
+        </div>
+        <div v-else class="json-editor">
+          <el-input
+            v-model="paramsJson"
+            type="textarea"
+            :rows="4"
+            placeholder='{"page": 1, "size": 20}'
+            @blur="parseParamsJson"
+          />
+          <div v-if="paramsJsonError" class="json-error">{{ paramsJsonError }}</div>
         </div>
       </el-form-item>
 
@@ -120,6 +152,14 @@ const emit = defineEmits(['update:modelValue'])
 const methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS']
 const authType = ref('none')
 
+// 双输入模式控制
+const headersInputMode = ref('row')
+const paramsInputMode = ref('row')
+const headersJson = ref('')
+const paramsJson = ref('')
+const headersJsonError = ref('')
+const paramsJsonError = ref('')
+
 const formData = ref({
   method: 'GET',
   url: '',
@@ -162,6 +202,64 @@ function handleAuthTypeChange(type) {
   }
 }
 
+function parseHeadersJson() {
+  if (!headersJson.value.trim()) {
+    formData.value.headers = []
+    headersJsonError.value = ''
+    return
+  }
+  try {
+    const parsed = JSON.parse(headersJson.value)
+    if (typeof parsed === 'object' && parsed !== null) {
+      formData.value.headers = Object.entries(parsed).map(([key, value]) => ({ key, value: String(value) }))
+      headersJsonError.value = ''
+    } else {
+      headersJsonError.value = 'JSON 必须是对象格式'
+    }
+  } catch {
+    headersJsonError.value = 'JSON 格式错误'
+  }
+}
+
+function parseParamsJson() {
+  if (!paramsJson.value.trim()) {
+    formData.value.params = []
+    paramsJsonError.value = ''
+    return
+  }
+  try {
+    const parsed = JSON.parse(paramsJson.value)
+    if (typeof parsed === 'object' && parsed !== null) {
+      formData.value.params = Object.entries(parsed).map(([key, value]) => ({ key, value: String(value) }))
+      paramsJsonError.value = ''
+    } else {
+      paramsJsonError.value = 'JSON 必须是对象格式'
+    }
+  } catch {
+    paramsJsonError.value = 'JSON 格式错误'
+  }
+}
+
+function updateHeadersJson() {
+  if (headersInputMode.value === 'json') {
+    const obj = {}
+    formData.value.headers.forEach(item => {
+      if (item.key) obj[item.key] = item.value
+    })
+    headersJson.value = JSON.stringify(obj, null, 2)
+  }
+}
+
+function updateParamsJson() {
+  if (paramsInputMode.value === 'json') {
+    const obj = {}
+    formData.value.params.forEach(item => {
+      if (item.key) obj[item.key] = item.value
+    })
+    paramsJson.value = JSON.stringify(obj, null, 2)
+  }
+}
+
 watch(() => props.modelValue, (val) => {
   if (val) {
     formData.value = { ...formData.value, ...val }
@@ -179,8 +277,28 @@ watch(() => props.modelValue, (val) => {
         authType.value = 'none'
       }
     }
+    // Initialize JSON from headers/params
+    if (val.headers && Array.isArray(val.headers)) {
+      const obj = {}
+      val.headers.forEach(item => { if (item.key) obj[item.key] = item.value })
+      headersJson.value = JSON.stringify(obj, null, 2)
+    }
+    if (val.params && Array.isArray(val.params)) {
+      const obj = {}
+      val.params.forEach(item => { if (item.key) obj[item.key] = item.value })
+      paramsJson.value = JSON.stringify(obj, null, 2)
+    }
   }
 }, { immediate: true })
+
+// Watch row data changes to update JSON when in JSON mode
+watch(() => formData.value.headers, () => {
+  updateHeadersJson()
+}, { deep: true })
+
+watch(() => formData.value.params, () => {
+  updateParamsJson()
+}, { deep: true })
 
 watch(formData, (val) => {
   emit('update:modelValue', val)
@@ -194,6 +312,20 @@ watch(formData, (val) => {
 
 .kv-editor {
   width: 100%;
+}
+
+.input-mode-toggle {
+  margin-bottom: 8px;
+}
+
+.json-editor {
+  width: 100%;
+}
+
+.json-error {
+  color: var(--el-color-danger);
+  font-size: 12px;
+  margin-top: 4px;
 }
 
 .kv-row {

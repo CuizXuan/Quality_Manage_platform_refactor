@@ -14,9 +14,11 @@
   },
   "dependencies": {
     "@vitejs/plugin-vue": "^6.0.5",
+    "@vueup/vue-quill": "^1.2.0",
     "axios": "^1.14.0",
     "element-plus": "^2.13.6",
     "pinia": "^3.0.4",
+    "quill": "^2.0.3",
     "vue-router": "^4.6.4"
   }
 }

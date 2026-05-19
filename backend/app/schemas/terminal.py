@@ -45,6 +45,7 @@ class DebugHistoryItem(BaseModel):
     id: int
     method: str
     url: str
+    status: str = "active"
     status_code: Optional[int] = None
     duration_ms: Optional[int] = None
     created_at: str

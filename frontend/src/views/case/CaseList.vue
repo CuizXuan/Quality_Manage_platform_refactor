@@ -40,7 +40,11 @@
           <el-tag :type="getPriorityType(row.priority)" size="small">{{ row.priority }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="updated_at" label="更新时间" width="160" />
+      <el-table-column prop="updated_at" label="更新时间" width="160">
+        <template #default="{ row }">
+          {{ formatDate(row.updated_at) }}
+        </template>
+      </el-table-column>
       <el-table-column label="操作" width="150" fixed="right">
         <template #default="{ row }">
           <el-button type="primary" size="small" text @click.stop="handleCopy(row)">复制</el-button>
@@ -53,9 +57,12 @@
       v-model:current-page="currentPage"
       v-model:page-size="currentPageSize"
       :total="caseStore.total"
-      :page-sizes="[10, 20, 50, 100]"
+      :page-sizes="[15, 30, 50, 100]"
+      page-size-text="条/页"
+      prev-text="上一页"
+      next-text="下一页"
       layout="total, sizes, prev, pager, next"
-      style="margin-top: 16px"
+      class="list-pagination"
       @current-change="handlePageChange"
       @size-change="handleSizeChange"
     />
@@ -81,11 +88,18 @@ const props = defineProps({
 const caseStore = useCaseStore()
 const keyword = ref('')
 const currentPage = ref(1)
-const currentPageSize = ref(20)
+const currentPageSize = ref(15)
 
 function getPriorityType(priority) {
   const map = { P0: 'danger', P1: 'warning', P2: 'info', P3: '' }
   return map[priority] || ''
+}
+
+function formatDate(dateStr) {
+  if (!dateStr) return '-'
+  const d = new Date(dateStr)
+  const pad = n => n.toString().padStart(2, '0')
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`
 }
 
 async function loadCases() {
@@ -169,12 +183,26 @@ defineExpose({ reload: loadCases })
   height: 100%;
   display: flex;
   flex-direction: column;
+  min-height: 0;
 }
 
 .list-header {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   margin-bottom: 16px;
+}
+
+.case-list-container :deep(.el-table) {
+  flex: 1;
+}
+
+.case-list-container :deep(.el-table__body tr) {
+  cursor: pointer;
+}
+
+.case-list-container :deep(.el-table__cell) {
+  vertical-align: middle;
 }
 
 .text-ellipsis {
@@ -183,5 +211,12 @@ defineExpose({ reload: loadCases })
   text-overflow: ellipsis;
   white-space: nowrap;
   max-width: 100%;
+}
+
+.list-pagination {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 16px;
 }
 </style>

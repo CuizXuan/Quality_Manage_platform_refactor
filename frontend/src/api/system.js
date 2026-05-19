@@ -25,5 +25,11 @@ export const systemApi = {
     update: (id, data) => client.put(`/api/system/menus/${id}`, data),
     delete: (id) => client.delete(`/api/system/menus/${id}`),
   },
+  dictionaries: {
+    list: (params = {}) => client.get('/api/system/dictionaries', { params }),
+    create: (data) => client.post('/api/system/dictionaries', data),
+    update: (id, data) => client.put(`/api/system/dictionaries/${id}`, data),
+    delete: (id) => client.delete(`/api/system/dictionaries/${id}`),
+  },
 }
 

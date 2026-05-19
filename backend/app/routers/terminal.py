@@ -100,6 +100,7 @@ def get_history(
                 id=req.id,
                 method=req.method,
                 url=req.url,
+                status=req.status or "active",
                 status_code=latest_result.status_code if latest_result else None,
                 duration_ms=latest_result.duration_ms if latest_result else None,
                 created_at=req.created_at.isoformat() if req.created_at else "",

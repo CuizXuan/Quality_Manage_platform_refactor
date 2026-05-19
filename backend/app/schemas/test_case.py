@@ -11,6 +11,8 @@ class TestCaseCreate(BaseModel):
     tags: List[str] = Field(default_factory=list)
     pre_condition: str = ""
     case_type: Literal["api", "functional"] = Field(default="api")
+    api_case: Optional[Dict[str, Any]] = Field(default=None)
+    functional_case: Optional[Dict[str, Any]] = Field(default=None)
 
 
 class TestCaseUpdate(BaseModel):
@@ -20,6 +22,8 @@ class TestCaseUpdate(BaseModel):
     priority: Optional[Literal["P0", "P1", "P2", "P3"]] = None
     tags: Optional[List[str]] = None
     pre_condition: Optional[str] = None
+    api_case: Optional[Dict[str, Any]] = Field(default=None)
+    functional_case: Optional[Dict[str, Any]] = Field(default=None)
 
 
 class TestCaseResponse(BaseModel):
@@ -35,6 +39,8 @@ class TestCaseResponse(BaseModel):
     created_by: Optional[int] = None
     created_at: str
     updated_at: Optional[str] = None
+    api_case: Optional[Dict[str, Any]] = None
+    functional_case: Optional[Dict[str, Any]] = None
 
     class Config:
         from_attributes = True

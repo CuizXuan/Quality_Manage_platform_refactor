@@ -4,41 +4,30 @@
       <el-form-item label="执行步骤">
         <div class="steps-list">
           <div v-for="(step, index) in formData.steps" :key="index" class="step-item">
-            <el-input-number v-model="step.order" :min="1" size="small" style="width: 80px" />
-            <el-input v-model="step.description" placeholder="步骤描述" size="small" style="flex: 1" />
-            <el-input v-model="step.expected_result" placeholder="预期结果" size="small" style="flex: 1" />
-            <el-button type="danger" :icon="Delete" size="small" @click="removeStep(index)" />
+            <div class="step-item__header">
+              <span class="step-item__title">步骤 {{ index + 1 }}</span>
+              <div class="step-item__actions">
+                <el-input-number v-model="step.order" :min="1" size="small" class="step-order" />
+                <el-button type="danger" :icon="Delete" size="small" @click="removeStep(index)" />
+              </div>
+            </div>
+            <el-input v-model="step.description" placeholder="步骤描述" />
+            <RichTextEditor v-model="step.expected_result" />
           </div>
           <el-button :icon="Plus" @click="addStep">添加步骤</el-button>
         </div>
       </el-form-item>
 
       <el-form-item label="测试数据">
-        <el-input
-          v-model="testDataJson"
-          type="textarea"
-          :rows="4"
-          placeholder="JSON 格式测试数据"
-          @blur="handleTestDataBlur"
-        />
+        <RichTextEditor v-model="testDataHtml" />
       </el-form-item>
 
       <el-form-item label="后置动作">
-        <el-input
-          v-model="formData.post_action"
-          type="textarea"
-          :rows="2"
-          placeholder="清理数据、重置状态等"
-        />
+        <RichTextEditor v-model="formData.post_action" />
       </el-form-item>
 
       <el-form-item label="预期结果">
-        <el-input
-          v-model="formData.expected_result"
-          type="textarea"
-          :rows="2"
-          placeholder="请输入预期结果"
-        />
+        <RichTextEditor v-model="formData.expected_result" />
       </el-form-item>
     </el-form>
   </div>
@@ -48,6 +37,7 @@
 import { ref, watch, computed } from 'vue'
 import { Plus, Delete } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
+import RichTextEditor from '@/components/common/RichTextEditor.vue'
 
 const props = defineProps({
   modelValue: {
@@ -72,6 +62,23 @@ const testDataJson = computed({
       formData.value.test_data = JSON.parse(val)
     } catch {}
   }
+})
+
+const testDataHtml = computed({
+  get: () => {
+    const pretty = JSON.stringify(formData.value.test_data || {}, null, 2)
+    return pretty ? `<pre>${pretty}</pre>` : ''
+  },
+  set: (val) => {
+    const text = (val || '').replace(/<[^>]+>/g, '').trim()
+    if (!text) {
+      formData.value.test_data = {}
+      return
+    }
+    try {
+      formData.value.test_data = JSON.parse(text)
+    } catch {}
+  },
 })
 
 function addStep() {
@@ -113,12 +120,37 @@ watch(formData, (val) => {
 
 .steps-list {
   width: 100%;
+  display: grid;
+  gap: 12px;
 }
 
 .step-item {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-base);
+  background: var(--bg-container-soft);
+}
+
+.step-item__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.step-item__title {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.step-item__actions {
   display: flex;
   gap: 8px;
-  margin-bottom: 8px;
   align-items: center;
+}
+
+.step-order {
+  width: 100px;
 }
 </style>

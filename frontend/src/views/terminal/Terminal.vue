@@ -6,7 +6,7 @@
           <span class="panel-title">历史记录</span>
           <span class="panel-subtitle">{{ filteredHistory.length }} 条请求</span>
         </div>
-        <el-button size="small" text :icon="Refresh" @click="loadHistory" />
+        <el-button size="small" text :icon="Refresh" @click="loadHistory(true)" />
       </div>
 
       <div class="history-search">
@@ -20,24 +20,35 @@
       </div>
 
       <div class="history-list">
-        <button
+        <div
           v-for="item in filteredHistory"
           :key="item.id"
           class="history-item"
           :class="{ active: currentRequestId === item.id }"
-          type="button"
-          @click="loadRequest(item.id)"
         >
-          <span class="method-badge" :class="item.method.toLowerCase()">{{ item.method }}</span>
-          <span class="item-main">
-            <span class="item-url" :title="item.url">{{ getUrlTitle(item.url) }}</span>
-            <span class="item-path">{{ getUrlPath(item.url) }}</span>
-          </span>
-          <span class="item-meta">
-            <span v-if="item.status_code" class="item-status" :class="getStatusClass(item.status_code)">{{ item.status_code }}</span>
-            <span v-if="item.duration_ms" class="item-duration">{{ item.duration_ms }}ms</span>
-          </span>
-        </button>
+          <button class="history-item-main" type="button" @click="loadRequest(item.id)">
+            <span class="method-badge" :class="item.method.toLowerCase()">{{ item.method }}</span>
+            <span class="item-main">
+              <span class="item-url" :title="item.url">{{ getUrlTitle(item.url) }}</span>
+              <span class="item-path">
+                {{ getUrlPath(item.url) }}
+                <span v-if="loadingRequestId === item.id" class="item-loading">加载中...</span>
+              </span>
+            </span>
+            <span class="item-meta">
+              <span v-if="item.status_code" class="item-status" :class="getStatusClass(item.status_code)">{{ item.status_code }}</span>
+              <span v-if="item.duration_ms" class="item-duration">{{ item.duration_ms }}ms</span>
+            </span>
+          </button>
+          <el-button
+            class="favorite-toggle"
+            size="small"
+            text
+            :type="item.status === 'favorite' ? 'warning' : ''"
+            :icon="Star"
+            @click.stop="toggleFavoriteById(item.id)"
+          />
+        </div>
         <div v-if="historyLoading" class="list-placeholder">加载中...</div>
         <div v-else-if="filteredHistory.length === 0" class="list-placeholder">暂无记录</div>
       </div>
@@ -51,7 +62,7 @@
             <span class="panel-subtitle">粘贴抓包请求、导入接口文档、手工编辑后直接调试</span>
           </div>
           <div class="request-toolbar-actions">
-            <el-button size="small" :icon="CopyDocument" @click="showPasteDialog = true">粘贴数据</el-button>
+            <el-button size="small" :icon="MagicStick" @click="showPasteDialog = true">智能识别</el-button>
             <el-button size="small" :icon="Upload" @click="showImportDialog = true">导入文档</el-button>
           </div>
         </div>
@@ -157,7 +168,7 @@
           <span class="panel-title">分析与产出</span>
           <span class="panel-subtitle">AI 断言 / 健壮性 / 安全检查 / 用例沉淀</span>
         </div>
-        <el-button size="small" text :icon="Refresh" :loading="aiLoading" @click="runAiAnalysis">分析</el-button>
+        <el-button size="small" text :icon="Refresh" :loading="aiLoading" @click="runAiAnalysis(true)">分析</el-button>
       </div>
 
       <div v-if="!aiResult && !aiLoading" class="analysis-empty">
@@ -297,12 +308,12 @@ import {
   Upload,
   WarningFilled,
 } from '@element-plus/icons-vue'
-import { ElMessage } from 'element-plus'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
 import { terminalApi } from '@/api/terminal'
 import { parseRequest } from '@/utils/requestParser'
+import feedback from '@/utils/feedback'
 import AuthEditor from '@/components/terminal/AuthEditor.vue'
 import BodyEditor from '@/components/terminal/BodyEditor.vue'
 import KeyValueEditor from '@/components/terminal/KeyValueEditor.vue'
@@ -330,6 +341,7 @@ const activeTab = ref('params')
 const responseTab = ref('body')
 const sending = ref(false)
 const historyLoading = ref(false)
+const loadingRequestId = ref(null)
 const historyItems = ref([])
 const currentRequestId = ref(null)
 const currentRequest = ref(null)
@@ -421,32 +433,35 @@ function handlePaste(e) {
     const parsed = parseRequest(trimmed)
     fillRequestForm(parsed)
     if (parseWarnings.value.length) {
-      ElMessage.warning(`已解析 ${parseHint.value}，存在 ${parseWarnings.value.length} 项警告`)
+      feedback.warning(`已解析 ${parseHint.value}，存在 ${parseWarnings.value.length} 项警告`)
     } else {
-      ElMessage.success(`已解析 ${parseHint.value} 请求`)
+      feedback.success(`解析成功：${parseHint.value} 请求`)
     }
   }
 }
 
 function applyPastedSource() {
   if (!pastedSource.value.trim()) {
-    ElMessage.warning('请先粘贴内容')
+    feedback.warning('请先粘贴内容')
     return
   }
   const parsed = parseRequest(pastedSource.value)
   fillRequestForm(parsed)
   showPasteDialog.value = false
   if (parseWarnings.value.length) {
-    ElMessage.warning(`已解析 ${parseHint.value}，存在 ${parseWarnings.value.length} 项警告`)
+    feedback.warning(`已解析 ${parseHint.value}，存在 ${parseWarnings.value.length} 项警告`)
   } else {
-    ElMessage.success(`已解析 ${parseHint.value} 请求`)
+    feedback.success(`解析成功：${parseHint.value} 请求`)
   }
 }
 
-function clearParseHint() {
+function clearParseHint(showMessage = true) {
   parseHint.value = ''
   parseWarnings.value = []
   parsedHeaderCount.value = 0
+  if (showMessage) {
+    feedback.success('解析结果已清除')
+  }
 }
 
 async function loadImportDocument() {
@@ -458,9 +473,9 @@ async function loadImportDocument() {
       content_type: 'openapi',
     })
     importItems.value = res.data.items || []
-    ElMessage.success(`读取到 ${res.data.total} 个接口`)
+    feedback.success(`导入成功：读取到 ${res.data.total} 个接口`)
   } catch (err) {
-    ElMessage.error(err.response?.data?.detail || '读取文档失败')
+    feedback.error(err.response?.data?.detail || '读取文档失败')
   } finally {
     importingDocument.value = false
   }
@@ -476,14 +491,14 @@ function applyImportedItem(item) {
   requestForm.value.bodyType = 'none'
   requestForm.value.authType = 'none'
   requestForm.value.authConfig = {}
-  clearParseHint()
+  clearParseHint(false)
   showImportDialog.value = false
-  ElMessage.success('接口已导入到请求区')
+  feedback.success('导入成功，接口已填充到请求区')
 }
 
 async function sendRequest() {
   if (!requestForm.value.url) {
-    ElMessage.warning('请输入请求 URL')
+    feedback.warning('请输入请求 URL')
     return
   }
   sending.value = true
@@ -509,9 +524,12 @@ async function sendRequest() {
     currentRequest.value = res.data
     if (responseData.value?.error_message) {
       responseError.value = responseData.value.error_message
+    } else if ((responseData.value?.status_code || 0) >= 200 && (responseData.value?.status_code || 0) < 300) {
+      await runAiAnalysis()
     }
     parseHint.value = ''
     await loadHistory()
+    feedback.success('发送成功')
   } catch (err) {
     responseError.value = err.response?.data?.detail || err.message || '请求失败'
   } finally {
@@ -519,19 +537,26 @@ async function sendRequest() {
   }
 }
 
-async function loadHistory() {
+async function loadHistory(showMessage = false) {
   historyLoading.value = true
   try {
     const res = await terminalApi.getHistory({ page: 1, page_size: 100 })
     historyItems.value = res.data.items
+    if (showMessage) {
+      feedback.success('历史记录已刷新')
+    }
   } catch (err) {
     console.error('加载历史失败', err)
+    if (showMessage) {
+      feedback.error('刷新历史失败')
+    }
   } finally {
     historyLoading.value = false
   }
 }
 
 async function loadRequest(id) {
+  loadingRequestId.value = id
   try {
     const res = await terminalApi.getRequest(id)
     const data = res.data
@@ -550,34 +575,53 @@ async function loadRequest(id) {
     responseData.value = data.latest_result
     responseError.value = data.latest_result?.error_message || ''
     aiResult.value = null
-    clearParseHint()
+    clearParseHint(false)
+    feedback.success('历史记录加载成功')
   } catch (err) {
-    ElMessage.error('加载请求详情失败')
+    feedback.error('加载请求详情失败')
+  } finally {
+    loadingRequestId.value = null
   }
 }
 
 async function toggleFavorite() {
   if (!currentRequestId.value) return
   try {
-    await terminalApi.toggleFavorite(currentRequestId.value)
+    const res = await terminalApi.toggleFavorite(currentRequestId.value)
+    if (currentRequest.value) {
+      currentRequest.value.status = res.data.status
+    }
     await loadHistory()
-    ElMessage.success('操作成功')
+    feedback.success(res.data.status === 'favorite' ? '收藏成功' : '取消收藏成功')
   } catch (err) {
-    ElMessage.error('操作失败')
+    feedback.error('操作失败')
+  }
+}
+
+async function toggleFavoriteById(id) {
+  try {
+    const res = await terminalApi.toggleFavorite(id)
+    await loadHistory()
+    if (currentRequestId.value === id && currentRequest.value) {
+      currentRequest.value.status = res.data.status
+    }
+    feedback.success(res.data.status === 'favorite' ? '收藏成功' : '取消收藏成功')
+  } catch (err) {
+    feedback.error('收藏操作失败')
   }
 }
 
 function saveDraft() {
-  ElMessage.success('请求已保留在当前工作台')
+  feedback.success('保存成功')
 }
 
 async function copyResponse() {
   if (!responseData.value?.response_body) return
   try {
     await navigator.clipboard.writeText(responseData.value.response_body)
-    ElMessage.success('已复制')
+    feedback.success('已复制')
   } catch {
-    ElMessage.error('复制失败')
+    feedback.error('复制失败')
   }
 }
 
@@ -592,17 +636,17 @@ function downloadResponse() {
   a.click()
   document.body.removeChild(a)
   URL.revokeObjectURL(url)
-  ElMessage.success('下载成功')
+  feedback.success('下载成功')
 }
 
 function handleSaveToCaseSuccess() {
   showSaveToCaseDialog.value = false
-  ElMessage.success('已保存为用例')
+  feedback.success('已保存为用例')
 }
 
-async function runAiAnalysis() {
+async function runAiAnalysis(showMessage = false) {
   if (!responseData.value) {
-    ElMessage.warning('请先发送请求')
+    feedback.warning('请先发送请求')
     return
   }
   aiLoading.value = true
@@ -632,8 +676,11 @@ async function runAiAnalysis() {
         { name: 'CSRF 攻击', safe: false },
       ],
     }
+    if (showMessage) {
+      feedback.success('分析成功')
+    }
   } catch (err) {
-    ElMessage.error('分析失败')
+    feedback.error('分析失败')
   } finally {
     aiLoading.value = false
   }
@@ -812,15 +859,11 @@ watch(() => route.query.id, async (id) => {
 
 .history-item {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: 8px;
-  width: 100%;
-  padding: 9px 8px;
-  border: 0;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 6px;
+  align-items: center;
+  padding: 4px;
   border-radius: 9px;
-  color: var(--text-primary);
-  background: transparent;
-  text-align: left;
 }
 
 .history-item:hover,
@@ -830,6 +873,18 @@ watch(() => route.query.id, async (id) => {
 
 .history-item.active {
   box-shadow: inset 3px 0 0 var(--color-primary);
+}
+
+.history-item-main {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 8px;
+  width: 100%;
+  padding: 5px 4px;
+  border: 0;
+  color: var(--text-primary);
+  background: transparent;
+  text-align: left;
 }
 
 .item-main {
@@ -857,12 +912,22 @@ watch(() => route.query.id, async (id) => {
   font-size: 11px;
 }
 
+.item-loading {
+  margin-left: 8px;
+  color: var(--color-primary);
+}
+
 .item-meta {
   grid-column: 2;
   display: flex;
   gap: 8px;
   align-items: center;
   margin-top: 2px;
+}
+
+.favorite-toggle {
+  width: 28px;
+  padding: 0;
 }
 
 .item-status {

@@ -15,8 +15,9 @@
 
       <el-form-item label="用例类型">
         <el-radio-group v-model="caseForm.case_type" :disabled="!isNew">
-          <el-radio label="api">接口用例</el-radio>
-          <el-radio label="functional">功能用例</el-radio>
+          <el-radio v-for="item in caseTypeOptions" :key="item.code" :label="item.code">
+            {{ item.name }}
+          </el-radio>
         </el-radio-group>
       </el-form-item>
 
@@ -33,21 +34,18 @@
 
       <el-form-item label="优先级">
         <el-select v-model="caseForm.priority" style="width: 150px">
-          <el-option label="P0" value="P0" />
-          <el-option label="P1" value="P1" />
-          <el-option label="P2" value="P2" />
-          <el-option label="P3" value="P3" />
+          <el-option v-for="item in priorityOptions" :key="item.code" :label="item.name" :value="item.code" />
         </el-select>
       </el-form-item>
 
       <el-form-item label="标签">
         <el-select v-model="caseForm.tags" multiple placeholder="选择标签" style="width: 100%">
-          <el-option v-for="tag in availableTags" :key="tag" :label="tag" :value="tag" />
+          <el-option v-for="item in tagOptions" :key="item.code" :label="item.name" :value="item.code" />
         </el-select>
       </el-form-item>
 
       <el-form-item label="前置条件">
-        <el-input v-model="caseForm.pre_condition" type="textarea" :rows="2" placeholder="请输入前置条件" />
+        <RichTextEditor v-model="caseForm.pre_condition" />
       </el-form-item>
 
       <el-form-item label="描述">
@@ -66,8 +64,10 @@
 import { ref, computed, watch, onMounted } from 'vue'
 import { useCaseStore } from '@/stores/caseStore'
 import { caseApi } from '@/api/case'
+import { systemApi } from '@/api/system'
 import ApiCaseForm from './ApiCaseForm.vue'
 import FunctionalCaseForm from './FunctionalCaseForm.vue'
+import RichTextEditor from '@/components/common/RichTextEditor.vue'
 
 const props = defineProps({
   caseData: {
@@ -80,7 +80,25 @@ const emit = defineEmits(['saved', 'deleted'])
 
 const caseStore = useCaseStore()
 const folderTree = ref([])
-const availableTags = ['登录', '支付', '用户', '订单', '安全', '性能']
+const allDictionaries = ref([])
+
+const priorityOptions = computed(() =>
+  allDictionaries.value
+    .filter(d => d.category === 'priority')
+    .sort((a, b) => a.sort_order - b.sort_order)
+)
+
+const caseTypeOptions = computed(() =>
+  allDictionaries.value
+    .filter(d => d.category === 'case_type')
+    .sort((a, b) => a.sort_order - b.sort_order)
+)
+
+const tagOptions = computed(() =>
+  allDictionaries.value
+    .filter(d => d.category === 'tag')
+    .sort((a, b) => a.sort_order - b.sort_order)
+)
 
 const isNew = computed(() => !props.caseData?.id)
 const caseForm = ref({
@@ -124,6 +142,13 @@ async function loadFolders() {
   } catch {}
 }
 
+async function loadDictionaries() {
+  try {
+    const res = await systemApi.dictionaries.list()
+    allDictionaries.value = res.data
+  } catch {}
+}
+
 function buildTree(folders) {
   const map = {}
   const roots = []
@@ -160,6 +185,7 @@ function handleCancel() {
 
 onMounted(() => {
   loadFolders()
+  loadDictionaries()
 })
 </script>
 

@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, Field
 
 
 class TokenResponse(BaseModel):
@@ -18,7 +18,7 @@ class LoginRequest(BaseModel):
 
 class RegisterRequest(BaseModel):
     username: str = Field(..., min_length=2, max_length=100)
-    email: EmailStr
+    email: str
     password: str = Field(..., min_length=6)
 
 
@@ -28,7 +28,7 @@ class RefreshRequest(BaseModel):
 
 class UserCreate(BaseModel):
     username: str = Field(..., min_length=2, max_length=100)
-    email: EmailStr
+    email: str
     password: str = Field(..., min_length=6)
     display_name: str = ""
     phone: str = ""
@@ -37,7 +37,7 @@ class UserCreate(BaseModel):
 
 
 class UserUpdate(BaseModel):
-    email: Optional[EmailStr] = None
+    email: Optional[str] = None
     display_name: Optional[str] = None
     phone: Optional[str] = None
     status: Optional[str] = None
