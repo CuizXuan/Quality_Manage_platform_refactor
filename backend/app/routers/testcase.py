@@ -16,7 +16,7 @@ from app.schemas.test_case import (
 )
 from app.services.test_case_service import TestCaseService
 
-router = APIRouter(prefix="/api/testcase", tags=["用例管理"])
+router = APIRouter(prefix="/api/case", tags=["用例管理"])
 
 
 @router.post("", response_model=TestCaseResponse)
@@ -93,6 +93,20 @@ def delete_testcase(
     if not success:
         raise HTTPException(status_code=404, detail="Test case not found")
     return {"id": case_id}
+
+
+@router.post("/{case_id}/copy", response_model=TestCaseResponse)
+def copy_testcase(
+    case_id: int,
+    current_user: PlatformUser = Depends(get_current_platform_user),
+    db: Session = Depends(get_db),
+):
+    """Copy a test case."""
+    service = TestCaseService(db)
+    result = service.copy_case(case_id, current_user.id)
+    if not result:
+        raise HTTPException(status_code=404, detail="Test case not found")
+    return result
 
 
 @router.post("/{case_id}/variant", response_model=dict)
