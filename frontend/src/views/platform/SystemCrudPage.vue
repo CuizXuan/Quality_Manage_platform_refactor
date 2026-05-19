@@ -5,78 +5,98 @@
         <div>
           <span class="section-kicker">{{ kicker }}</span>
         </div>
-        <button class="primary-btn" type="button" @click="openCreate">{{ createLabel }}</button>
+        <el-button type="primary" @click="openCreate">{{ createLabel }}</el-button>
       </div>
 
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th v-for="field in visibleFields" :key="field.key">{{ field.label }}</th>
-            <th>操作</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="item in items" :key="item.id">
-            <td v-for="field in visibleFields" :key="field.key">
-              <span :class="cellClass(field)" :title="formatValue(item[field.key], field)">
-                {{ formatValue(item[field.key], field) }}
-              </span>
-            </td>
-            <td class="row-actions">
-              <button
-                v-for="action in actions"
-                :key="action.key"
-                type="button"
-                @click="$emit('action', { action, item })"
-              >
-                {{ action.label }}
-              </button>
-              <button type="button" @click="openEdit(item)">编辑</button>
-              <button type="button" @click="$emit('remove', item)">删除</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <el-table :data="items" border stripe class="crud-table">
+        <el-table-column
+          v-for="field in visibleFields"
+          :key="field.key"
+          :prop="field.key"
+          :label="field.label"
+          min-width="140"
+          show-overflow-tooltip
+        >
+          <template #default="{ row }">
+            <el-tag v-if="field.key === 'status'" :type="row[field.key] === 'active' ? 'success' : 'info'" effect="light">
+              {{ formatValue(row[field.key], field) }}
+            </el-tag>
+            <span v-else-if="field.key === 'permissions'" class="summary-pill">
+              {{ formatValue(row[field.key], field) }}
+            </span>
+            <span v-else>{{ formatValue(row[field.key], field) }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="220" fixed="right">
+          <template #default="{ row }">
+            <el-button
+              v-for="action in actions"
+              :key="action.key"
+              size="small"
+              text
+              type="primary"
+              @click="$emit('action', { action, item: row })"
+            >
+              {{ action.label }}
+            </el-button>
+            <el-button size="small" text type="primary" @click="openEdit(row)">编辑</el-button>
+            <el-button size="small" text type="danger" @click="$emit('remove', row)">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
     </section>
 
-    <div v-if="editing" class="drawer-mask" @click.self="editing = false">
-      <form class="editor-drawer" @submit.prevent="submit">
-        <h3>{{ form.id ? '编辑' : '新建' }}{{ title }}</h3>
-        <label v-for="field in editableFields" :key="field.key">
-          {{ field.label }}
-          <select v-if="field.type === 'select'" v-model="form[field.key]">
-            <option v-for="option in field.options" :key="optionValue(option)" :value="optionValue(option)">
-              {{ optionLabel(option) }}
-            </option>
-          </select>
-          <div v-else-if="field.type === 'checks'" class="check-grid">
-            <label v-for="option in field.options" :key="option.value" class="check-item">
-              <input v-model="form[field.key]" type="checkbox" :value="option.value" />
+    <el-drawer v-model="editing" :title="`${form.id ? '编辑' : '新建'}${title}`" size="420px">
+      <el-form :model="form" label-position="top" class="drawer-form" @submit.prevent>
+        <el-form-item v-for="field in editableFields" :key="field.key" :label="field.label" :required="field.required">
+          <el-select v-if="field.type === 'select'" v-model="form[field.key]" class="form-control">
+            <el-option
+              v-for="option in field.options"
+              :key="optionValue(option)"
+              :label="optionLabel(option)"
+              :value="optionValue(option)"
+            />
+          </el-select>
+
+          <el-checkbox-group v-else-if="field.type === 'checks'" v-model="form[field.key]" class="check-group">
+            <el-checkbox v-for="option in field.options" :key="option.value" :label="option.value">
               {{ option.label }}
-            </label>
-          </div>
-          <div v-else-if="field.type === 'icon'" class="icon-grid">
-            <label v-for="option in field.options" :key="option.value" class="icon-item">
-              <input v-model="form[field.key]" type="radio" :value="option.value" />
-              <span>{{ option.symbol }}</span>
+            </el-checkbox>
+          </el-checkbox-group>
+
+          <el-radio-group v-else-if="field.type === 'icon'" v-model="form[field.key]" class="icon-radio-group">
+            <el-radio-button v-for="option in field.options" :key="option.value" :label="option.value">
+              <span class="icon-option">{{ option.symbol }}</span>
               {{ option.label }}
-            </label>
-          </div>
-          <input
+            </el-radio-button>
+          </el-radio-group>
+
+          <el-input-number
+            v-else-if="field.type === 'number'"
+            v-model="form[field.key]"
+            class="form-control"
+            :min="field.min"
+            :max="field.max"
+          />
+
+          <el-input
             v-else
             v-model="form[field.key]"
             :disabled="!!form.id && field.createOnly"
-            :required="field.required"
-            :type="field.type || 'text'"
+            :type="field.type === 'password' ? 'password' : 'text'"
+            :show-password="field.type === 'password'"
             :placeholder="field.placeholder || ''"
           />
-        </label>
-        <div class="drawer-actions">
-          <button type="button" @click="editing = false">取消</button>
-          <button class="primary-btn" type="submit">保存</button>
+        </el-form-item>
+      </el-form>
+
+      <template #footer>
+        <div class="drawer-footer">
+          <el-button @click="editing = false">取消</el-button>
+          <el-button type="primary" @click="submit">保存</el-button>
         </div>
-      </form>
-    </div>
+      </template>
+    </el-drawer>
   </div>
 </template>
 
@@ -131,10 +151,6 @@ function formatValue(value, field) {
   return value ?? '-'
 }
 
-function cellClass(field) {
-  return field.key === 'permissions' ? 'summary-pill' : 'truncate-cell'
-}
-
 function optionValue(option) {
   return typeof option === 'object' ? option.value : option
 }
@@ -150,3 +166,43 @@ function cloneItem(item) {
   )
 }
 </script>
+
+<style scoped>
+.crud-table {
+  width: 100%;
+}
+
+.drawer-form {
+  padding-right: var(--spacing-sm);
+}
+
+.form-control {
+  width: 100%;
+}
+
+.check-group {
+  display: grid;
+  gap: var(--spacing-sm);
+}
+
+.icon-radio-group {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--spacing-sm);
+}
+
+.icon-radio-group :deep(.el-radio-button__inner) {
+  width: 100%;
+  text-align: left;
+}
+
+.icon-option {
+  margin-right: var(--spacing-xs);
+}
+
+.drawer-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-sm);
+}
+</style>

@@ -3,91 +3,109 @@
     <section class="panel">
       <div class="panel-head">
         <span class="section-kicker">Menus 菜单</span>
-        <button class="primary-btn" type="button" @click="openCreate()">新建菜单</button>
+        <el-button type="primary" @click="openCreate()">新建菜单</el-button>
       </div>
 
-      <table class="data-table tree-table">
-        <thead>
-          <tr>
-            <th>菜单名称</th>
-            <th>路径</th>
-            <th>图标</th>
-            <th>组件</th>
-            <th>权限编码</th>
-            <th>状态</th>
-            <th>操作</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="item in visibleMenus" :key="item.id">
-            <td>
-              <div class="tree-cell" :style="{ paddingLeft: `${item.level * 22}px` }">
-                <button
-                  v-if="item.children.length"
-                  class="tree-toggle"
-                  type="button"
-                  @click="toggleMenu(item.id)"
-                >
-                  {{ collapsedIds.has(item.id) ? '›' : '⌄' }}
-                </button>
-                <span v-else class="tree-toggle-placeholder"></span>
-                <span class="truncate-cell" :title="item.name">{{ item.name }}</span>
-              </div>
-            </td>
-            <td><span class="truncate-cell" :title="item.path">{{ item.path || '-' }}</span></td>
-            <td><span class="truncate-cell" :title="formatMenuIcon(item.icon)">{{ formatMenuIcon(item.icon) }}</span></td>
-            <td><span class="truncate-cell" :title="item.component">{{ item.component || '-' }}</span></td>
-            <td><span class="truncate-cell" :title="item.permission_code">{{ item.permission_code || '-' }}</span></td>
-            <td><span class="status-pill" :class="item.status">{{ formatStatus(item.status) }}</span></td>
-            <td class="row-actions">
-              <button type="button" @click="openCreate(item)">新增子级</button>
-              <button type="button" @click="openEdit(item)">编辑</button>
-              <button type="button" @click="removeMenu(item)">删除</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <el-table :data="visibleMenus" row-key="id" border stripe class="menu-table">
+        <el-table-column label="菜单名称" min-width="220">
+          <template #default="{ row }">
+            <div class="tree-cell" :style="{ paddingLeft: `${row.level * 22}px` }">
+              <el-button
+                v-if="row.children.length"
+                text
+                size="small"
+                class="tree-toggle"
+                @click.stop="toggleMenu(row.id)"
+              >
+                {{ collapsedIds.has(row.id) ? '›' : '⌄' }}
+              </el-button>
+              <span v-else class="tree-toggle-placeholder"></span>
+              <span class="text-ellipsis" :title="row.name">{{ row.name }}</span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="path" label="路径" min-width="150" show-overflow-tooltip>
+          <template #default="{ row }">{{ row.path || '-' }}</template>
+        </el-table-column>
+        <el-table-column label="图标" min-width="120" show-overflow-tooltip>
+          <template #default="{ row }">{{ formatMenuIcon(row.icon) }}</template>
+        </el-table-column>
+        <el-table-column prop="component" label="组件" min-width="130" show-overflow-tooltip>
+          <template #default="{ row }">{{ row.component || '-' }}</template>
+        </el-table-column>
+        <el-table-column prop="permission_code" label="权限编码" min-width="150" show-overflow-tooltip>
+          <template #default="{ row }">{{ row.permission_code || '-' }}</template>
+        </el-table-column>
+        <el-table-column prop="status" label="状态" width="100">
+          <template #default="{ row }">
+            <el-tag :type="row.status === 'active' ? 'success' : 'info'" effect="light">
+              {{ formatStatus(row.status) }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="230" fixed="right">
+          <template #default="{ row }">
+            <el-button size="small" text type="primary" @click="openCreate(row)">新增子级</el-button>
+            <el-button size="small" text type="primary" @click="openEdit(row)">编辑</el-button>
+            <el-button size="small" text type="danger" @click="removeMenu(row)">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
     </section>
 
-    <div v-if="editing" class="drawer-mask" @click.self="closeEditor">
-      <form class="editor-drawer" @submit.prevent="saveMenu">
-        <h3>{{ form.id ? '编辑菜单' : '新建菜单' }}</h3>
-        <label>上级菜单
-          <select v-model.number="form.parent_id">
-            <option :value="null">一级菜单</option>
-            <option v-for="item in parentOptions" :key="item.id" :value="item.id">
-              {{ '　'.repeat(item.level) }}{{ item.name }}
-            </option>
-          </select>
-        </label>
-        <label>菜单名称<input v-model="form.name" required /></label>
-        <label>菜单编码<input v-model="form.code" :disabled="!!form.id" required /></label>
-        <label>路径<input v-model="form.path" /></label>
-        <label>菜单图标
-          <div class="icon-grid">
-            <label v-for="option in menuIconOptions" :key="option.value" class="icon-item">
-              <input v-model="form.icon" type="radio" :value="option.value" />
-              <span>{{ option.symbol }}</span>
+    <el-drawer v-model="editing" :title="form.id ? '编辑菜单' : '新建菜单'" size="420px">
+      <el-form :model="form" label-position="top">
+        <el-form-item label="上级菜单">
+          <el-select v-model="form.parent_id" class="form-control">
+            <el-option :value="null" label="一级菜单" />
+            <el-option
+              v-for="item in parentOptions"
+              :key="item.id"
+              :label="`${'　'.repeat(item.level)}${item.name}`"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="菜单名称" required>
+          <el-input v-model="form.name" />
+        </el-form-item>
+        <el-form-item label="菜单编码" required>
+          <el-input v-model="form.code" :disabled="!!form.id" />
+        </el-form-item>
+        <el-form-item label="路径">
+          <el-input v-model="form.path" />
+        </el-form-item>
+        <el-form-item label="菜单图标">
+          <el-radio-group v-model="form.icon" class="icon-radio-group">
+            <el-radio-button v-for="option in menuIconOptions" :key="option.value" :label="option.value">
+              <span class="icon-option">{{ option.symbol }}</span>
               {{ option.label }}
-            </label>
-          </div>
-        </label>
-        <label>组件标识<input v-model="form.component" /></label>
-        <label>权限编码<input v-model="form.permission_code" /></label>
-        <label>状态
-          <select v-model="form.status">
-            <option v-for="option in statusOptions" :key="option.value" :value="option.value">
-              {{ option.label }}
-            </option>
-          </select>
-        </label>
-        <label>排序<input v-model.number="form.sort_order" type="number" /></label>
-        <div class="drawer-actions">
-          <button type="button" @click="closeEditor">取消</button>
-          <button class="primary-btn" type="submit">保存</button>
+            </el-radio-button>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="组件标识">
+          <el-input v-model="form.component" />
+        </el-form-item>
+        <el-form-item label="权限编码">
+          <el-input v-model="form.permission_code" />
+        </el-form-item>
+        <el-form-item label="状态">
+          <el-select v-model="form.status" class="form-control">
+            <el-option v-for="option in statusOptions" :key="option.value" :label="option.label" :value="option.value" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="排序">
+          <el-input-number v-model="form.sort_order" class="form-control" />
+        </el-form-item>
+      </el-form>
+
+      <template #footer>
+        <div class="drawer-footer">
+          <el-button @click="closeEditor">取消</el-button>
+          <el-button type="primary" @click="saveMenu">保存</el-button>
         </div>
-      </form>
-    </div>
+      </template>
+    </el-drawer>
   </div>
 </template>
 
@@ -223,3 +241,44 @@ function flattenAll(items) {
 
 onMounted(loadMenus)
 </script>
+
+<style scoped>
+.menu-table,
+.form-control {
+  width: 100%;
+}
+
+.tree-cell {
+  display: flex;
+  gap: var(--spacing-sm);
+  align-items: center;
+  min-width: 0;
+}
+
+.tree-toggle,
+.tree-toggle-placeholder {
+  width: 26px;
+  flex: 0 0 26px;
+}
+
+.icon-radio-group {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--spacing-sm);
+}
+
+.icon-radio-group :deep(.el-radio-button__inner) {
+  width: 100%;
+  text-align: left;
+}
+
+.icon-option {
+  margin-right: var(--spacing-xs);
+}
+
+.drawer-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-sm);
+}
+</style>
