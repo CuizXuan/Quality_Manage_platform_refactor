@@ -1,6 +1,6 @@
 <template>
   <div class="case-list-container">
-    <div class="header">
+    <div class="list-header">
       <el-input
         v-model="keyword"
         placeholder="搜索用例名称"
@@ -25,26 +25,25 @@
       <el-table-column prop="id" label="ID" width="80" />
       <el-table-column prop="name" label="用例名称" min-width="200">
         <template #default="{ row }">
-          <span class="case-name" :title="row.name">{{ row.name }}</span>
+          <span class="text-ellipsis" :title="row.name">{{ row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="method" label="方法" width="100">
+      <el-table-column prop="case_type" label="类型" width="100">
         <template #default="{ row }">
-          <el-tag :type="getMethodType(row.method)" size="small">{{ row.method }}</el-tag>
+          <el-tag :type="row.case_type === 'api' ? 'success' : 'warning'" size="small">
+            {{ row.case_type === 'api' ? '接口' : '功能' }}
+          </el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="url" label="URL" min-width="300">
+      <el-table-column prop="priority" label="优先级" width="80">
         <template #default="{ row }">
-          <span class="case-url" :title="row.url">{{ row.url }}</span>
+          <el-tag :type="getPriorityType(row.priority)" size="small">{{ row.priority }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="description" label="描述" min-width="150">
-        <template #default="{ row }">
-          <span class="case-desc" :title="row.description">{{ row.description || '-' }}</span>
-        </template>
-      </el-table-column>
+      <el-table-column prop="updated_at" label="更新时间" width="160" />
       <el-table-column label="操作" width="150" fixed="right">
         <template #default="{ row }">
+          <el-button type="primary" size="small" text @click.stop="handleCopy(row)">复制</el-button>
           <el-button type="danger" size="small" text @click.stop="handleDelete(row)">删除</el-button>
         </template>
       </el-table-column>
@@ -65,17 +64,14 @@
 
 <script setup>
 import { ref, onMounted, watch } from 'vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
 import { Search, Plus } from '@element-plus/icons-vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { useCaseStore } from '@/stores/caseStore'
+import { caseApi } from '@/api/case'
 
 const emit = defineEmits(['case-selected', 'create-case'])
 
 const props = defineProps({
-  caseType: {
-    type: String,
-    default: 'api'
-  },
   folderId: {
     type: Number,
     default: null
@@ -83,37 +79,18 @@ const props = defineProps({
 })
 
 const caseStore = useCaseStore()
-
 const keyword = ref('')
 const currentPage = ref(1)
 const currentPageSize = ref(20)
 
-const methodTypes = {
-  GET: '',
-  POST: 'success',
-  PUT: 'warning',
-  DELETE: 'danger',
-  PATCH: 'info',
+function getPriorityType(priority) {
+  const map = { P0: 'danger', P1: 'warning', P2: 'info', P3: '' }
+  return map[priority] || ''
 }
-
-function getMethodType(method) {
-  return methodTypes[method?.toUpperCase()] || ''
-}
-
-watch(() => props.caseType, () => {
-  currentPage.value = 1
-  loadCases()
-})
-
-watch(() => props.folderId, () => {
-  currentPage.value = 1
-  loadCases()
-})
 
 async function loadCases() {
   try {
     await caseStore.fetchCases({
-      case_type: props.caseType,
       folder_id: props.folderId || undefined,
       page: currentPage.value,
       page_size: currentPageSize.value,
@@ -144,15 +121,23 @@ function handleRowClick(row) {
   emit('case-selected', row)
 }
 
-async function handleCreate() {
+function handleCreate() {
   emit('create-case')
+}
+
+async function handleCopy(row) {
+  try {
+    await caseApi.copy(row.id)
+    ElMessage.success('复制成功')
+    loadCases()
+  } catch {
+    ElMessage.error('复制失败')
+  }
 }
 
 async function handleDelete(row) {
   try {
-    await ElMessageBox.confirm(`确定删除用例 "${row.name}" 吗？`, '确认删除', {
-      type: 'warning',
-    })
+    await ElMessageBox.confirm(`确定删除用例 "${row.name}" 吗？`, '确认删除', { type: 'warning' })
     await caseStore.deleteCase(row.id)
     ElMessage.success('删除成功')
     if (caseStore.cases.length === 0 && currentPage.value > 1) {
@@ -166,29 +151,33 @@ async function handleDelete(row) {
   }
 }
 
+watch(() => props.folderId, () => {
+  currentPage.value = 1
+  loadCases()
+})
+
 onMounted(() => {
   loadCases()
 })
 
-defineExpose({
-  reload: loadCases,
-})
+defineExpose({ reload: loadCases })
 </script>
 
 <style scoped>
 .case-list-container {
   padding: 16px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
-.header {
+.list-header {
   display: flex;
   justify-content: space-between;
   margin-bottom: 16px;
 }
 
-.case-name,
-.case-url,
-.case-desc {
+.text-ellipsis {
   display: block;
   overflow: hidden;
   text-overflow: ellipsis;
