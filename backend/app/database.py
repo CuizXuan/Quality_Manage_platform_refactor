@@ -51,13 +51,23 @@ def _run_migrations():
 
     db = Session(bind=engine)
     try:
-        # Check if test_cases.case_type column exists
+        # Check test_cases table columns
         result = db.execute(text("PRAGMA table_info(test_cases)"))
         columns = [row[1] for row in result.fetchall()]
 
         if 'case_type' not in columns:
             db.execute(text("ALTER TABLE test_cases ADD COLUMN case_type VARCHAR(20) DEFAULT 'api'"))
-            db.commit()
+
+        if 'priority' not in columns:
+            db.execute(text("ALTER TABLE test_cases ADD COLUMN priority VARCHAR(10) DEFAULT 'P2'"))
+
+        if 'tags' not in columns:
+            db.execute(text("ALTER TABLE test_cases ADD COLUMN tags TEXT DEFAULT '[]'"))
+
+        if 'pre_condition' not in columns:
+            db.execute(text("ALTER TABLE test_cases ADD COLUMN pre_condition TEXT DEFAULT ''"))
+
+        db.commit()
     except Exception:
         db.rollback()
         raise
