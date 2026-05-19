@@ -1,5 +1,10 @@
 <template>
   <div class="case-sidebar">
+    <div class="sidebar-header">
+      <span class="sidebar-title">用例分类</span>
+      <el-button size="small" :icon="Plus" @click="handleCreateFolder">新建</el-button>
+    </div>
+
     <div class="folder-search">
       <el-input
         v-model="searchKeyword"
@@ -17,50 +22,59 @@
         node-key="id"
         :expand-on-click-node="false"
         :filter-node-method="filterNode"
+        :default-expand-all="true"
         ref="treeRef"
         @node-click="handleNodeClick"
       >
         <template #default="{ node, data }">
           <span class="folder-node">
             <el-icon><Folder /></el-icon>
-            <span>{{ node.label }}</span>
-            <span class="case-count">({{ data.case_count || 0 }})</span>
+            <span class="folder-name">{{ node.label }}</span>
           </span>
         </template>
       </el-tree>
     </div>
 
-    <div class="sidebar-footer">
-      <el-button size="small" :icon="Plus" @click="handleCreateFolder">新建分类</el-button>
-    </div>
+    <el-dialog v-model="showFolderDialog" title="新建分类" width="400px">
+      <el-form :model="folderForm" label-width="80px">
+        <el-form-item label="分类名称">
+          <el-input v-model="folderForm.name" placeholder="请输入分类名称" />
+        </el-form-item>
+        <el-form-item label="上级分类">
+          <el-tree-select
+            v-model="folderForm.parent_id"
+            :data="folderTree"
+            :props="{ label: 'name', value: 'id' }"
+            placeholder="选择上级分类（可选）"
+            clearable
+          />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="showFolderDialog = false">取消</el-button>
+        <el-button type="primary" @click="handleDoCreateFolder">确定</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { ref, onMounted } from 'vue'
 import { Search, Folder, Plus } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { caseApi } from '@/api/case'
-
-const route = useRoute()
 
 const emit = defineEmits(['folder-selected'])
 
 const searchKeyword = ref('')
 const folderTree = ref([])
 const treeRef = ref(null)
-
-// caseType 由路由路径决定：/case/functional 或 /case/api
-const caseType = route.path.includes('functional') ? 'functional' : 'api'
-
-watch(() => route.path, () => {
-  loadFolders()
-}, { immediate: true })
+const showFolderDialog = ref(false)
+const folderForm = ref({ name: '', parent_id: null })
 
 async function loadFolders() {
   try {
-    const res = await caseApi.listFolders({ case_type: caseType })
+    const res = await caseApi.listFolders({})
     folderTree.value = buildTree(res.data.items)
   } catch {
     ElMessage.error('加载分类失败')
@@ -92,21 +106,35 @@ function handleNodeClick(data) {
   emit('folder-selected', data.id)
 }
 
-watch(searchKeyword, (val) => {
-  treeRef.value?.filter(val)
-})
-
 function handleCreateFolder() {
-  // TODO: 弹出创建分类对话框
+  folderForm.value = { name: '', parent_id: null }
+  showFolderDialog.value = true
 }
 
-defineExpose({
-  reload: loadFolders,
+async function handleDoCreateFolder() {
+  if (!folderForm.value.name) {
+    ElMessage.warning('请输入分类名称')
+    return
+  }
+  try {
+    await caseApi.createFolder(folderForm.value)
+    ElMessage.success('创建成功')
+    showFolderDialog.value = false
+    loadFolders()
+  } catch {
+    ElMessage.error('创建失败')
+  }
+}
+
+watch(searchKeyword, (val) => {
+  treeRef.value?.filter(val)
 })
 
 onMounted(() => {
   loadFolders()
 })
+
+defineExpose({ reload: loadFolders })
 </script>
 
 <style scoped>
@@ -114,7 +142,19 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: var(--bg-container);
+}
+
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.sidebar-title {
+  font-weight: 600;
+  color: var(--text-primary);
 }
 
 .folder-search {
@@ -131,16 +171,10 @@ onMounted(() => {
 .folder-node {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
 }
 
-.case-count {
-  color: var(--text-secondary);
-  font-size: 12px;
-}
-
-.sidebar-footer {
-  padding: 8px 12px;
-  border-top: 1px solid var(--border-color);
+.folder-name {
+  color: var(--text-primary);
 }
 </style>
