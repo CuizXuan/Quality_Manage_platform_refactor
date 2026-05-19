@@ -44,7 +44,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import { Search, Folder, Plus } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { caseApi } from '@/api/case'
