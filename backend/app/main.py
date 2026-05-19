@@ -4,6 +4,9 @@ from fastapi.responses import JSONResponse
 
 from app.database import init_db
 from app.routers import platform_auth, platform_system
+from app.routers.terminal import router as terminal_router
+from app.routers.testcase import router as testcase_router
+from app.routers.case_folder import router as case_folder_router
 
 app = FastAPI(title="Quality Manage Platform", version="2.0.0")
 
@@ -23,6 +26,9 @@ app.add_middleware(
 
 app.include_router(platform_auth.router)
 app.include_router(platform_system.router)
+app.include_router(terminal_router)
+app.include_router(testcase_router)
+app.include_router(case_folder_router)
 
 
 @app.on_event("startup")

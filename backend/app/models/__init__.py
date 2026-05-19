@@ -7,6 +7,9 @@ from app.models.platform import (
     PlatformUser,
     PlatformUserRole,
 )
+from app.models.terminal import DebugRequest, DebugResult
+from app.models.test_case import CaseVariant, TestCase
+from app.models.case_folder import CaseFolder
 
 __all__ = [
     "Base",
@@ -16,4 +19,9 @@ __all__ = [
     "PlatformUserRole",
     "PlatformPermission",
     "PlatformMenu",
+    "DebugRequest",
+    "DebugResult",
+    "TestCase",
+    "CaseVariant",
+    "CaseFolder",
 ]
