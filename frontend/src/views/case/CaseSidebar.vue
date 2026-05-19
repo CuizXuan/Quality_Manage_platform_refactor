@@ -1,12 +1,5 @@
 <template>
   <div class="case-sidebar">
-    <div class="sidebar-tabs">
-      <el-tabs v-model="activeTab" @tab-change="handleTabChange">
-        <el-tab-pane label="功能测试" name="functional" />
-        <el-tab-pane label="接口测试" name="api" />
-      </el-tabs>
-    </div>
-
     <div class="folder-search">
       <el-input
         v-model="searchKeyword"
@@ -45,37 +38,29 @@
 
 <script setup>
 import { ref, watch, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 import { Search, Folder, Plus } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { caseApi } from '@/api/case'
 
-const props = defineProps({
-  caseType: {
-    type: String,
-    default: 'api'
-  }
-})
+const route = useRoute()
 
-const emit = defineEmits(['folder-selected', 'case-type-change'])
+const emit = defineEmits(['folder-selected'])
 
-const activeTab = ref(props.caseType)
 const searchKeyword = ref('')
 const folderTree = ref([])
 const treeRef = ref(null)
 
-watch(() => props.caseType, (newType) => {
-  activeTab.value = newType
+// caseType 由路由路径决定：/case/functional 或 /case/api
+const caseType = route.path.includes('functional') ? 'functional' : 'api'
+
+watch(() => route.path, () => {
   loadFolders()
 }, { immediate: true })
 
-function handleTabChange(tab) {
-  emit('case-type-change', tab)
-  loadFolders()
-}
-
 async function loadFolders() {
   try {
-    const res = await caseApi.listFolders({ case_type: activeTab.value })
+    const res = await caseApi.listFolders({ case_type: caseType })
     folderTree.value = buildTree(res.data.items)
   } catch {
     ElMessage.error('加载分类失败')
@@ -130,11 +115,6 @@ onMounted(() => {
   flex-direction: column;
   height: 100%;
   background: var(--bg-container);
-}
-
-.sidebar-tabs {
-  padding: 8px 12px;
-  border-bottom: 1px solid var(--border-color);
 }
 
 .folder-search {

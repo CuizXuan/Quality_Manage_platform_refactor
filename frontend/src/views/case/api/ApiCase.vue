@@ -1,7 +1,7 @@
 <template>
   <div class="case-page">
     <aside class="case-sidebar">
-      <CaseSidebar case-type="api" @folder-selected="handleFolderSelected" @case-type-change="handleCaseTypeChange" />
+      <CaseSidebar @folder-selected="handleFolderSelected" />
     </aside>
     <main class="case-list">
       <CaseList ref="caseListRef" :case-type="caseType" :folder-id="currentFolderId" @case-selected="handleCaseSelected" @create-case="handleCreateCase" />
@@ -25,12 +25,6 @@ const caseListRef = ref(null)
 
 function handleFolderSelected(folderId) {
   currentFolderId.value = folderId
-}
-
-function handleCaseTypeChange(type) {
-  caseType.value = type
-  currentFolderId.value = null
-  selectedCase.value = null
 }
 
 function handleCaseSelected(caseItem) {
