@@ -1,9 +1,11 @@
 <template>
-  <el-drawer
+  <el-dialog
     v-model="visible"
     :title="isEdit ? '编辑缺陷' : '新建缺陷'"
-    size="600px"
-    :before-close="handleClose"
+    top="4vh"
+    width="min(600px, 92vw)"
+    destroy-on-close
+    append-to-body
   >
     <el-form :model="defectForm" label-width="100px" class="defect-form">
       <el-form-item label="缺陷标题" required>
@@ -49,12 +51,10 @@
     </el-form>
 
     <template #footer>
-      <div style="display: flex; justify-content: flex-end; gap: 8px">
-        <el-button @click="handleClose">取消</el-button>
-        <el-button type="primary" :loading="saving" @click="handleSubmit">保存</el-button>
-      </div>
+      <el-button @click="handleClose">取消</el-button>
+      <el-button type="primary" :loading="saving" @click="handleSubmit">保存</el-button>
     </template>
-  </el-drawer>
+  </el-dialog>
 </template>
 
 <script setup>
@@ -131,13 +131,14 @@ async function handleSubmit() {
   try {
     if (isEdit.value) {
       await reportStore.updateDefect(props.defect.id, defectForm.value)
+      ElMessage.success('更新成功')
     } else {
       await reportStore.createDefect(defectForm.value)
+      ElMessage.success('创建成功')
     }
-    ElMessage.success(isEdit.value ? '更新成功' : '创建成功')
     emit('saved')
   } catch {
-    // error handled in store
+    ElMessage.error('保存失败')
   } finally {
     saving.value = false
   }
@@ -145,7 +146,7 @@ async function handleSubmit() {
 </script>
 
 <style scoped>
-.defect-form {
-  padding-right: var(--spacing-md);
+.defect-form :deep(.el-form-item) {
+  margin-bottom: 16px;
 }
 </style>

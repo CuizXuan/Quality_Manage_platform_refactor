@@ -21,17 +21,28 @@
       </div>
       <div class="info-row">
         <span class="info-label">内容类型</span>
-        <span class="info-value">{{ getContentType(response.response_headers) }}</span>
+        <OverflowText
+          :text="getContentType(response.response_headers)"
+          class="info-value"
+          mono
+          :rows="2"
+        />
       </div>
       <div v-if="response.error_message" class="info-row">
         <span class="info-label">错误信息</span>
-        <span class="info-value error">{{ response.error_message }}</span>
+        <OverflowText
+          :text="response.error_message"
+          class="info-value error"
+          :rows="3"
+        />
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
+import OverflowText from '@/components/common/OverflowText.vue'
+
 const props = defineProps({
   response: { type: Object, default: () => ({}) },
   requestId: { type: [Number, String], default: null },
@@ -105,8 +116,12 @@ function getContentType(headers) {
 }
 
 .info-value {
+  flex: 1;
+  min-width: 0;
   color: var(--text-strong);
   font-family: var(--font-mono);
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .info-value.success { color: var(--el-color-success); }

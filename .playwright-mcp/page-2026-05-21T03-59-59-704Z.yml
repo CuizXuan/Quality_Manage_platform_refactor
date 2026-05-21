@@ -1,0 +1,737 @@
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]: Q
+      - generic [ref=e7]:
+        - strong [ref=e8]: Quality Platform
+        - generic [ref=e9]: Command Center
+    - menubar [ref=e10]:
+      - menuitem "工作台" [ref=e11] [cursor=pointer]:
+        - img [ref=e13]
+        - text: 工作台
+      - menuitem "工具" [expanded] [ref=e15]:
+        - generic [ref=e16] [cursor=pointer]:
+          - img [ref=e18]
+          - generic [ref=e20]: 工具
+          - img [ref=e22]
+        - menu [ref=e24]:
+          - menuitem "终端调试台" [ref=e25] [cursor=pointer]:
+            - img [ref=e27]
+            - text: 终端调试台
+          - menuitem "用例管理" [ref=e30] [cursor=pointer]:
+            - img [ref=e32]
+            - text: 用例管理
+      - menuitem "测试执行" [ref=e34]:
+        - generic [ref=e35] [cursor=pointer]:
+          - img [ref=e37]
+          - generic [ref=e39]: 测试执行
+          - img [ref=e41]
+      - menuitem "质量中心" [ref=e43]:
+        - generic [ref=e44] [cursor=pointer]:
+          - img [ref=e46]
+          - generic [ref=e49]: 质量中心
+          - img [ref=e51]
+      - menuitem "AI 中枢" [ref=e53]:
+        - generic [ref=e54] [cursor=pointer]:
+          - img [ref=e56]
+          - generic [ref=e58]: AI 中枢
+          - img [ref=e60]
+      - menuitem "系统管理" [ref=e62]:
+        - generic [ref=e63] [cursor=pointer]:
+          - img [ref=e65]
+          - generic [ref=e67]: 系统管理
+          - img [ref=e69]
+  - generic [ref=e71]:
+    - generic [ref=e72]:
+      - generic [ref=e73]:
+        - button [ref=e74] [cursor=pointer]:
+          - img [ref=e76]
+        - navigation "面包屑" [ref=e78]:
+          - generic [ref=e79]:
+            - link "工具" [ref=e80]
+            - text: /
+          - link "用例管理" [ref=e82]
+      - generic [ref=e83]:
+        - generic [ref=e84]:
+          - generic [ref=e85]: 环境
+          - generic [ref=e87] [cursor=pointer]:
+            - generic:
+              - combobox [ref=e89]
+              - generic [ref=e90]: 本地环境
+            - img [ref=e93]
+        - button [ref=e95] [cursor=pointer]:
+          - img [ref=e97]
+        - button "个人中心：系统管理员" [ref=e99] [cursor=pointer]:
+          - img [ref=e101]
+        - button "退出登录" [ref=e103] [cursor=pointer]:
+          - img [ref=e105]
+    - main [ref=e108]:
+      - generic [ref=e109]:
+        - generic [ref=e111]:
+          - heading "用例管理" [level=1] [ref=e112]
+          - paragraph [ref=e113]: 统计区、筛选区与资产列表分层呈现，实时度量自动化覆盖情况。
+        - generic [ref=e114]:
+          - article [ref=e115]:
+            - generic [ref=e116]:
+              - generic [ref=e117]: 总用例数
+              - img [ref=e119]
+            - strong [ref=e121]: "17"
+            - generic [ref=e122]: 当前视图 17
+          - article [ref=e123]:
+            - generic [ref=e124]:
+              - generic [ref=e125]: 接口用例数
+              - img [ref=e127]
+            - strong [ref=e130]: "17"
+            - generic [ref=e131]: 占比 100.0%
+          - article [ref=e132]:
+            - generic [ref=e133]:
+              - generic [ref=e134]: 功能用例数
+              - img [ref=e136]
+            - strong [ref=e138]: "0"
+            - generic [ref=e139]: 占比 0.0%
+          - article [ref=e140]:
+            - generic [ref=e141]:
+              - generic [ref=e142]: 自动化覆盖率
+              - img [ref=e144]
+            - strong [ref=e146]: 5.9%
+            - generic [ref=e147]: 已自动化 1
+        - generic [ref=e148]:
+          - tablist [ref=e152]:
+            - tab "接口用例" [selected] [ref=e154]
+            - tab "功能用例" [ref=e155]
+          - tabpanel "接口用例" [ref=e157]:
+            - generic [ref=e158]:
+              - complementary [ref=e159]:
+                - generic [ref=e160]:
+                  - generic [ref=e161]:
+                    - generic [ref=e162]:
+                      - generic [ref=e163]: 接口分类
+                      - generic [ref=e164]: 按系统模块维护接口
+                    - button [ref=e165] [cursor=pointer]:
+                      - img [ref=e167]
+                  - generic [ref=e171]:
+                    - img [ref=e174]
+                    - textbox "搜索分类" [ref=e176]
+                  - tree [ref=e180]:
+                    - treeitem "全部分类" [expanded] [ref=e181]:
+                      - generic [ref=e182] [cursor=pointer]:
+                        - img [ref=e184]
+                        - generic [ref=e186]:
+                          - img [ref=e188]
+                          - generic [ref=e190]: 全部分类
+                      - group [ref=e191]:
+                        - treeitem "一级目录" [expanded] [ref=e192]:
+                          - generic [ref=e193] [cursor=pointer]:
+                            - img [ref=e195]
+                            - generic [ref=e197]:
+                              - img [ref=e199]
+                              - generic [ref=e201]: 一级目录
+                          - group [ref=e202]:
+                            - treeitem "二级目录" [expanded] [ref=e203]:
+                              - generic [ref=e205] [cursor=pointer]:
+                                - img [ref=e207]
+                                - generic [ref=e209]: 二级目录
+                              - group
+                        - treeitem "Test Folder API" [expanded] [ref=e210]:
+                          - generic [ref=e212] [cursor=pointer]:
+                            - img [ref=e214]
+                            - generic [ref=e216]: Test Folder API
+                          - group
+              - main [ref=e217]:
+                - generic [ref=e218]:
+                  - generic [ref=e221]:
+                    - generic [ref=e223]:
+                      - generic [ref=e224]: 请求方式：
+                      - generic [ref=e227] [cursor=pointer]:
+                        - generic:
+                          - combobox "请求方式：" [ref=e229]
+                          - generic [ref=e230]: 请求方式
+                        - img [ref=e233]
+                    - generic [ref=e236]:
+                      - generic [ref=e237]: 优先级：
+                      - generic [ref=e240] [cursor=pointer]:
+                        - generic:
+                          - combobox "优先级：" [ref=e242]
+                          - generic [ref=e243]: 优先级
+                        - img [ref=e246]
+                    - generic [ref=e249]:
+                      - generic [ref=e250]: 自动化：
+                      - generic [ref=e253] [cursor=pointer]:
+                        - generic:
+                          - combobox "自动化：" [ref=e255]
+                          - generic [ref=e256]: 自动化状态
+                        - img [ref=e259]
+                    - generic [ref=e262]:
+                      - generic [ref=e263]: 创建日期：
+                      - generic [ref=e265]:
+                        - img [ref=e267]
+                        - combobox "创建日期：" [ref=e269]
+                        - generic [ref=e270]: 至
+                        - combobox "结束日期" [ref=e271]
+                  - generic [ref=e272]:
+                    - generic [ref=e273]:
+                      - generic [ref=e274]: 关键词：
+                      - generic [ref=e277]:
+                        - img [ref=e280]
+                        - textbox "关键词：" [ref=e282]:
+                          - /placeholder: 搜索用例名称
+                    - generic [ref=e283]:
+                      - button "查询" [ref=e284] [cursor=pointer]:
+                        - img [ref=e286]
+                        - generic [ref=e288]: 查询
+                      - button "重置" [ref=e289] [cursor=pointer]:
+                        - img [ref=e291]
+                        - generic [ref=e293]: 重置
+                      - button "新增接口用例" [ref=e294] [cursor=pointer]:
+                        - img [ref=e296]
+                        - generic [ref=e298]: 新增接口用例
+                - generic [ref=e299]:
+                  - generic [ref=e302]:
+                    - table [ref=e304]:
+                      - rowgroup [ref=e316]:
+                        - row "选择所有行 编号 / 用例名称 Method 按 Method 排序 URL 按 URL 排序 描述 优先级 按 优先级 排序 自动化 更新时间 按 更新时间 排序 创建人 操作" [ref=e317]:
+                          - columnheader "选择所有行" [ref=e318]:
+                            - generic "选择所有行" [ref=e320] [cursor=pointer]:
+                              - generic [ref=e321]:
+                                - checkbox "选择所有行"
+                          - columnheader "编号 / 用例名称" [ref=e323]:
+                            - generic [ref=e324]: 编号 / 用例名称
+                          - columnheader "Method 按 Method 排序" [ref=e325] [cursor=pointer]:
+                            - generic [ref=e326]:
+                              - text: Method
+                              - button "按 Method 排序" [ref=e327]
+                          - columnheader "URL 按 URL 排序" [ref=e330] [cursor=pointer]:
+                            - generic [ref=e331]:
+                              - text: URL
+                              - button "按 URL 排序" [ref=e332]
+                          - columnheader "描述" [ref=e335]:
+                            - generic [ref=e336]: 描述
+                          - columnheader "优先级 按 优先级 排序" [ref=e337] [cursor=pointer]:
+                            - generic [ref=e338]:
+                              - text: 优先级
+                              - button "按 优先级 排序" [ref=e339]
+                          - columnheader "自动化" [ref=e342]:
+                            - generic [ref=e343]: 自动化
+                          - columnheader "更新时间 按 更新时间 排序" [ref=e344] [cursor=pointer]:
+                            - generic [ref=e345]:
+                              - text: 更新时间
+                              - button "按 更新时间 排序" [ref=e346]
+                          - columnheader "创建人" [ref=e349]:
+                            - generic [ref=e350]: 创建人
+                          - columnheader "操作" [ref=e351]:
+                            - generic [ref=e352]: 操作
+                    - table [ref=e357]:
+                      - rowgroup [ref=e369]:
+                        - row "选择当前行 API-CASE-017 Playwright自动化测试用例 GET http://localhost:3000/api/test - ● P2 未自动化 2026-05-21 03:58 系统管理员 编辑 复制 删除" [ref=e1882]:
+                          - cell "选择当前行" [ref=e1883]:
+                            - generic "选择当前行" [ref=e1885] [cursor=pointer]:
+                              - generic [ref=e1886]:
+                                - checkbox "选择当前行"
+                          - cell "API-CASE-017 Playwright自动化测试用例" [ref=e1888]:
+                            - generic [ref=e1890]:
+                              - generic [ref=e1891]: API-CASE-017
+                              - button "Playwright自动化测试用例" [ref=e1892] [cursor=pointer]
+                          - cell "GET" [ref=e1893]:
+                            - generic [ref=e1895]: GET
+                          - cell "http://localhost:3000/api/test" [ref=e1896]:
+                            - generic [ref=e1898]: http://localhost:3000/api/test
+                          - cell "-" [ref=e1899]:
+                            - generic [ref=e1901]: "-"
+                          - cell "● P2" [ref=e1902]:
+                            - generic [ref=e1904]: ● P2
+                          - cell "未自动化" [ref=e1905]:
+                            - generic [ref=e1907]:
+                              - switch
+                              - generic [ref=e1911] [cursor=pointer]: 未自动化
+                          - cell "2026-05-21 03:58" [ref=e1913]:
+                            - generic [ref=e1914]: 2026-05-21 03:58
+                          - cell "系统管理员" [ref=e1915]:
+                            - generic [ref=e1917]: 系统管理员
+                          - cell "编辑 复制 删除" [ref=e1918]:
+                            - generic [ref=e1920]:
+                              - button "编辑" [active] [ref=e1921] [cursor=pointer]:
+                                - generic [ref=e1922]: 编辑
+                              - button "复制" [ref=e1923] [cursor=pointer]:
+                                - generic [ref=e1924]: 复制
+                              - button "删除" [ref=e1925] [cursor=pointer]:
+                                - generic [ref=e1926]: 删除
+                        - 'row "选择当前行 #16 测试 GET http://localhost:3000/case 测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试 ● P2 已自动化 2026-05-21 03:38 系统管理员 编辑 复制 删除" [ref=e370]':
+                          - cell "选择当前行" [ref=e371]:
+                            - generic "选择当前行" [ref=e373] [cursor=pointer]:
+                              - generic [ref=e374]:
+                                - checkbox "选择当前行"
+                          - cell "#16 测试" [ref=e376]:
+                            - generic [ref=e378]:
+                              - generic [ref=e379]: "#16"
+                              - button "测试" [ref=e380] [cursor=pointer]
+                          - cell "GET" [ref=e381]:
+                            - generic [ref=e383]: GET
+                          - cell "http://localhost:3000/case" [ref=e384]:
+                            - generic [ref=e386]: http://localhost:3000/case
+                          - cell "测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试" [ref=e387]:
+                            - generic [ref=e389]: 测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试
+                          - cell "● P2" [ref=e390]:
+                            - generic [ref=e392]: ● P2
+                          - cell "已自动化" [ref=e393]:
+                            - generic [ref=e395]:
+                              - switch [checked]
+                              - generic [ref=e399] [cursor=pointer]: 已自动化
+                          - cell "2026-05-21 03:38" [ref=e401]:
+                            - generic [ref=e402]: 2026-05-21 03:38
+                          - cell "系统管理员" [ref=e403]:
+                            - generic [ref=e405]: 系统管理员
+                          - cell "编辑 复制 删除" [ref=e406]:
+                            - generic [ref=e408]:
+                              - button "编辑" [ref=e409] [cursor=pointer]:
+                                - generic [ref=e410]: 编辑
+                              - button "复制" [ref=e411] [cursor=pointer]:
+                                - generic [ref=e412]: 复制
+                              - button "删除" [ref=e413] [cursor=pointer]:
+                                - generic [ref=e414]: 删除
+                        - 'row "选择当前行 #15 page GET http://map.geoshare.com.cn/geoshareClient/TaskManage - ● P2 未自动化 2026-05-21 02:19 系统管理员 编辑 复制 删除" [ref=e1119]':
+                          - cell "选择当前行" [ref=e1120]:
+                            - generic "选择当前行" [ref=e1122] [cursor=pointer]:
+                              - generic [ref=e1123]:
+                                - checkbox "选择当前行"
+                          - cell "#15 page" [ref=e1125]:
+                            - generic [ref=e1127]:
+                              - generic [ref=e1128]: "#15"
+                              - button "page" [ref=e1129] [cursor=pointer]
+                          - cell "GET" [ref=e1130]:
+                            - generic [ref=e1132]: GET
+                          - cell "http://map.geoshare.com.cn/geoshareClient/TaskManage" [ref=e1133]:
+                            - generic [ref=e1135]: http://map.geoshare.com.cn/geoshareClient/TaskManage
+                          - cell "-" [ref=e1136]:
+                            - generic [ref=e1138]: "-"
+                          - cell "● P2" [ref=e1139]:
+                            - generic [ref=e1141]: ● P2
+                          - cell "未自动化" [ref=e1142]:
+                            - generic [ref=e1144]:
+                              - switch
+                              - generic [ref=e1148] [cursor=pointer]: 未自动化
+                          - cell "2026-05-21 02:19" [ref=e1150]:
+                            - generic [ref=e1151]: 2026-05-21 02:19
+                          - cell "系统管理员" [ref=e1152]:
+                            - generic [ref=e1154]: 系统管理员
+                          - cell "编辑 复制 删除" [ref=e1155]:
+                            - generic [ref=e1157]:
+                              - button "编辑" [ref=e1158] [cursor=pointer]:
+                                - generic [ref=e1159]: 编辑
+                              - button "复制" [ref=e1160] [cursor=pointer]:
+                                - generic [ref=e1161]: 复制
+                              - button "删除" [ref=e1162] [cursor=pointer]:
+                                - generic [ref=e1163]: 删除
+                        - 'row "选择当前行 #4 分页-任务管理 GET 11 测试 ● P2 未自动化 2026-05-20 16:56 系统管理员 编辑 复制 删除" [ref=e1164]':
+                          - cell "选择当前行" [ref=e1165]:
+                            - generic "选择当前行" [ref=e1167] [cursor=pointer]:
+                              - generic [ref=e1168]:
+                                - checkbox "选择当前行"
+                          - cell "#4 分页-任务管理" [ref=e1170]:
+                            - generic [ref=e1172]:
+                              - generic [ref=e1173]: "#4"
+                              - button "分页-任务管理" [ref=e1174] [cursor=pointer]
+                          - cell "GET" [ref=e1175]:
+                            - generic [ref=e1177]: GET
+                          - cell "11" [ref=e1178]:
+                            - generic [ref=e1180]: "11"
+                          - cell "测试" [ref=e1181]:
+                            - generic [ref=e1183]: 测试
+                          - cell "● P2" [ref=e1184]:
+                            - generic [ref=e1186]: ● P2
+                          - cell "未自动化" [ref=e1187]:
+                            - generic [ref=e1189]:
+                              - switch
+                              - generic [ref=e1193] [cursor=pointer]: 未自动化
+                          - cell "2026-05-20 16:56" [ref=e1195]:
+                            - generic [ref=e1196]: 2026-05-20 16:56
+                          - cell "系统管理员" [ref=e1197]:
+                            - generic [ref=e1199]: 系统管理员
+                          - cell "编辑 复制 删除" [ref=e1200]:
+                            - generic [ref=e1202]:
+                              - button "编辑" [ref=e1203] [cursor=pointer]:
+                                - generic [ref=e1204]: 编辑
+                              - button "复制" [ref=e1205] [cursor=pointer]:
+                                - generic [ref=e1206]: 复制
+                              - button "删除" [ref=e1207] [cursor=pointer]:
+                                - generic [ref=e1208]: 删除
+                        - 'row "选择当前行 #3 分页-任务管理 GET - 测试 ● P2 未自动化 2026-05-20 16:56 系统管理员 编辑 复制 删除" [ref=e1209]':
+                          - cell "选择当前行" [ref=e1210]:
+                            - generic "选择当前行" [ref=e1212] [cursor=pointer]:
+                              - generic [ref=e1213]:
+                                - checkbox "选择当前行"
+                          - cell "#3 分页-任务管理" [ref=e1215]:
+                            - generic [ref=e1217]:
+                              - generic [ref=e1218]: "#3"
+                              - button "分页-任务管理" [ref=e1219] [cursor=pointer]
+                          - cell "GET" [ref=e1220]:
+                            - generic [ref=e1222]: GET
+                          - cell "-" [ref=e1223]:
+                            - generic [ref=e1225]: "-"
+                          - cell "测试" [ref=e1226]:
+                            - generic [ref=e1228]: 测试
+                          - cell "● P2" [ref=e1229]:
+                            - generic [ref=e1231]: ● P2
+                          - cell "未自动化" [ref=e1232]:
+                            - generic [ref=e1234]:
+                              - switch
+                              - generic [ref=e1238] [cursor=pointer]: 未自动化
+                          - cell "2026-05-20 16:56" [ref=e1240]:
+                            - generic [ref=e1241]: 2026-05-20 16:56
+                          - cell "系统管理员" [ref=e1242]:
+                            - generic [ref=e1244]: 系统管理员
+                          - cell "编辑 复制 删除" [ref=e1245]:
+                            - generic [ref=e1247]:
+                              - button "编辑" [ref=e1248] [cursor=pointer]:
+                                - generic [ref=e1249]: 编辑
+                              - button "复制" [ref=e1250] [cursor=pointer]:
+                                - generic [ref=e1251]: 复制
+                              - button "删除" [ref=e1252] [cursor=pointer]:
+                                - generic [ref=e1253]: 删除
+                        - 'row "选择当前行 #7 deptTree GET - - ● P2 未自动化 2026-05-20 16:56 系统管理员 编辑 复制 删除" [ref=e1254]':
+                          - cell "选择当前行" [ref=e1255]:
+                            - generic "选择当前行" [ref=e1257] [cursor=pointer]:
+                              - generic [ref=e1258]:
+                                - checkbox "选择当前行"
+                          - cell "#7 deptTree" [ref=e1260]:
+                            - generic [ref=e1262]:
+                              - generic [ref=e1263]: "#7"
+                              - button "deptTree" [ref=e1264] [cursor=pointer]
+                          - cell "GET" [ref=e1265]:
+                            - generic [ref=e1267]: GET
+                          - cell "-" [ref=e1268]:
+                            - generic [ref=e1270]: "-"
+                          - cell "-" [ref=e1271]:
+                            - generic [ref=e1273]: "-"
+                          - cell "● P2" [ref=e1274]:
+                            - generic [ref=e1276]: ● P2
+                          - cell "未自动化" [ref=e1277]:
+                            - generic [ref=e1279]:
+                              - switch
+                              - generic [ref=e1283] [cursor=pointer]: 未自动化
+                          - cell "2026-05-20 16:56" [ref=e1285]:
+                            - generic [ref=e1286]: 2026-05-20 16:56
+                          - cell "系统管理员" [ref=e1287]:
+                            - generic [ref=e1289]: 系统管理员
+                          - cell "编辑 复制 删除" [ref=e1290]:
+                            - generic [ref=e1292]:
+                              - button "编辑" [ref=e1293] [cursor=pointer]:
+                                - generic [ref=e1294]: 编辑
+                              - button "复制" [ref=e1295] [cursor=pointer]:
+                                - generic [ref=e1296]: 复制
+                              - button "删除" [ref=e1297] [cursor=pointer]:
+                                - generic [ref=e1298]: 删除
+                        - 'row "选择当前行 #14 page GET - - ● P2 未自动化 2026-05-20 16:05 系统管理员 编辑 复制 删除" [ref=e1299]':
+                          - cell "选择当前行" [ref=e1300]:
+                            - generic "选择当前行" [ref=e1302] [cursor=pointer]:
+                              - generic [ref=e1303]:
+                                - checkbox "选择当前行"
+                          - cell "#14 page" [ref=e1305]:
+                            - generic [ref=e1307]:
+                              - generic [ref=e1308]: "#14"
+                              - button "page" [ref=e1309] [cursor=pointer]
+                          - cell "GET" [ref=e1310]:
+                            - generic [ref=e1312]: GET
+                          - cell "-" [ref=e1313]:
+                            - generic [ref=e1315]: "-"
+                          - cell "-" [ref=e1316]:
+                            - generic [ref=e1318]: "-"
+                          - cell "● P2" [ref=e1319]:
+                            - generic [ref=e1321]: ● P2
+                          - cell "未自动化" [ref=e1322]:
+                            - generic [ref=e1324]:
+                              - switch
+                              - generic [ref=e1328] [cursor=pointer]: 未自动化
+                          - cell "2026-05-20 16:05" [ref=e1330]:
+                            - generic [ref=e1331]: 2026-05-20 16:05
+                          - cell "系统管理员" [ref=e1332]:
+                            - generic [ref=e1334]: 系统管理员
+                          - cell "编辑 复制 删除" [ref=e1335]:
+                            - generic [ref=e1337]:
+                              - button "编辑" [ref=e1338] [cursor=pointer]:
+                                - generic [ref=e1339]: 编辑
+                              - button "复制" [ref=e1340] [cursor=pointer]:
+                                - generic [ref=e1341]: 复制
+                              - button "删除" [ref=e1342] [cursor=pointer]:
+                                - generic [ref=e1343]: 删除
+                        - 'row "选择当前行 #13 page GET - - ● P2 未自动化 2026-05-20 16:05 系统管理员 编辑 复制 删除" [ref=e1344]':
+                          - cell "选择当前行" [ref=e1345]:
+                            - generic "选择当前行" [ref=e1347] [cursor=pointer]:
+                              - generic [ref=e1348]:
+                                - checkbox "选择当前行"
+                          - cell "#13 page" [ref=e1350]:
+                            - generic [ref=e1352]:
+                              - generic [ref=e1353]: "#13"
+                              - button "page" [ref=e1354] [cursor=pointer]
+                          - cell "GET" [ref=e1355]:
+                            - generic [ref=e1357]: GET
+                          - cell "-" [ref=e1358]:
+                            - generic [ref=e1360]: "-"
+                          - cell "-" [ref=e1361]:
+                            - generic [ref=e1363]: "-"
+                          - cell "● P2" [ref=e1364]:
+                            - generic [ref=e1366]: ● P2
+                          - cell "未自动化" [ref=e1367]:
+                            - generic [ref=e1369]:
+                              - switch
+                              - generic [ref=e1373] [cursor=pointer]: 未自动化
+                          - cell "2026-05-20 16:05" [ref=e1375]:
+                            - generic [ref=e1376]: 2026-05-20 16:05
+                          - cell "系统管理员" [ref=e1377]:
+                            - generic [ref=e1379]: 系统管理员
+                          - cell "编辑 复制 删除" [ref=e1380]:
+                            - generic [ref=e1382]:
+                              - button "编辑" [ref=e1383] [cursor=pointer]:
+                                - generic [ref=e1384]: 编辑
+                              - button "复制" [ref=e1385] [cursor=pointer]:
+                                - generic [ref=e1386]: 复制
+                              - button "删除" [ref=e1387] [cursor=pointer]:
+                                - generic [ref=e1388]: 删除
+                        - 'row "选择当前行 #12 page GET - - ● P2 未自动化 2026-05-20 16:05 系统管理员 编辑 复制 删除" [ref=e1389]':
+                          - cell "选择当前行" [ref=e1390]:
+                            - generic "选择当前行" [ref=e1392] [cursor=pointer]:
+                              - generic [ref=e1393]:
+                                - checkbox "选择当前行"
+                          - cell "#12 page" [ref=e1395]:
+                            - generic [ref=e1397]:
+                              - generic [ref=e1398]: "#12"
+                              - button "page" [ref=e1399] [cursor=pointer]
+                          - cell "GET" [ref=e1400]:
+                            - generic [ref=e1402]: GET
+                          - cell "-" [ref=e1403]:
+                            - generic [ref=e1405]: "-"
+                          - cell "-" [ref=e1406]:
+                            - generic [ref=e1408]: "-"
+                          - cell "● P2" [ref=e1409]:
+                            - generic [ref=e1411]: ● P2
+                          - cell "未自动化" [ref=e1412]:
+                            - generic [ref=e1414]:
+                              - switch
+                              - generic [ref=e1418] [cursor=pointer]: 未自动化
+                          - cell "2026-05-20 16:05" [ref=e1420]:
+                            - generic [ref=e1421]: 2026-05-20 16:05
+                          - cell "系统管理员" [ref=e1422]:
+                            - generic [ref=e1424]: 系统管理员
+                          - cell "编辑 复制 删除" [ref=e1425]:
+                            - generic [ref=e1427]:
+                              - button "编辑" [ref=e1428] [cursor=pointer]:
+                                - generic [ref=e1429]: 编辑
+                              - button "复制" [ref=e1430] [cursor=pointer]:
+                                - generic [ref=e1431]: 复制
+                              - button "删除" [ref=e1432] [cursor=pointer]:
+                                - generic [ref=e1433]: 删除
+                        - 'row "选择当前行 #11 page GET - - ● P2 未自动化 2026-05-20 16:05 系统管理员 编辑 复制 删除" [ref=e1434]':
+                          - cell "选择当前行" [ref=e1435]:
+                            - generic "选择当前行" [ref=e1437] [cursor=pointer]:
+                              - generic [ref=e1438]:
+                                - checkbox "选择当前行"
+                          - cell "#11 page" [ref=e1440]:
+                            - generic [ref=e1442]:
+                              - generic [ref=e1443]: "#11"
+                              - button "page" [ref=e1444] [cursor=pointer]
+                          - cell "GET" [ref=e1445]:
+                            - generic [ref=e1447]: GET
+                          - cell "-" [ref=e1448]:
+                            - generic [ref=e1450]: "-"
+                          - cell "-" [ref=e1451]:
+                            - generic [ref=e1453]: "-"
+                          - cell "● P2" [ref=e1454]:
+                            - generic [ref=e1456]: ● P2
+                          - cell "未自动化" [ref=e1457]:
+                            - generic [ref=e1459]:
+                              - switch
+                              - generic [ref=e1463] [cursor=pointer]: 未自动化
+                          - cell "2026-05-20 16:05" [ref=e1465]:
+                            - generic [ref=e1466]: 2026-05-20 16:05
+                          - cell "系统管理员" [ref=e1467]:
+                            - generic [ref=e1469]: 系统管理员
+                          - cell "编辑 复制 删除" [ref=e1470]:
+                            - generic [ref=e1472]:
+                              - button "编辑" [ref=e1473] [cursor=pointer]:
+                                - generic [ref=e1474]: 编辑
+                              - button "复制" [ref=e1475] [cursor=pointer]:
+                                - generic [ref=e1476]: 复制
+                              - button "删除" [ref=e1477] [cursor=pointer]:
+                                - generic [ref=e1478]: 删除
+                        - 'row "选择当前行 #10 串联测试用例3-PUT GET 11 场景串联测试用 PUT 请求 ● P2 未自动化 2026-05-20 16:03 系统管理员 编辑 复制 删除" [ref=e775]':
+                          - cell "选择当前行" [ref=e776]:
+                            - generic "选择当前行" [ref=e778] [cursor=pointer]:
+                              - generic [ref=e779]:
+                                - checkbox "选择当前行"
+                          - cell "#10 串联测试用例3-PUT" [ref=e781]:
+                            - generic [ref=e783]:
+                              - generic [ref=e784]: "#10"
+                              - button "串联测试用例3-PUT" [ref=e785] [cursor=pointer]
+                          - cell "GET" [ref=e786]:
+                            - generic [ref=e788]: GET
+                          - cell "11" [ref=e789]:
+                            - generic [ref=e791]: "11"
+                          - cell "场景串联测试用 PUT 请求" [ref=e792]:
+                            - generic [ref=e794]: 场景串联测试用 PUT 请求
+                          - cell "● P2" [ref=e795]:
+                            - generic [ref=e797]: ● P2
+                          - cell "未自动化" [ref=e798]:
+                            - generic [ref=e800]:
+                              - switch
+                              - generic [ref=e804] [cursor=pointer]: 未自动化
+                          - cell "2026-05-20 16:03" [ref=e806]:
+                            - generic [ref=e807]: 2026-05-20 16:03
+                          - cell "系统管理员" [ref=e808]:
+                            - generic [ref=e810]: 系统管理员
+                          - cell "编辑 复制 删除" [ref=e811]:
+                            - generic [ref=e813]:
+                              - button "编辑" [ref=e814] [cursor=pointer]:
+                                - generic [ref=e815]: 编辑
+                              - button "复制" [ref=e816] [cursor=pointer]:
+                                - generic [ref=e817]: 复制
+                              - button "删除" [ref=e818] [cursor=pointer]:
+                                - generic [ref=e819]: 删除
+                        - 'row "选择当前行 #9 串联测试用例2-POST GET - 场景串联测试用 POST 请求 ● P1 未自动化 2026-05-20 15:23 系统管理员 编辑 复制 删除" [ref=e820]':
+                          - cell "选择当前行" [ref=e821]:
+                            - generic "选择当前行" [ref=e823] [cursor=pointer]:
+                              - generic [ref=e824]:
+                                - checkbox "选择当前行"
+                          - cell "#9 串联测试用例2-POST" [ref=e826]:
+                            - generic [ref=e828]:
+                              - generic [ref=e829]: "#9"
+                              - button "串联测试用例2-POST" [ref=e830] [cursor=pointer]
+                          - cell "GET" [ref=e831]:
+                            - generic [ref=e833]: GET
+                          - cell "-" [ref=e834]:
+                            - generic [ref=e836]: "-"
+                          - cell "场景串联测试用 POST 请求" [ref=e837]:
+                            - generic [ref=e839]: 场景串联测试用 POST 请求
+                          - cell "● P1" [ref=e840]:
+                            - generic [ref=e842]: ● P1
+                          - cell "未自动化" [ref=e843]:
+                            - generic [ref=e845]:
+                              - switch
+                              - generic [ref=e849] [cursor=pointer]: 未自动化
+                          - cell "2026-05-20 15:23" [ref=e851]:
+                            - generic [ref=e852]: 2026-05-20 15:23
+                          - cell "系统管理员" [ref=e853]:
+                            - generic [ref=e855]: 系统管理员
+                          - cell "编辑 复制 删除" [ref=e856]:
+                            - generic [ref=e858]:
+                              - button "编辑" [ref=e859] [cursor=pointer]:
+                                - generic [ref=e860]: 编辑
+                              - button "复制" [ref=e861] [cursor=pointer]:
+                                - generic [ref=e862]: 复制
+                              - button "删除" [ref=e863] [cursor=pointer]:
+                                - generic [ref=e864]: 删除
+                        - 'row "选择当前行 #8 串联测试用例1-GET GET - 场景串联测试用 GET 请求 ● P1 未自动化 2026-05-20 15:23 系统管理员 编辑 复制 删除" [ref=e865]':
+                          - cell "选择当前行" [ref=e866]:
+                            - generic "选择当前行" [ref=e868] [cursor=pointer]:
+                              - generic [ref=e869]:
+                                - checkbox "选择当前行"
+                          - cell "#8 串联测试用例1-GET" [ref=e871]:
+                            - generic [ref=e873]:
+                              - generic [ref=e874]: "#8"
+                              - button "串联测试用例1-GET" [ref=e875] [cursor=pointer]
+                          - cell "GET" [ref=e876]:
+                            - generic [ref=e878]: GET
+                          - cell "-" [ref=e879]:
+                            - generic [ref=e881]: "-"
+                          - cell "场景串联测试用 GET 请求" [ref=e882]:
+                            - generic [ref=e884]: 场景串联测试用 GET 请求
+                          - cell "● P1" [ref=e885]:
+                            - generic [ref=e887]: ● P1
+                          - cell "未自动化" [ref=e888]:
+                            - generic [ref=e890]:
+                              - switch
+                              - generic [ref=e894] [cursor=pointer]: 未自动化
+                          - cell "2026-05-20 15:23" [ref=e896]:
+                            - generic [ref=e897]: 2026-05-20 15:23
+                          - cell "系统管理员" [ref=e898]:
+                            - generic [ref=e900]: 系统管理员
+                          - cell "编辑 复制 删除" [ref=e901]:
+                            - generic [ref=e903]:
+                              - button "编辑" [ref=e904] [cursor=pointer]:
+                                - generic [ref=e905]: 编辑
+                              - button "复制" [ref=e906] [cursor=pointer]:
+                                - generic [ref=e907]: 复制
+                              - button "删除" [ref=e908] [cursor=pointer]:
+                                - generic [ref=e909]: 删除
+                        - 'row "选择当前行 #5 page GET - - ● P1 未自动化 2026-05-20 09:58 系统管理员 编辑 复制 删除" [ref=e1479]':
+                          - cell "选择当前行" [ref=e1480]:
+                            - generic "选择当前行" [ref=e1482] [cursor=pointer]:
+                              - generic [ref=e1483]:
+                                - checkbox "选择当前行"
+                          - cell "#5 page" [ref=e1485]:
+                            - generic [ref=e1487]:
+                              - generic [ref=e1488]: "#5"
+                              - button "page" [ref=e1489] [cursor=pointer]
+                          - cell "GET" [ref=e1490]:
+                            - generic [ref=e1492]: GET
+                          - cell "-" [ref=e1493]:
+                            - generic [ref=e1495]: "-"
+                          - cell "-" [ref=e1496]:
+                            - generic [ref=e1498]: "-"
+                          - cell "● P1" [ref=e1499]:
+                            - generic [ref=e1501]: ● P1
+                          - cell "未自动化" [ref=e1502]:
+                            - generic [ref=e1504]:
+                              - switch
+                              - generic [ref=e1508] [cursor=pointer]: 未自动化
+                          - cell "2026-05-20 09:58" [ref=e1510]:
+                            - generic [ref=e1511]: 2026-05-20 09:58
+                          - cell "系统管理员" [ref=e1512]:
+                            - generic [ref=e1514]: 系统管理员
+                          - cell "编辑 复制 删除" [ref=e1515]:
+                            - generic [ref=e1517]:
+                              - button "编辑" [ref=e1518] [cursor=pointer]:
+                                - generic [ref=e1519]: 编辑
+                              - button "复制" [ref=e1520] [cursor=pointer]:
+                                - generic [ref=e1521]: 复制
+                              - button "删除" [ref=e1522] [cursor=pointer]:
+                                - generic [ref=e1523]: 删除
+                        - 'row "选择当前行 #6 page GET - - ● P2 未自动化 2026-05-20 09:14 系统管理员 编辑 复制 删除" [ref=e1524]':
+                          - cell "选择当前行" [ref=e1525]:
+                            - generic "选择当前行" [ref=e1527] [cursor=pointer]:
+                              - generic [ref=e1528]:
+                                - checkbox "选择当前行"
+                          - cell "#6 page" [ref=e1530]:
+                            - generic [ref=e1532]:
+                              - generic [ref=e1533]: "#6"
+                              - button "page" [ref=e1534] [cursor=pointer]
+                          - cell "GET" [ref=e1535]:
+                            - generic [ref=e1537]: GET
+                          - cell "-" [ref=e1538]:
+                            - generic [ref=e1540]: "-"
+                          - cell "-" [ref=e1541]:
+                            - generic [ref=e1543]: "-"
+                          - cell "● P2" [ref=e1544]:
+                            - generic [ref=e1546]: ● P2
+                          - cell "未自动化" [ref=e1547]:
+                            - generic [ref=e1549]:
+                              - switch
+                              - generic [ref=e1553] [cursor=pointer]: 未自动化
+                          - cell "2026-05-20 09:14" [ref=e1555]:
+                            - generic [ref=e1556]: 2026-05-20 09:14
+                          - cell "系统管理员" [ref=e1557]:
+                            - generic [ref=e1559]: 系统管理员
+                          - cell "编辑 复制 删除" [ref=e1560]:
+                            - generic [ref=e1562]:
+                              - button "编辑" [ref=e1563] [cursor=pointer]:
+                                - generic [ref=e1564]: 编辑
+                              - button "复制" [ref=e1565] [cursor=pointer]:
+                                - generic [ref=e1566]: 复制
+                              - button "删除" [ref=e1567] [cursor=pointer]:
+                                - generic [ref=e1568]: 删除
+                  - generic [ref=e1046]:
+                    - generic [ref=e1047]: 共 17 条
+                    - generic [ref=e1050] [cursor=pointer]:
+                      - generic:
+                        - combobox [ref=e1052]
+                        - generic [ref=e1053]: 15条/页
+                      - img [ref=e1056]
+                    - button "上一页" [disabled] [ref=e1058]:
+                      - generic: 上一页
+                    - list [ref=e1059]:
+                      - listitem "第 1 页" [ref=e1060]: "1"
+                      - listitem "第 2 页" [ref=e1614] [cursor=pointer]: "2"
+                    - button "下一页" [ref=e1062] [cursor=pointer]:
+                      - generic: 下一页
+                    - generic [ref=e1063]:
+                      - generic [ref=e1064]: 前往
+                      - spinbutton "页" [ref=e1067]: "1"
+                      - generic [ref=e1068]: 页

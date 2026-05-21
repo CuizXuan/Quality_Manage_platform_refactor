@@ -29,6 +29,7 @@ DEFAULT_PERMISSIONS = [
     ("dictionary", "create"),
     ("dictionary", "update"),
     ("dictionary", "delete"),
+    ("log", "view"),
     ("organization", "view"),
     ("organization", "create"),
     ("organization", "update"),
@@ -119,6 +120,15 @@ DEFAULT_MENUS = [
         "component": "DictionaryManagement",
         "permission_code": "dictionary:view",
         "sort_order": 55,
+    },
+    {
+        "name": "日志管理",
+        "code": "system_logs",
+        "path": "/system/logs",
+        "icon": "Scroll",
+        "component": "LogManagement",
+        "permission_code": "log:view",
+        "sort_order": 60,
     },
     {
         "name": "终端调试台",

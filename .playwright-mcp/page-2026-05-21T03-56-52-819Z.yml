@@ -1,0 +1,290 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - button "灵测 AI" [ref=e5] [cursor=pointer]:
+      - img [ref=e7]
+      - generic [ref=e10]: 灵测 AI
+    - button "登录工作台" [active] [ref=e12] [cursor=pointer]
+  - navigation "页面定位导航" [ref=e13]:
+    - link "01 能力矩阵" [ref=e14] [cursor=pointer]:
+      - /url: "#capabilities"
+      - generic [ref=e15]: "01"
+      - text: 能力矩阵
+    - link "02 质量中台" [ref=e16] [cursor=pointer]:
+      - /url: "#console"
+      - generic [ref=e17]: "02"
+      - text: 质量中台
+    - link "03 场景数据" [ref=e18] [cursor=pointer]:
+      - /url: "#scenarios"
+      - generic [ref=e19]: "03"
+      - text: 场景数据
+    - link "04 智能闭环" [ref=e20] [cursor=pointer]:
+      - /url: "#insights"
+      - generic [ref=e21]: "04"
+      - text: 智能闭环
+  - main [ref=e22]:
+    - region "把质量信号转化为发布确定性" [ref=e23]:
+      - generic [ref=e24]:
+        - generic [ref=e25]: AI Quality Command Center
+        - heading "把质量信号转化为发布确定性" [level=1] [ref=e28]
+        - paragraph [ref=e29]: 把需求、接口、自动化、缺陷和发布风险串成一条可观测的质量流，让团队在发布前看清每个信号、每次变化和每个决策依据。
+        - generic [ref=e30]:
+          - button "进入工作台" [ref=e31] [cursor=pointer]:
+            - text: 进入工作台
+            - generic [ref=e32]: →
+          - button "浏览能力矩阵" [ref=e33] [cursor=pointer]
+        - generic "平台关键指标" [ref=e34]:
+          - generic [ref=e35]:
+            - strong [ref=e36]: 18.6k
+            - generic [ref=e37]: 发布前质量信号
+          - generic [ref=e38]:
+            - strong [ref=e39]: 91%
+            - generic [ref=e40]: 风险识别准确率
+          - generic [ref=e41]:
+            - strong [ref=e42]: 24ms
+            - generic [ref=e43]: 平均反馈延迟
+      - generic "AI 质量工程能力大屏" [ref=e45]:
+        - generic [ref=e46]:
+          - generic [ref=e47]:
+            - generic [ref=e48]: Quality Command Center
+            - strong [ref=e49]: Release Intelligence
+          - generic [ref=e50]:
+            - generic [ref=e51]: Plan
+            - generic [ref=e52]: Run
+            - generic [ref=e53]: Gate
+          - generic [ref=e54]: Live Sync
+        - generic "质量信号流" [ref=e56]:
+          - generic [ref=e57]: Demand
+          - generic [ref=e59]: API
+          - generic [ref=e61]: Case
+          - generic [ref=e63]: Risk
+          - generic [ref=e65]: Release
+        - generic "AI 决策提示" [ref=e66]:
+          - article [ref=e67]:
+            - generic [ref=e68]: AI Suggestion
+            - strong [ref=e69]: 阻断 3 个高风险发布项
+            - paragraph [ref=e70]: 基于失败簇、覆盖缺口和变更热区给出门禁建议。
+          - article [ref=e71]:
+            - generic [ref=e72]: Signal Stream
+            - strong [ref=e73]: 需求、接口、日志实时汇聚
+            - paragraph [ref=e74]: 将多源质量信号收束到同一条发布决策链路。
+        - generic [ref=e75]:
+          - generic [ref=e76]:
+            - generic [ref=e77]: 发布风险
+            - strong [ref=e78]: Low
+          - generic [ref=e85]:
+            - generic [ref=e86]: 覆盖率
+            - strong [ref=e87]: 92%
+            - emphasis [ref=e88]: +8.4%
+          - generic [ref=e89]:
+            - generic [ref=e90]: 自动化率
+            - strong [ref=e91]: 78%
+            - emphasis [ref=e92]: rolling
+          - generic [ref=e93]:
+            - generic [ref=e94]: 失败聚类
+            - strong [ref=e95]: "12"
+            - emphasis [ref=e96]: 3 high
+        - generic [ref=e97]:
+          - article [ref=e98]:
+            - generic [ref=e99]: "01"
+            - generic [ref=e100]:
+              - heading "AI 用例生成" [level=3] [ref=e101]
+              - paragraph [ref=e102]: 从需求、接口和变更描述生成高覆盖测试集，并标记风险路径。
+            - generic [ref=e103]: Ready
+          - article [ref=e104]:
+            - generic [ref=e105]: "02"
+            - generic [ref=e106]:
+              - heading "接口智能解析" [level=3] [ref=e107]
+              - paragraph [ref=e108]: 识别 cURL、OpenAPI 与请求链路，自动沉淀可复用资产。
+            - generic [ref=e109]: Parse
+          - article [ref=e110]:
+            - generic [ref=e111]: "03"
+            - generic [ref=e112]:
+              - heading "自动化回归" [level=3] [ref=e113]
+              - paragraph [ref=e114]: 按发布窗口调度测试集，输出变更影响范围与执行建议。
+            - generic [ref=e115]: Run
+          - article [ref=e116]:
+            - generic [ref=e117]: "04"
+            - generic [ref=e118]:
+              - heading "风险预测" [level=3] [ref=e119]
+              - paragraph [ref=e120]: 结合模块、提交、缺陷历史和覆盖变化计算发布风险。
+            - generic [ref=e121]: Score
+          - article [ref=e122]:
+            - generic [ref=e123]: "05"
+            - generic [ref=e124]:
+              - heading "缺陷聚类" [level=3] [ref=e125]
+              - paragraph [ref=e126]: 把失败日志、异常堆栈和接口错误归因聚合成问题簇。
+            - generic [ref=e127]: Cluster
+          - article [ref=e128]:
+            - generic [ref=e129]: "06"
+            - generic [ref=e130]:
+              - heading "质量门禁" [level=3] [ref=e131]
+              - paragraph [ref=e132]: 发布前自动评估准入条件、阻断项和豁免理由。
+            - generic [ref=e133]: Gate
+    - region "质量场景数据" [ref=e134]:
+      - generic [ref=e135]:
+        - generic [ref=e136]: 自动化场景
+        - strong [ref=e137]: 2,480+
+        - emphasis [ref=e138]: 持续回归中
+      - generic [ref=e139]:
+        - generic [ref=e140]: 接口资产
+        - strong [ref=e141]: 18.6k
+        - emphasis [ref=e142]: 跨项目复用
+      - generic [ref=e143]:
+        - generic [ref=e144]: 风险识别
+        - strong [ref=e145]: 91%
+        - emphasis [ref=e146]: 发布前预判
+      - generic [ref=e147]:
+        - generic [ref=e148]: 平均反馈
+        - strong [ref=e149]: 24ms
+        - emphasis [ref=e150]: 实时信号同步
+    - region "质量信号流动" [ref=e151]:
+      - generic [ref=e152]:
+        - generic [ref=e153]: 需求解析
+        - generic [ref=e154]: 接口资产
+        - generic [ref=e155]: 用例生成
+        - generic [ref=e156]: 自动回归
+        - generic [ref=e157]: 缺陷聚类
+        - generic [ref=e158]: 风险评分
+        - generic [ref=e159]: 质量门禁
+        - generic [ref=e160]: 发布洞察
+        - generic [ref=e161]: 需求解析
+        - generic [ref=e162]: 接口资产
+        - generic [ref=e163]: 用例生成
+        - generic [ref=e164]: 自动回归
+        - generic [ref=e165]: 缺陷聚类
+        - generic [ref=e166]: 风险评分
+        - generic [ref=e167]: 质量门禁
+        - generic [ref=e168]: 发布洞察
+        - generic [ref=e169]: 需求解析
+        - generic [ref=e170]: 接口资产
+        - generic [ref=e171]: 用例生成
+        - generic [ref=e172]: 自动回归
+        - generic [ref=e173]: 缺陷聚类
+        - generic [ref=e174]: 风险评分
+        - generic [ref=e175]: 质量门禁
+        - generic [ref=e176]: 发布洞察
+        - generic [ref=e177]: 需求解析
+        - generic [ref=e178]: 接口资产
+        - generic [ref=e179]: 用例生成
+        - generic [ref=e180]: 自动回归
+        - generic [ref=e181]: 缺陷聚类
+        - generic [ref=e182]: 风险评分
+        - generic [ref=e183]: 质量门禁
+        - generic [ref=e184]: 发布洞察
+        - generic [ref=e185]: 需求解析
+        - generic [ref=e186]: 接口资产
+        - generic [ref=e187]: 用例生成
+        - generic [ref=e188]: 自动回归
+        - generic [ref=e189]: 缺陷聚类
+        - generic [ref=e190]: 风险评分
+        - generic [ref=e191]: 质量门禁
+        - generic [ref=e192]: 发布洞察
+        - generic [ref=e193]: 需求解析
+        - generic [ref=e194]: 接口资产
+        - generic [ref=e195]: 用例生成
+        - generic [ref=e196]: 自动回归
+        - generic [ref=e197]: 缺陷聚类
+        - generic [ref=e198]: 风险评分
+        - generic [ref=e199]: 质量门禁
+        - generic [ref=e200]: 发布洞察
+        - generic [ref=e201]: 需求解析
+        - generic [ref=e202]: 接口资产
+        - generic [ref=e203]: 用例生成
+        - generic [ref=e204]: 自动回归
+        - generic [ref=e205]: 缺陷聚类
+        - generic [ref=e206]: 风险评分
+        - generic [ref=e207]: 质量门禁
+        - generic [ref=e208]: 发布洞察
+        - generic [ref=e209]: 需求解析
+        - generic [ref=e210]: 接口资产
+        - generic [ref=e211]: 用例生成
+        - generic [ref=e212]: 自动回归
+        - generic [ref=e213]: 缺陷聚类
+        - generic [ref=e214]: 风险评分
+        - generic [ref=e215]: 质量门禁
+        - generic [ref=e216]: 发布洞察
+        - generic [ref=e217]: 需求解析
+        - generic [ref=e218]: 接口资产
+        - generic [ref=e219]: 用例生成
+        - generic [ref=e220]: 自动回归
+        - generic [ref=e221]: 缺陷聚类
+        - generic [ref=e222]: 风险评分
+        - generic [ref=e223]: 质量门禁
+        - generic [ref=e224]: 发布洞察
+        - generic [ref=e225]: 需求解析
+        - generic [ref=e226]: 接口资产
+        - generic [ref=e227]: 用例生成
+        - generic [ref=e228]: 自动回归
+        - generic [ref=e229]: 缺陷聚类
+        - generic [ref=e230]: 风险评分
+        - generic [ref=e231]: 质量门禁
+        - generic [ref=e232]: 发布洞察
+        - generic [ref=e233]: 需求解析
+        - generic [ref=e234]: 接口资产
+        - generic [ref=e235]: 用例生成
+        - generic [ref=e236]: 自动回归
+        - generic [ref=e237]: 缺陷聚类
+        - generic [ref=e238]: 风险评分
+        - generic [ref=e239]: 质量门禁
+        - generic [ref=e240]: 发布洞察
+        - generic [ref=e241]: 需求解析
+        - generic [ref=e242]: 接口资产
+        - generic [ref=e243]: 用例生成
+        - generic [ref=e244]: 自动回归
+        - generic [ref=e245]: 缺陷聚类
+        - generic [ref=e246]: 风险评分
+        - generic [ref=e247]: 质量门禁
+        - generic [ref=e248]: 发布洞察
+    - region "智能质量流程" [ref=e249]:
+      - generic [ref=e250]:
+        - generic [ref=e251]: AI TestOps Flow
+        - strong [ref=e252]: 从需求到发布，让每一步都可追踪、可解释、可决策。
+      - generic [ref=e253]:
+        - article [ref=e254]:
+          - emphasis [ref=e255]: "01"
+          - strong [ref=e256]: 需求解析
+          - paragraph [ref=e257]: 把需求、变更和接口信息拆成可测试信号。
+        - article [ref=e258]:
+          - emphasis [ref=e259]: "02"
+          - strong [ref=e260]: 用例生成
+          - paragraph [ref=e261]: 自动补齐路径、边界、异常和回归集合。
+        - article [ref=e262]:
+          - emphasis [ref=e263]: "03"
+          - strong [ref=e264]: 执行编排
+          - paragraph [ref=e265]: 按环境、优先级和发布窗口动态调度。
+        - article [ref=e266]:
+          - emphasis [ref=e267]: "04"
+          - strong [ref=e268]: 风险决策
+          - paragraph [ref=e269]: 汇总覆盖、失败、缺陷和趋势形成门禁建议。
+  - complementary "账号登录" [ref=e271]:
+    - button "关闭登录面板" [ref=e272] [cursor=pointer]: ×
+    - generic [ref=e273]:
+      - img [ref=e275]
+      - generic [ref=e278]:
+        - text: Protected Workspace
+        - strong [ref=e279]: 灵测 AI
+    - generic [ref=e280]:
+      - generic [ref=e281]:
+        - heading "登录工作台" [level=2] [ref=e282]
+        - paragraph [ref=e283]: 继续进入企业级质量工程中台。
+      - generic [ref=e284]:
+        - generic [ref=e285]:
+          - generic [ref=e286]: 用户名或邮箱
+          - textbox "用户名或邮箱" [ref=e287]:
+            - /placeholder: admin
+        - generic [ref=e288]:
+          - generic [ref=e289]: 密码
+          - generic [ref=e290]:
+            - textbox "密码 显示" [ref=e291]:
+              - /placeholder: 输入密码
+            - button "显示" [ref=e292] [cursor=pointer]
+        - generic [ref=e293]:
+          - generic [ref=e294] [cursor=pointer]: 记住登录状态
+          - emphasis [ref=e296]: Session protected
+        - button "登录" [ref=e297] [cursor=pointer]
+      - generic [ref=e298]:
+        - generic [ref=e299]: 还没有账号？
+        - button "创建账号" [ref=e300] [cursor=pointer]
+    - generic [ref=e301]:
+      - generic [ref=e302]: Demo account
+      - code [ref=e303]: admin / admin123

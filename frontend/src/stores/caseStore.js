@@ -26,6 +26,7 @@ export const useCaseStore = defineStore('case', () => {
         page_size: params.page_size || pageSize.value,
         ...(params.folder_id && { folder_id: params.folder_id }),
         ...(params.keyword && { keyword: params.keyword }),
+        ...(params.case_type && { case_type: params.case_type }),
       })
       cases.value = response.data.items
       total.value = response.data.total

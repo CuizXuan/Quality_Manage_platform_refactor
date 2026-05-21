@@ -1,5 +1,5 @@
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import or_
+from fastapi import APIRouter, Depends, HTTPException, Query
+from sqlalchemy import or_, func
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -25,19 +25,52 @@ from app.schemas.platform import (
     UserCreate,
     UserResponse,
     UserUpdate,
+    PaginatedResponse,
 )
 from app.services.platform_auth import PlatformAuthService
+from app.services.log_service import LogService
 
 router = APIRouter(prefix="/api/system", tags=["平台系统管理"])
 
 
-@router.get("/users", response_model=list[UserResponse])
+@router.get("/users", response_model=PaginatedResponse)
 def list_users(
+    keyword: str = Query("", description="搜索关键词：用户名/姓名/邮箱"),
+    status: str = Query("", description="状态筛选"),
+    page: int = Query(1, ge=1),
+    page_size: int = Query(20, ge=1, le=100),
     current_user: PlatformUser = Depends(get_current_platform_user),
     db: Session = Depends(get_db),
 ):
-    users = db.query(PlatformUser).order_by(PlatformUser.id.asc()).all()
-    return [build_user_response(user, db) for user in users]
+    query = db.query(PlatformUser)
+
+    # 关键词搜索
+    if keyword:
+        query = query.filter(
+            or_(
+                PlatformUser.username.contains(keyword),
+                PlatformUser.display_name.contains(keyword),
+                PlatformUser.email.contains(keyword),
+            )
+        )
+
+    # 状态筛选
+    if status:
+        query = query.filter(PlatformUser.status == status)
+
+    # 总数
+    total = query.count()
+
+    # 分页
+    offset = (page - 1) * page_size
+    users = query.order_by(PlatformUser.id.desc()).offset(offset).limit(page_size).all()
+
+    return PaginatedResponse(
+        items=[build_user_response(user, db) for user in users],
+        total=total,
+        page=page,
+        page_size=page_size,
+    )
 
 
 @router.post("/users", response_model=UserResponse)
@@ -64,6 +97,7 @@ def create_user(
     db.add(user)
     db.flush()
     sync_user_roles(db, user.id, request.role_ids)
+    LogService(db, current_user.id, current_user.username).log_crud("创建", "用户管理", request.username, user.id)
     db.commit()
     db.refresh(user)
     return build_user_response(user, db)
@@ -84,6 +118,7 @@ def update_user(
         setattr(user, key, value)
     if request.role_ids is not None:
         sync_user_roles(db, user.id, request.role_ids)
+    LogService(db, current_user.id, current_user.username).log_crud("更新", "用户管理", user.username, user.id)
     db.commit()
     db.refresh(user)
     return build_user_response(user, db)
@@ -100,18 +135,50 @@ def delete_user(
     user = db.query(PlatformUser).filter(PlatformUser.id == user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="用户不存在")
+    username = user.username
     db.delete(user)
+    LogService(db, current_user.id, current_user.username).log_crud("删除", "用户管理", username, user_id)
     db.commit()
     return {"message": "删除成功"}
 
 
-@router.get("/roles", response_model=list[RoleResponse])
+@router.get("/roles", response_model=PaginatedResponse)
 def list_roles(
+    keyword: str = Query("", description="搜索关键词：角色名称/编码"),
+    status: str = Query("", description="状态筛选"),
+    page: int = Query(1, ge=1),
+    page_size: int = Query(20, ge=1, le=100),
     current_user: PlatformUser = Depends(get_current_platform_user),
     db: Session = Depends(get_db),
 ):
-    roles = db.query(PlatformRole).order_by(PlatformRole.id.asc()).all()
-    return [build_role_response(role) for role in roles]
+    query = db.query(PlatformRole)
+
+    # 关键词搜索
+    if keyword:
+        query = query.filter(
+            or_(
+                PlatformRole.name.contains(keyword),
+                PlatformRole.code.contains(keyword),
+            )
+        )
+
+    # 状态筛选
+    if status:
+        query = query.filter(PlatformRole.status == status)
+
+    # 总数
+    total = query.count()
+
+    # 分页
+    offset = (page - 1) * page_size
+    roles = query.order_by(PlatformRole.id.desc()).offset(offset).limit(page_size).all()
+
+    return PaginatedResponse(
+        items=[build_role_response(role) for role in roles],
+        total=total,
+        page=page,
+        page_size=page_size,
+    )
 
 
 @router.post("/roles", response_model=RoleResponse)
@@ -129,6 +196,7 @@ def create_role(
     db.add(role)
     db.flush()
     sync_role_permissions(db, role.id, request.permissions)
+    LogService(db, current_user.id, current_user.username).log_crud("创建", "角色管理", request.name, role.id)
     db.commit()
     db.refresh(role)
     return build_role_response(role)
@@ -151,6 +219,7 @@ def update_role(
         setattr(role, key, value)
     if request.permissions is not None and not role.is_system:
         sync_role_permissions(db, role.id, request.permissions)
+    LogService(db, current_user.id, current_user.username).log_crud("更新", "角色管理", role.name, role.id)
     db.commit()
     db.refresh(role)
     return build_role_response(role)
@@ -167,18 +236,50 @@ def delete_role(
         raise HTTPException(status_code=404, detail="角色不存在")
     if role.is_system:
         raise HTTPException(status_code=400, detail="系统角色不能删除")
+    rolename = role.name
     db.delete(role)
+    LogService(db, current_user.id, current_user.username).log_crud("删除", "角色管理", rolename, role_id)
     db.commit()
     return {"message": "删除成功"}
 
 
-@router.get("/organizations", response_model=list[OrganizationResponse])
+@router.get("/organizations", response_model=PaginatedResponse)
 def list_organizations(
+    keyword: str = Query("", description="搜索关键词：组织名称/编码"),
+    status: str = Query("", description="状态筛选"),
+    page: int = Query(1, ge=1),
+    page_size: int = Query(15, ge=1, le=100),
     current_user: PlatformUser = Depends(get_current_platform_user),
     db: Session = Depends(get_db),
 ):
-    organizations = db.query(Organization).order_by(Organization.sort_order.asc(), Organization.id.asc()).all()
-    return [build_organization_response(item, db) for item in organizations]
+    query = db.query(Organization)
+
+    # 关键词搜索
+    if keyword:
+        query = query.filter(
+            or_(
+                Organization.name.contains(keyword),
+                Organization.code.contains(keyword),
+            )
+        )
+
+    # 状态筛选
+    if status:
+        query = query.filter(Organization.status == status)
+
+    # 总数
+    total = query.count()
+
+    # 分页
+    offset = (page - 1) * page_size
+    organizations = query.order_by(Organization.sort_order.asc(), Organization.id.desc()).offset(offset).limit(page_size).all()
+
+    return PaginatedResponse(
+        items=[build_organization_response(org, db) for org in organizations],
+        total=total,
+        page=page,
+        page_size=page_size,
+    )
 
 
 @router.post("/organizations", response_model=OrganizationResponse)
@@ -192,6 +293,7 @@ def create_organization(
         raise HTTPException(status_code=400, detail="组织编码已存在")
     org = Organization(**request.model_dump())
     db.add(org)
+    LogService(db, current_user.id, current_user.username).log_crud("创建", "组织管理", request.name, org.id)
     db.commit()
     db.refresh(org)
     return build_organization_response(org, db)
@@ -209,6 +311,7 @@ def update_organization(
         raise HTTPException(status_code=404, detail="组织不存在")
     for key, value in request.model_dump(exclude_unset=True).items():
         setattr(org, key, value)
+    LogService(db, current_user.id, current_user.username).log_crud("更新", "组织管理", org.name, organization_id)
     db.commit()
     db.refresh(org)
     return build_organization_response(org, db)
@@ -225,18 +328,45 @@ def delete_organization(
         raise HTTPException(status_code=404, detail="组织不存在")
     if db.query(PlatformUser).filter(PlatformUser.organization_id == organization_id).first():
         raise HTTPException(status_code=400, detail="组织下存在用户，不能删除")
+    orgname = org.name
     db.delete(org)
+    LogService(db, current_user.id, current_user.username).log_crud("删除", "组织管理", orgname, organization_id)
     db.commit()
     return {"message": "删除成功"}
 
 
-@router.get("/menus", response_model=list[MenuResponse])
+@router.get("/menus", response_model=PaginatedResponse)
 def list_menus(
+    keyword: str = Query("", description="搜索关键词：菜单名称/编码"),
+    status: str = Query("", description="状态筛选"),
+    page: int = Query(1, ge=1),
+    page_size: int = Query(20, ge=1, le=100),
     current_user: PlatformUser = Depends(get_current_platform_user),
     db: Session = Depends(get_db),
 ):
-    menus = db.query(PlatformMenu).order_by(PlatformMenu.sort_order.asc(), PlatformMenu.id.asc()).all()
-    return [MenuResponse(**menu.__dict__) for menu in menus]
+    query = db.query(PlatformMenu)
+
+    if keyword:
+        query = query.filter(
+            or_(
+                PlatformMenu.name.contains(keyword),
+                PlatformMenu.code.contains(keyword),
+            )
+        )
+
+    if status:
+        query = query.filter(PlatformMenu.status == status)
+
+    total = query.count()
+    offset = (page - 1) * page_size
+    menus = query.order_by(PlatformMenu.sort_order.asc(), PlatformMenu.id.asc()).offset(offset).limit(page_size).all()
+
+    return PaginatedResponse(
+        items=[MenuResponse(**menu.__dict__) for menu in menus],
+        total=total,
+        page=page,
+        page_size=page_size,
+    )
 
 
 @router.post("/menus", response_model=MenuResponse)
@@ -250,6 +380,7 @@ def create_menu(
         raise HTTPException(status_code=400, detail="菜单编码已存在")
     menu = PlatformMenu(**request.model_dump())
     db.add(menu)
+    LogService(db, current_user.id, current_user.username).log_crud("创建", "菜单管理", request.name, menu.id)
     db.commit()
     db.refresh(menu)
     return MenuResponse(**menu.__dict__)
@@ -267,6 +398,7 @@ def update_menu(
         raise HTTPException(status_code=404, detail="菜单不存在")
     for key, value in request.model_dump(exclude_unset=True).items():
         setattr(menu, key, value)
+    LogService(db, current_user.id, current_user.username).log_crud("更新", "菜单管理", menu.name, menu_id)
     db.commit()
     db.refresh(menu)
     return MenuResponse(**menu.__dict__)
@@ -281,7 +413,9 @@ def delete_menu(
     menu = db.query(PlatformMenu).filter(PlatformMenu.id == menu_id).first()
     if not menu:
         raise HTTPException(status_code=404, detail="菜单不存在")
+    menuname = menu.name
     db.delete(menu)
+    LogService(db, current_user.id, current_user.username).log_crud("删除", "菜单管理", menuname, menu_id)
     db.commit()
     return {"message": "删除成功"}
 

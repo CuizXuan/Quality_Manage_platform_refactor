@@ -1,12 +1,12 @@
 <template>
   <div class="execution-detail">
-    <!-- 顶部 -->
-    <div class="detail-header">
+    <!-- 页面标题区 -->
+    <header class="execution-detail__header">
       <div class="header-left">
         <el-button :icon="ArrowLeft" text @click="router.push('/scenario/executions')">返回</el-button>
         <el-divider direction="vertical" />
         <span class="page-title">执行详情</span>
-        <el-tag :type="getStatusType(execution?.status)" style="margin-left: 8px">
+        <el-tag v-if="execution" :type="getStatusType(execution?.status)" style="margin-left: 8px">
           {{ getStatusLabel(execution?.status) }}
         </el-tag>
       </div>
@@ -14,53 +14,57 @@
         <el-button v-if="execution?.status === 'failed'" type="warning" @click="handleRetry">重试</el-button>
         <el-button type="primary" @click="handleRerun">重新执行</el-button>
       </div>
-    </div>
+    </header>
 
     <!-- 执行概览 -->
-    <el-row :gutter="16" v-if="execution">
-      <el-col :span="6">
-        <el-card class="stat-card" shadow="never">
-          <div class="stat-label">场景</div>
-          <div class="stat-value text-ellipsis" :title="execution.scenario_name">{{ execution.scenario_name }}</div>
-        </el-card>
-      </el-col>
-      <el-col :span="6">
-        <el-card class="stat-card" shadow="never">
-          <div class="stat-label">总步骤</div>
-          <div class="stat-value">{{ execution.total_steps }}</div>
-        </el-card>
-      </el-col>
-      <el-col :span="6">
-        <el-card class="stat-card" shadow="never">
-          <div class="stat-label">成功 / 失败</div>
-          <div class="stat-value">
-            <span style="color: var(--el-color-success)">{{ execution.passed_steps }}</span>
-            /
-            <span style="color: var(--el-color-danger)">{{ execution.failed_steps }}</span>
-          </div>
-        </el-card>
-      </el-col>
-      <el-col :span="6">
-        <el-card class="stat-card" shadow="never">
-          <div class="stat-label">耗时</div>
-          <div class="stat-value">{{ execution.duration ? `${execution.duration}s` : '—' }}</div>
-        </el-card>
-      </el-col>
-    </el-row>
+    <section v-if="execution" class="execution-detail__stats">
+      <el-row :gutter="16">
+        <el-col :span="6">
+          <el-card class="stat-card" shadow="never">
+            <div class="stat-label">场景</div>
+            <div class="stat-value text-ellipsis" :title="execution.scenario_name">{{ execution.scenario_name }}</div>
+          </el-card>
+        </el-col>
+        <el-col :span="6">
+          <el-card class="stat-card" shadow="never">
+            <div class="stat-label">总步骤</div>
+            <div class="stat-value">{{ execution.total_steps }}</div>
+          </el-card>
+        </el-col>
+        <el-col :span="6">
+          <el-card class="stat-card" shadow="never">
+            <div class="stat-label">成功 / 失败</div>
+            <div class="stat-value">
+              <span style="color: var(--el-color-success)">{{ execution.passed_steps }}</span>
+              /
+              <span style="color: var(--el-color-danger)">{{ execution.failed_steps }}</span>
+            </div>
+          </el-card>
+        </el-col>
+        <el-col :span="6">
+          <el-card class="stat-card" shadow="never">
+            <div class="stat-label">耗时</div>
+            <div class="stat-value">{{ execution.duration ? `${execution.duration}s` : '—' }}</div>
+          </el-card>
+        </el-col>
+      </el-row>
+    </section>
 
-    <!-- 时间线 -->
-    <el-card v-if="execution" class="timeline-card" shadow="never">
-      <el-descriptions :column="3" border>
-        <el-descriptions-item label="Run ID">{{ execution.id }}</el-descriptions-item>
-        <el-descriptions-item label="触发者">{{ execution.triggered_by || '—' }}</el-descriptions-item>
-        <el-descriptions-item label="开始时间">{{ execution.started_at || '—' }}</el-descriptions-item>
-        <el-descriptions-item label="结束时间">{{ execution.finished_at || '—' }}</el-descriptions-item>
-        <el-descriptions-item label="失败策略" :span="2">{{ execution.on_error || 'stop' }}</el-descriptions-item>
-      </el-descriptions>
-    </el-card>
+    <!-- 时间线信息 -->
+    <section v-if="execution" class="execution-detail__timeline">
+      <el-card shadow="never">
+        <el-descriptions :column="3" border>
+          <el-descriptions-item label="Run ID">{{ execution.id }}</el-descriptions-item>
+          <el-descriptions-item label="触发者">{{ execution.triggered_by || '—' }}</el-descriptions-item>
+          <el-descriptions-item label="开始时间">{{ execution.started_at || '—' }}</el-descriptions-item>
+          <el-descriptions-item label="结束时间">{{ execution.finished_at || '—' }}</el-descriptions-item>
+          <el-descriptions-item label="失败策略" :span="2">{{ execution.on_error || 'stop' }}</el-descriptions-item>
+        </el-descriptions>
+      </el-card>
+    </section>
 
     <!-- 步骤结果 -->
-    <div class="steps-result">
+    <section class="execution-detail__steps">
       <div class="section-header">步骤结果</div>
 
       <el-empty v-if="!execution?.step_results?.length" description="暂无步骤结果" />
@@ -69,6 +73,7 @@
         v-else
         :data="execution.step_results"
         row-key="id"
+        height="100%"
         class="result-table"
       >
         <el-table-column type="index" label="#" width="60" align="center" />
@@ -88,9 +93,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="duration" label="耗时(s)" width="90" align="center">
-          <template #default="{ row }">
-            {{ row.duration != null ? row.duration : '—' }}
-          </template>
+          <template #default="{ row }">{{ row.duration != null ? row.duration : '—' }}</template>
         </el-table-column>
         <el-table-column prop="actual_result" label="实际结果" min-width="160">
           <template #default="{ row }">
@@ -106,19 +109,14 @@
         </el-table-column>
         <el-table-column label="操作" width="80" fixed="right" align="center">
           <template #default="{ row }">
-            <el-button
-              type="primary"
-              size="small"
-              text
-              @click="handleViewStepDetail(row)"
-            >详情</el-button>
+            <el-button type="primary" size="small" text @click="handleViewStepDetail(row)">详情</el-button>
           </template>
         </el-table-column>
       </el-table>
-    </div>
+    </section>
 
     <!-- 步骤详情弹窗 -->
-    <el-dialog v-model="stepDetailVisible" title="步骤详情" width="640px">
+    <el-dialog v-model="stepDetailVisible" title="步骤详情" width="640px" destroy-on-close>
       <el-descriptions v-if="currentStepResult" :column="1" border>
         <el-descriptions-item label="步骤名称">{{ currentStepResult.step_name }}</el-descriptions-item>
         <el-descriptions-item label="类型">{{ currentStepResult.step_type }}</el-descriptions-item>
@@ -129,13 +127,13 @@
         </el-descriptions-item>
         <el-descriptions-item label="耗时">{{ currentStepResult.duration != null ? `${currentStepResult.duration}s` : '—' }}</el-descriptions-item>
         <el-descriptions-item label="实际结果">{{ currentStepResult.actual_result || '—' }}</el-descriptions-item>
-        <el-descriptions-item label="错误信息" v-if="currentStepResult.error_message">
+        <el-descriptions-item v-if="currentStepResult.error_message" label="错误信息">
           <span style="color: var(--el-color-danger)">{{ currentStepResult.error_message }}</span>
         </el-descriptions-item>
-        <el-descriptions-item label="请求数据" v-if="currentStepResult.request_data">
+        <el-descriptions-item v-if="currentStepResult.request_data" label="请求数据">
           <pre class="code-block">{{ JSON.stringify(JSON.parse(currentStepResult.request_data), null, 2) }}</pre>
         </el-descriptions-item>
-        <el-descriptions-item label="响应数据" v-if="currentStepResult.response_data">
+        <el-descriptions-item v-if="currentStepResult.response_data" label="响应数据">
           <pre class="code-block">{{ JSON.stringify(JSON.parse(currentStepResult.response_data), null, 2) }}</pre>
         </el-descriptions-item>
       </el-descriptions>
@@ -198,49 +196,54 @@ function handleViewStepDetail(row) {
 
 function getStatusType(status) {
   const map = {
-    pending: 'info',
-    running: 'primary',
-    passed: 'success',
-    success: 'success',
-    failed: 'danger',
-    error: 'danger',
-    skipped: 'warning',
+    pending: 'info', running: 'primary', passed: 'success', success: 'success',
+    failed: 'danger', error: 'danger', skipped: 'warning',
   }
   return map[status] || 'info'
 }
 
 function getStatusLabel(status) {
   const map = {
-    pending: '等待中',
-    running: '运行中',
-    passed: '通过',
-    success: '成功',
-    failed: '失败',
-    error: '错误',
-    skipped: '跳过',
+    pending: '等待中', running: '运行中', passed: '通过', success: '成功',
+    failed: '失败', error: '错误', skipped: '跳过',
   }
   return map[status] || status
 }
 </script>
 
 <style scoped>
+/* ── 页面容器 ── */
 .execution-detail {
-  padding: var(--spacing-md);
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-md);
-  overflow-y: auto;
+  width: 100%;
   height: 100%;
+  min-height: 0;
+  min-width: 0;
+  gap: 10px;
+  padding: 12px;
+  background:
+    radial-gradient(circle at top right, rgba(56, 189, 248, 0.13), transparent 30%),
+    var(--bg-page);
+  overflow: hidden;
 }
 
-.detail-header {
+/* ── 标题区 ── */
+.execution-detail__header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: var(--bg-container);
-  padding: var(--spacing-sm) var(--spacing-md);
-  border-radius: var(--border-radius-base);
+  min-height: 56px;
+  padding: 12px 16px;
   border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-base);
+  background: rgba(20, 22, 27, 0.7);
+  box-shadow: var(--box-shadow-light);
+  backdrop-filter: blur(10px);
+}
+
+html:not(.dark) .execution-detail__header {
+  background: rgba(255, 255, 255, 0.86);
 }
 
 .header-left {
@@ -250,13 +253,20 @@ function getStatusLabel(status) {
 
 .header-right {
   display: flex;
-  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
 }
 
 .page-title {
   font-size: 16px;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--text-strong);
+}
+
+/* ── 统计卡片 ── */
+.execution-detail__stats :deep(.el-card) {
+  border-radius: var(--border-radius-base);
 }
 
 .stat-card {
@@ -272,30 +282,66 @@ function getStatusLabel(status) {
 .stat-value {
   font-size: 18px;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--text-strong);
 }
 
-.timeline-card {
+/* ── 时间线 ── */
+.execution-detail__timeline :deep(.el-card) {
   border-radius: var(--border-radius-base);
 }
 
-.steps-result {
+/* ── 步骤结果 ── */
+.execution-detail__steps {
   flex: 1;
-  background: var(--bg-container);
-  border-radius: var(--border-radius-base);
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  background: rgba(20, 22, 27, 0.7);
   border: 1px solid var(--border-color);
-  padding: var(--spacing-md);
+  border-radius: var(--border-radius-base);
+  box-shadow: var(--box-shadow-light);
+  backdrop-filter: blur(10px);
+  overflow: hidden;
+}
+
+html:not(.dark) .execution-detail__steps {
+  background: rgba(255, 255, 255, 0.86);
 }
 
 .section-header {
+  padding: 12px 16px;
   font-size: 14px;
   font-weight: 600;
-  color: var(--text-primary);
-  margin-bottom: var(--spacing-md);
+  color: var(--text-strong);
+  border-bottom: 1px solid var(--border-color);
 }
 
-.result-table {
-  margin-top: 0;
+.execution-detail__steps :deep(.el-table) {
+  flex: 1;
+}
+
+.execution-detail__steps :deep(.el-table__header th) {
+  background: var(--bg-container-soft) !important;
+  color: var(--text-secondary);
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.execution-detail__steps :deep(.el-table__row:hover > td) {
+  background: rgba(56, 189, 248, 0.1) !important;
+}
+
+.execution-detail__steps :deep(.el-table__cell) {
+  vertical-align: middle;
+}
+
+/* ── 通用 ── */
+.text-ellipsis {
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .error-text {
@@ -311,7 +357,7 @@ function getStatusLabel(status) {
 .code-block {
   background: var(--bg-page);
   border-radius: 4px;
-  padding: var(--spacing-sm);
+  padding: 8px;
   font-size: 12px;
   overflow-x: auto;
   max-height: 200px;

@@ -1,9 +1,11 @@
 <template>
-  <el-drawer
+  <el-dialog
     v-model="visible"
     :title="isEdit ? '编辑步骤' : '添加步骤'"
-    size="560px"
-    :before-close="handleClose"
+    top="4vh"
+    width="min(560px, 92vw)"
+    destroy-on-close
+    append-to-body
   >
     <el-form :model="stepForm" label-width="100px" class="step-form">
       <el-form-item label="步骤名称" required>
@@ -20,19 +22,25 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item v-if="stepForm.step_type === 'api'" label="API 路径" required>
-        <el-input v-model="stepForm.config.method" placeholder="GET/POST/PUT/DELETE" style="width: 100px" />
-        <el-input v-model="stepForm.config.path" placeholder="/api/endpoint" style="width: calc(100% - 110px); margin-left: 8px" />
-      </el-form-item>
+      <!-- API 类型配置 -->
+      <template v-if="stepForm.step_type === 'api'">
+        <el-form-item label="请求方法">
+          <el-select v-model="stepForm.config.method" style="width: 120px">
+            <el-option v-for="m in ['GET','POST','PUT','DELETE','PATCH']" :key="m" :label="m" :value="m" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="API 路径" required>
+          <el-input v-model="stepForm.config.path" placeholder="/api/endpoint" />
+        </el-form-item>
+        <el-form-item label="请求体">
+          <el-input v-model="stepForm.config.body" type="textarea" :rows="3" placeholder="JSON 请求体" />
+        </el-form-item>
+        <el-form-item label="预期状态码">
+          <el-input-number v-model="stepForm.config.expected_status" :min="100" :max="599" />
+        </el-form-item>
+      </template>
 
-      <el-form-item v-if="stepForm.step_type === 'api'" label="请求体">
-        <el-input v-model="stepForm.config.body" type="textarea" :rows="4" placeholder="JSON 请求体" />
-      </el-form-item>
-
-      <el-form-item v-if="stepForm.step_type === 'api'" label="预期状态码">
-        <el-input-number v-model="stepForm.config.expected_status" :min="100" :max="599" placeholder="200" style="width: 120px" />
-      </el-form-item>
-
+      <!-- 用例类型配置 -->
       <el-form-item v-if="stepForm.step_type === 'case'" label="关联用例" required>
         <el-select
           v-model="stepForm.config.case_id"
@@ -40,34 +48,34 @@
           filterable
           style="width: 100%"
         >
-          <el-option
-            v-for="c in availableCases"
-            :key="c.id"
-            :label="c.name"
-            :value="c.id"
-          />
+          <el-option v-for="c in availableCases" :key="c.id" :label="c.name" :value="c.id" />
         </el-select>
       </el-form-item>
 
+      <!-- 等待类型配置 -->
       <el-form-item v-if="stepForm.step_type === 'delay'" label="等待时长(秒)">
-        <el-input-number v-model="stepForm.config.duration" :min="0" :max="3600" placeholder="3" style="width: 120px" />
+        <el-input-number v-model="stepForm.config.duration" :min="0" :max="3600" />
       </el-form-item>
 
-      <el-form-item v-if="stepForm.step_type === 'condition'" label="条件表达式">
-        <el-input v-model="stepForm.config.expression" type="textarea" :rows="2" placeholder="例如: variables.status == 'success'" />
-      </el-form-item>
+      <!-- 条件判断配置 -->
+      <template v-if="stepForm.step_type === 'condition'">
+        <el-form-item label="条件表达式">
+          <el-input v-model="stepForm.config.expression" type="textarea" :rows="2" placeholder="例如: variables.status == 'success'" />
+        </el-form-item>
+        <el-form-item label="预期结果">
+          <el-radio-group v-model="stepForm.config.expected_result">
+            <el-radio value="pass">通过</el-radio>
+            <el-radio value="fail">失败</el-radio>
+          </el-radio-group>
+        </el-form-item>
+      </template>
 
-      <el-form-item v-if="stepForm.step_type === 'condition'" label="预期结果">
-        <el-radio-group v-model="stepForm.config.expected_result">
-          <el-radio value="pass">通过</el-radio>
-          <el-radio value="fail">失败</el-radio>
-        </el-radio-group>
-      </el-form-item>
-
+      <!-- 脚本类型配置 -->
       <el-form-item v-if="stepForm.step_type === 'script'" label="脚本内容">
         <el-input v-model="stepForm.config.script" type="textarea" :rows="4" placeholder="Python 脚本" />
       </el-form-item>
 
+      <!-- 通用配置 -->
       <el-form-item label="失败策略">
         <el-radio-group v-model="stepForm.on_error">
           <el-radio value="stop">停止执行</el-radio>
@@ -82,12 +90,12 @@
     </el-form>
 
     <template #footer>
-      <div style="display: flex; justify-content: flex-end; gap: 8px">
+      <div class="drawer-footer">
         <el-button @click="handleClose">取消</el-button>
         <el-button type="primary" :loading="saving" @click="handleSubmit">保存</el-button>
       </div>
     </template>
-  </el-drawer>
+  </el-dialog>
 </template>
 
 <script setup>
@@ -97,22 +105,12 @@ import { useScenarioStore } from '@/stores/scenarioStore'
 import { caseApi } from '@/api/case'
 
 const props = defineProps({
-  modelValue: {
-    type: Boolean,
-    default: false,
-  },
-  step: {
-    type: Object,
-    default: null,
-  },
-  scenarioId: {
-    type: Number,
-    required: true,
-  },
+  modelValue: { type: Boolean, default: false },
+  step: { type: Object, default: null },
+  scenarioId: { type: Number, required: true },
 })
 
 const emit = defineEmits(['update:modelValue', 'saved'])
-
 const scenarioStore = useScenarioStore()
 
 const visible = computed({
@@ -157,10 +155,9 @@ watch(
       } else {
         stepForm.value = defaultForm()
       }
-      // 加载可用用例列表
       try {
         const res = await caseApi.list({ page: 1, page_size: 1000 })
-        availableCases.value = res.data.items
+        availableCases.value = res.data?.items || []
       } catch {
         availableCases.value = []
       }
@@ -169,7 +166,6 @@ watch(
 )
 
 function handleTypeChange() {
-  // 重置 config 当类型切换时
   stepForm.value.config = { ...defaultForm().config }
 }
 
@@ -205,10 +201,10 @@ async function handleSubmit() {
     } else {
       await scenarioStore.addStep(props.scenarioId, data)
     }
-    ElMessage.success(isEdit.value ? '更新成功' : '添加成功')
     emit('saved')
+    ElMessage.success(isEdit.value ? '更新成功' : '添加成功')
   } catch {
-    // error handled in store
+    ElMessage.error(isEdit.value ? '更新失败' : '添加失败')
   } finally {
     saving.value = false
   }
@@ -218,5 +214,11 @@ async function handleSubmit() {
 <style scoped>
 .step-form {
   padding-right: var(--spacing-md);
+}
+
+.drawer-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
 }
 </style>

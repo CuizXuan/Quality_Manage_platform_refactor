@@ -82,6 +82,21 @@ class PlatformPermission(Base):
     role = relationship("PlatformRole", back_populates="permissions")
 
 
+class OperationLog(Base):
+    __tablename__ = "operation_logs"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("platform_users.id"), nullable=True)
+    username = Column(String(100), nullable=False)
+    action = Column(String(80), nullable=False)
+    module = Column(String(80), default="")
+    detail = Column(Text, default="")
+    ip = Column(String(64), default="")
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    user = relationship("PlatformUser")
+
+
 class PlatformMenu(Base):
     __tablename__ = "platform_menus"
 

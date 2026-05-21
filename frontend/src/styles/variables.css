@@ -2,6 +2,11 @@
   --font-sans: Inter, "HarmonyOS Sans SC", "PingFang SC", "Microsoft YaHei UI",
     "Microsoft YaHei", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-mono: "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  --font-size-xs: 12px;
+  --font-size-sm: 13px;
+  --font-size-base: 14px;
+  --font-size-md: 15px;
+  --font-size-lg: 16px;
 
   --bg-page: #eef3f9;
   --bg-sidebar: #ffffff;
@@ -71,6 +76,11 @@
   --el-color-primary-light-8: #d6eaff;
   --el-color-primary-light-9: var(--color-primary-soft);
   --el-color-primary-dark-2: var(--color-primary-hover);
+  --el-font-size-extra-small: var(--font-size-xs);
+  --el-font-size-small: var(--font-size-sm);
+  --el-font-size-base: var(--font-size-base);
+  --el-font-size-medium: var(--font-size-md);
+  --el-font-size-large: var(--font-size-lg);
   --el-bg-color: var(--bg-container);
   --el-bg-color-overlay: var(--bg-container);
   --el-bg-color-page: var(--bg-page);
@@ -91,4 +101,6 @@
   --el-color-info: var(--text-secondary);
   --el-border-radius-base: var(--border-radius-base);
   --el-box-shadow-light: var(--box-shadow-light);
+  --el-segmented-active-color: var(--el-color-primary);
+  --el-segmented-active-bg-color: var(--el-color-primary-light-9);
 }

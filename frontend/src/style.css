@@ -1,4 +1,11 @@
 @import './styles/variables.css';
 @import './styles/dark.css';
 @import './styles/global.css';
+@import './styles/page-framework.css';
 @import './styles/element-override.css';
+
+/* el-segmented 选中状态高亮 - 全局应用，修复 dialog 内样式继承问题 */
+.el-segmented__item.is-selected {
+  color: var(--color-primary) !important;
+  background-color: var(--color-primary-soft) !important;
+}

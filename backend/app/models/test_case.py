@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Text
+from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import relationship
 
 from app.models.base import Base
@@ -20,8 +20,23 @@ class TestCase(Base):
     case_type = Column(String(20), nullable=False)  # 'api' | 'functional'
     source_debug_id = Column(Integer, nullable=True)
     created_by = Column(Integer, nullable=True)
+    is_automated = Column(Boolean, default=False)
+    auto_script_path = Column(String(1000), default="")
+    auto_script_config = Column(Text, default="{}")
+    auto_case_id = Column(String(100), default="")
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # API 调试字段（终端保存时使用）
+    method = Column(String(10), nullable=True)
+    url = Column(String(2000), nullable=True)
+    headers = Column(Text, default="{}")
+    query_params = Column(Text, default="{}")
+    cookies = Column(Text, default="{}")
+    auth_config = Column(Text, default="{}")
+    body_type = Column(String(20), default="none")
+    body = Column(Text, default="")
+    expected_status = Column(Integer, default=200)
 
     variants = relationship("CaseVariant", back_populates="test_case", cascade="all, delete-orphan")
     api_case = relationship("ApiTestCase", back_populates="test_case", uselist=False)

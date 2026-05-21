@@ -12,7 +12,7 @@ from app.models.test_case import CaseVariant, TestCase
 from app.models.case_folder import CaseFolder
 from app.models.api_test_case import ApiTestCase
 from app.models.functional_test_case import FunctionalTestCase
-from app.models.dictionary import SystemDictionary
+from app.models.dictionary import DictType, DictItem
 
 __all__ = [
     "Base",
@@ -29,5 +29,6 @@ __all__ = [
     "CaseFolder",
     "ApiTestCase",
     "FunctionalTestCase",
-    "SystemDictionary",
+    "DictType",
+    "DictItem",
 ]

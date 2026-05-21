@@ -1,0 +1,195 @@
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]: Q
+      - generic [ref=e7]:
+        - strong [ref=e8]: Quality Platform
+        - generic [ref=e9]: Command Center
+    - menubar [ref=e10]:
+      - menuitem "工作台" [ref=e11] [cursor=pointer]:
+        - img [ref=e13]
+        - text: 工作台
+      - menuitem "工具" [ref=e15]:
+        - generic [ref=e16] [cursor=pointer]:
+          - img [ref=e18]
+          - generic [ref=e20]: 工具
+          - img [ref=e22]
+      - menuitem "测试执行" [ref=e24]:
+        - generic [ref=e25] [cursor=pointer]:
+          - img [ref=e27]
+          - generic [ref=e29]: 测试执行
+          - img [ref=e31]
+      - menuitem "质量中心" [ref=e33]:
+        - generic [ref=e34] [cursor=pointer]:
+          - img [ref=e36]
+          - generic [ref=e39]: 质量中心
+          - img [ref=e41]
+      - menuitem "AI 中枢" [ref=e43]:
+        - generic [ref=e44] [cursor=pointer]:
+          - img [ref=e46]
+          - generic [ref=e48]: AI 中枢
+          - img [ref=e50]
+      - menuitem "系统管理" [expanded] [ref=e52]:
+        - generic [ref=e53] [cursor=pointer]:
+          - img [ref=e55]
+          - generic [ref=e57]: 系统管理
+          - img [ref=e59]
+        - menu [ref=e61]:
+          - menuitem "用户管理" [ref=e62] [cursor=pointer]:
+            - img [ref=e64]
+            - text: 用户管理
+          - menuitem "角色管理" [ref=e66] [cursor=pointer]:
+            - img [ref=e68]
+            - text: 角色管理
+          - menuitem "组织管理" [ref=e70] [cursor=pointer]:
+            - img [ref=e72]
+            - text: 组织管理
+          - menuitem "菜单管理" [ref=e74] [cursor=pointer]:
+            - img [ref=e76]
+            - text: 菜单管理
+          - menuitem "字典管理" [ref=e78] [cursor=pointer]:
+            - img [ref=e80]
+            - text: 字典管理
+          - menuitem "日志管理" [ref=e82] [cursor=pointer]:
+            - img [ref=e84]
+            - text: 日志管理
+  - generic [ref=e88]:
+    - generic [ref=e89]:
+      - generic [ref=e90]:
+        - button [ref=e91] [cursor=pointer]:
+          - img [ref=e93]
+        - navigation "面包屑" [ref=e95]:
+          - generic [ref=e96]:
+            - link "系统管理" [ref=e97]
+            - text: /
+          - link "用户管理" [ref=e99]
+      - generic [ref=e100]:
+        - generic [ref=e101]:
+          - generic [ref=e102]: 环境
+          - generic [ref=e104] [cursor=pointer]:
+            - generic:
+              - combobox [ref=e106]
+              - generic [ref=e107]: 本地环境
+            - img [ref=e110]
+        - button [ref=e112] [cursor=pointer]:
+          - img [ref=e114]
+        - button "个人中心：系统管理员" [ref=e116] [cursor=pointer]:
+          - img [ref=e118]
+        - button "退出登录" [ref=e120] [cursor=pointer]:
+          - img [ref=e122]
+    - main [ref=e125]:
+      - generic [ref=e126]:
+        - generic [ref=e127]:
+          - generic [ref=e128]: 用户管理
+          - button "新建用户" [ref=e129] [cursor=pointer]:
+            - img [ref=e131]
+            - generic [ref=e133]: 新建用户
+        - generic [ref=e134]:
+          - generic [ref=e135]:
+            - generic [ref=e137] [cursor=pointer]:
+              - generic:
+                - combobox [ref=e139]
+                - generic [ref=e140]: 全部状态
+              - img [ref=e143]
+            - generic [ref=e145]:
+              - img [ref=e147]
+              - combobox "开始日期" [ref=e149]
+              - generic [ref=e150]: 至
+              - combobox "结束日期" [ref=e151]
+          - generic [ref=e152]:
+            - textbox "搜索用户名/姓名/邮箱" [ref=e155]
+            - button "查询" [ref=e156] [cursor=pointer]:
+              - generic [ref=e157]: 查询
+            - button "重置" [ref=e158] [cursor=pointer]:
+              - generic [ref=e159]: 重置
+        - generic [ref=e160]:
+          - generic [ref=e162]:
+            - table [ref=e164]:
+              - rowgroup [ref=e173]:
+                - row "用户名 姓名 邮箱 组织 角色 状态 操作" [ref=e174]:
+                  - columnheader "用户名" [ref=e175]:
+                    - generic [ref=e176]: 用户名
+                  - columnheader "姓名" [ref=e177]:
+                    - generic [ref=e178]: 姓名
+                  - columnheader "邮箱" [ref=e179]:
+                    - generic [ref=e180]: 邮箱
+                  - columnheader "组织" [ref=e181]:
+                    - generic [ref=e182]: 组织
+                  - columnheader "角色" [ref=e183]:
+                    - generic [ref=e184]: 角色
+                  - columnheader "状态" [ref=e185]:
+                    - generic [ref=e186]: 状态
+                  - columnheader "操作" [ref=e187]:
+                    - generic [ref=e188]: 操作
+            - generic [ref=e192]:
+              - table:
+                - rowgroup
+              - generic [ref=e194]: 暂无数据
+          - generic [ref=e197]:
+            - generic [ref=e198]: 共 0 条
+            - generic [ref=e201] [cursor=pointer]:
+              - generic:
+                - combobox [ref=e203]
+                - generic [ref=e204]: 20条/页
+              - img [ref=e207]
+            - button "上一页" [disabled] [ref=e209]:
+              - generic: 上一页
+            - list [ref=e210]:
+              - listitem "第 1 页" [ref=e211]: "1"
+            - button "下一页" [disabled] [ref=e212]:
+              - generic: 下一页
+        - dialog "新建用户" [ref=e214]:
+          - generic [active] [ref=e215]:
+            - generic [ref=e216]:
+              - heading "新建用户" [level=2] [ref=e217]
+              - button "关闭此对话框" [ref=e218] [cursor=pointer]:
+                - img [ref=e220]
+            - generic [ref=e223]:
+              - generic [ref=e224]:
+                - generic [ref=e225]: "* 用户名"
+                - textbox "* 用户名" [ref=e229]:
+                  - /placeholder: 请输入用户名
+              - generic [ref=e230]:
+                - generic [ref=e231]: 姓名
+                - textbox "姓名" [ref=e235]:
+                  - /placeholder: 请输入姓名
+              - generic [ref=e236]:
+                - generic [ref=e237]: "* 邮箱"
+                - textbox "* 邮箱" [ref=e241]:
+                  - /placeholder: 请输入邮箱
+              - generic [ref=e242]:
+                - generic [ref=e243]: "* 密码"
+                - textbox "* 密码" [ref=e247]:
+                  - /placeholder: 请输入密码
+              - generic [ref=e248]:
+                - generic [ref=e249]: 手机号
+                - textbox "手机号" [ref=e253]:
+                  - /placeholder: 请输入手机号
+              - generic [ref=e254]:
+                - generic [ref=e255]: 组织
+                - generic [ref=e258] [cursor=pointer]:
+                  - generic:
+                    - combobox "组织" [ref=e260]
+                    - generic [ref=e261]: 请选择组织
+                  - img [ref=e264]
+              - generic [ref=e266]:
+                - generic [ref=e267]: 角色
+                - group "角色" [ref=e269]:
+                  - generic [ref=e270] [cursor=pointer]:
+                    - generic [ref=e271]:
+                      - checkbox "超级管理员"
+                    - generic [ref=e273]: 超级管理员
+              - generic [ref=e274]:
+                - generic [ref=e275]: 状态
+                - radiogroup "状态" [ref=e277]:
+                  - generic [ref=e278] [cursor=pointer]:
+                    - radio "启用" [checked] [ref=e280]
+                    - generic [ref=e282]: 启用
+                  - generic [ref=e283] [cursor=pointer]:
+                    - radio "停用" [ref=e285]
+                    - generic [ref=e287]: 停用
+            - generic [ref=e288]:
+              - button "取消" [ref=e289] [cursor=pointer]:
+                - generic [ref=e290]: 取消
+              - button "保存" [ref=e291] [cursor=pointer]:
+                - generic [ref=e292]: 保存

@@ -30,6 +30,7 @@ const localAuthConfig = ref({ ...props.authConfig })
 
 watch(() => props.modelValue, (v) => { localAuthType.value = v })
 watch(() => props.authConfig, (v) => { localAuthConfig.value = { ...v } }, { deep: true })
+watch(localAuthType, emitUpdate)
 
 function emitUpdate() {
   emit('update:modelValue', localAuthType.value)

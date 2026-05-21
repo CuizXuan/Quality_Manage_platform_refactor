@@ -104,6 +104,23 @@ export const useAuthStore = defineStore('auth', () => {
     clearTokens()
   }
 
+  async function changePassword(oldPassword, newPassword) {
+    loading.value = true
+    error.value = ''
+    try {
+      await client.post('/api/auth/change-password', {
+        old_password: oldPassword,
+        new_password: newPassword,
+      })
+      return true
+    } catch (err) {
+      error.value = err.response?.data?.detail || err.message || '密码修改失败'
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
   if (accessToken.value) {
     fetchUserInfo()
   }
@@ -122,6 +139,7 @@ export const useAuthStore = defineStore('auth', () => {
     fetchUserInfo,
     refreshAccessToken,
     logout,
+    changePassword,
   }
 })
 

@@ -1,7 +1,9 @@
 from datetime import datetime
-from typing import Optional
+from typing import Generic, Optional, TypeVar
 
 from pydantic import BaseModel, Field
+
+T = TypeVar("T")
 
 
 class TokenResponse(BaseModel):
@@ -24,6 +26,13 @@ class RegisterRequest(BaseModel):
 
 class RefreshRequest(BaseModel):
     refresh_token: str
+
+
+class PaginatedResponse(BaseModel, Generic[T]):
+    items: list[T]
+    total: int
+    page: int
+    page_size: int
 
 
 class UserCreate(BaseModel):

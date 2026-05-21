@@ -18,6 +18,7 @@ from app.schemas.terminal import (
     ImportDocumentResponse,
 )
 from app.services.terminal_service import TerminalService
+from app.services.log_service import LogService
 
 router = APIRouter(prefix="/api/terminal", tags=["终端调试"])
 
@@ -73,7 +74,40 @@ def debug_request(
         source_type="manual",
     )
     result = service.execute_debug(req.id)
+    LogService(db, current_user.id, current_user.username).log("发送请求", "终端调试", f"{request.method} {request.url}")
     return build_request_response(req, result)
+
+
+@router.post("/internal/run")
+def internal_run_request(
+    request: DebugRequestCreate,
+    db: Session = Depends(get_db),
+):
+    """
+    Internal endpoint for scenario execution engine.
+    Bypasses authentication — only callable from localhost.
+    """
+    service = TerminalService(db)
+    req = service.create_debug_request(
+        method=request.method,
+        url=request.url,
+        query_params=request.query_params,
+        headers=request.headers,
+        cookies=request.cookies,
+        auth_config=request.auth_config,
+        body_type=request.body_type,
+        body=request.body,
+        environment_id=request.environment_id,
+        created_by=None,
+        source_type="scenario",
+    )
+    result = service.execute_debug(req.id)
+    return {
+        "status_code": result.status_code,
+        "response_body": result.response_body,
+        "duration_ms": result.duration_ms,
+        "error": result.error_message,
+    }
 
 
 @router.get("/history", response_model=DebugHistoryResponse)
@@ -136,6 +170,11 @@ def toggle_favorite(
     service = TerminalService(db)
     try:
         req = service.toggle_favorite(request_id)
+        LogService(db, current_user.id, current_user.username).log(
+            "切换收藏" if req.status == "favorite" else "取消收藏",
+            "终端调试",
+            f"请求 ID={request_id}"
+        )
         return {"id": req.id, "status": req.status}
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
@@ -151,6 +190,7 @@ def delete_request(
     service = TerminalService(db)
     if not service.delete_request(request_id):
         raise HTTPException(status_code=404, detail="Request not found")
+    LogService(db, current_user.id, current_user.username).log("删除请求", "终端调试", f"请求 ID={request_id}")
     return {"message": "Deleted successfully"}
 
 

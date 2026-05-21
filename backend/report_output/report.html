@@ -438,7 +438,7 @@
     <div class="report-metadata" style="background: #f2f4f7;">
     <h2 onclick="this.nextElementSibling.classList.toggle('hidden')" style="cursor: pointer; font-size: 12px; ">
         Execution Metadata (click to toggle)
-         <button class="inline-copy-btn" onclick="event.stopPropagation(); copyFromBase64('eydyZXBvcnRfdGl0bGUnOiAncmVwb3J0X291dHB1dCcsICdlbnZpcm9ubWVudCc6ICdQYXNzIC0tcnAtZW52IHRvIHBvcHVsYXRlIGVudmlyb25tZW50JywgJ2JyYW5jaCc6ICdQYXNzIC0tZ2l0LWJyYW5jaCB0byBwb3B1bGF0ZSBnaXQgbWV0YWRhdGEnLCAnY29tbWl0JzogJ1Bhc3MgLS1naXQtY29tbWl0IHRvIHBvcHVsYXRlIGdpdCBtZXRhZGF0YScsICdweXRob25fdmVyc2lvbic6ICczLjEzLjknLCAnZ2VuZXJhdGVkX2F0JzogJzIwMjYtMDUtMTlUMjM6MTM6NDQuMzk5NDk1J30=', this)" title="Copy metadata">
+         <button class="inline-copy-btn" onclick="event.stopPropagation(); copyFromBase64('eydyZXBvcnRfdGl0bGUnOiAncmVwb3J0X291dHB1dCcsICdlbnZpcm9ubWVudCc6ICdQYXNzIC0tcnAtZW52IHRvIHBvcHVsYXRlIGVudmlyb25tZW50JywgJ2JyYW5jaCc6ICdQYXNzIC0tZ2l0LWJyYW5jaCB0byBwb3B1bGF0ZSBnaXQgbWV0YWRhdGEnLCAnY29tbWl0JzogJ1Bhc3MgLS1naXQtY29tbWl0IHRvIHBvcHVsYXRlIGdpdCBtZXRhZGF0YScsICdweXRob25fdmVyc2lvbic6ICczLjEzLjknLCAnZ2VuZXJhdGVkX2F0JzogJzIwMjYtMDUtMjBUMDE6MjE6MDcuMzAwODExJ30=', this)" title="Copy metadata">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                         <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
@@ -451,7 +451,7 @@
         <tr><th>Environment</th><td>Pass --rp-env to populate environment</td></tr>
         <tr><th>Branch</th><td>Pass --git-branch to populate git metadata</td></tr>
         <tr><th>Commit</th><td>Pass --git-commit to populate git metadata</td></tr>
-        <tr><th>Generated At</th><td>2026-05-19T23:13:44.399495</td></tr>
+        <tr><th>Generated At</th><td>2026-05-20T01:21:07.300811</td></tr>
         <tr><th>Python version</th><td>3.13.9</td></tr>
     </table>
 </div>
@@ -475,7 +475,7 @@
       </label>
       <label style="margin-left: 1rem;">
         <input type="checkbox" id="untrackedOnlyCheckbox" />
-        Show untracked (<span>12</span>)
+        Show untracked (<span>11</span>)
       </label>
       <span onclick="toggleUntrackedInfo()" style="
   display: inline-flex;
@@ -537,64 +537,20 @@
             border: 1px solid #2f7a33; 
             border-radius: 5px; margin-bottom: 1rem;">
               <strong>Bingo!</strong> All your tests passed!
-              The slowest test was <strong>test_create_scenario</strong> at 0.02s.
+              The slowest test was <strong>test_summarize_report_parses_markdown</strong> at 0.00s.
             </div>
             <div id="tests-container">    
-<div class="test test-card" data-name="test_create_scenario" data-link="" data-markers="">
+<div class="test test-card" data-name="test_generate_variants_filters_invalid_type" data-link="" data-markers="">
   <div class="header passed" onclick="toggleDetails(this)">
     <div class="header-section test-info">
       <span class="toggle"></span>
-      <strong>test_create_scenario</strong>
+      <strong>test_generate_variants_filters_invalid_type</strong>
       <span>— PASSED</span>
     </div>
     <div class="header-section meta">
       <span class="nodeid-badge" style="display: flex; align-items: center; gap: 6px;">
-        <code style="font-size: 0.6em; color: #555;">tests/models/test_scenario.py::TestScenario::test_create_scenario</code>
-          <button class="inline-copy-btn" onclick="event.stopPropagation(); copyFromBase64('dGVzdHMvbW9kZWxzL3Rlc3Rfc2NlbmFyaW8ucHk6OlRlc3RTY2VuYXJpbzo6dGVzdF9jcmVhdGVfc2NlbmFyaW8=', this)" title="Copy nodeid">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                    </svg>
-                </button>
-            
-      </span>
-      <span class="worker-id" style="background: #ddd; border-radius: 3px; padding: 2px 5px; font-size: 0.85em; font-weight: bold;">main</span>
-    </div>
-
-    <div class="header-section badges-and-timing">
-      <span style="display:inline-block; min-width:40px;"></span>
-      <span style="display:inline-block; min-width:45px;"></span>
-      <span class="timestamp">⏱ 0.02s</span>
-    </div>
-  </div>
-
-  <div class="details">
-    <div class="details-content">
-      <div class="details-text">
-    
-    
-    
-    
-    
-    
-      </div>
-      
-    </div>
-  </div>
-</div>
-
-        
-<div class="test test-card" data-name="test_scenario_default_values" data-link="" data-markers="">
-  <div class="header passed" onclick="toggleDetails(this)">
-    <div class="header-section test-info">
-      <span class="toggle"></span>
-      <strong>test_scenario_default_values</strong>
-      <span>— PASSED</span>
-    </div>
-    <div class="header-section meta">
-      <span class="nodeid-badge" style="display: flex; align-items: center; gap: 6px;">
-        <code style="font-size: 0.6em; color: #555;">tests/models/test_scenario.py::TestScenario::test_scenario_default_values</code>
-          <button class="inline-copy-btn" onclick="event.stopPropagation(); copyFromBase64('dGVzdHMvbW9kZWxzL3Rlc3Rfc2NlbmFyaW8ucHk6OlRlc3RTY2VuYXJpbzo6dGVzdF9zY2VuYXJpb19kZWZhdWx0X3ZhbHVlcw==', this)" title="Copy nodeid">
+        <code style="font-size: 0.6em; color: #555;">tests/services/test_ai_service.py::TestAIServiceVariants::test_generate_variants_filters_invalid_type</code>
+          <button class="inline-copy-btn" onclick="event.stopPropagation(); copyFromBase64('dGVzdHMvc2VydmljZXMvdGVzdF9haV9zZXJ2aWNlLnB5OjpUZXN0QUlTZXJ2aWNlVmFyaWFudHM6OnRlc3RfZ2VuZXJhdGVfdmFyaWFudHNfZmlsdGVyc19pbnZhbGlkX3R5cGU=', this)" title="Copy nodeid">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                         <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
@@ -628,17 +584,17 @@
 </div>
 
         
-<div class="test test-card" data-name="test_create_scenario_step" data-link="" data-markers="">
+<div class="test test-card" data-name="test_generate_variants_parses_edge_case" data-link="" data-markers="">
   <div class="header passed" onclick="toggleDetails(this)">
     <div class="header-section test-info">
       <span class="toggle"></span>
-      <strong>test_create_scenario_step</strong>
+      <strong>test_generate_variants_parses_edge_case</strong>
       <span>— PASSED</span>
     </div>
     <div class="header-section meta">
       <span class="nodeid-badge" style="display: flex; align-items: center; gap: 6px;">
-        <code style="font-size: 0.6em; color: #555;">tests/models/test_scenario.py::TestScenarioStep::test_create_scenario_step</code>
-          <button class="inline-copy-btn" onclick="event.stopPropagation(); copyFromBase64('dGVzdHMvbW9kZWxzL3Rlc3Rfc2NlbmFyaW8ucHk6OlRlc3RTY2VuYXJpb1N0ZXA6OnRlc3RfY3JlYXRlX3NjZW5hcmlvX3N0ZXA=', this)" title="Copy nodeid">
+        <code style="font-size: 0.6em; color: #555;">tests/services/test_ai_service.py::TestAIServiceVariants::test_generate_variants_parses_edge_case</code>
+          <button class="inline-copy-btn" onclick="event.stopPropagation(); copyFromBase64('dGVzdHMvc2VydmljZXMvdGVzdF9haV9zZXJ2aWNlLnB5OjpUZXN0QUlTZXJ2aWNlVmFyaWFudHM6OnRlc3RfZ2VuZXJhdGVfdmFyaWFudHNfcGFyc2VzX2VkZ2VfY2FzZQ==', this)" title="Copy nodeid">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                         <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
@@ -672,17 +628,17 @@
 </div>
 
         
-<div class="test test-card" data-name="test_scenario_step_with_variant_id" data-link="" data-markers="">
+<div class="test test-card" data-name="test_generate_variants_returns_list" data-link="" data-markers="">
   <div class="header passed" onclick="toggleDetails(this)">
     <div class="header-section test-info">
       <span class="toggle"></span>
-      <strong>test_scenario_step_with_variant_id</strong>
+      <strong>test_generate_variants_returns_list</strong>
       <span>— PASSED</span>
     </div>
     <div class="header-section meta">
       <span class="nodeid-badge" style="display: flex; align-items: center; gap: 6px;">
-        <code style="font-size: 0.6em; color: #555;">tests/models/test_scenario.py::TestScenarioStep::test_scenario_step_with_variant_id</code>
-          <button class="inline-copy-btn" onclick="event.stopPropagation(); copyFromBase64('dGVzdHMvbW9kZWxzL3Rlc3Rfc2NlbmFyaW8ucHk6OlRlc3RTY2VuYXJpb1N0ZXA6OnRlc3Rfc2NlbmFyaW9fc3RlcF93aXRoX3ZhcmlhbnRfaWQ=', this)" title="Copy nodeid">
+        <code style="font-size: 0.6em; color: #555;">tests/services/test_ai_service.py::TestAIServiceVariants::test_generate_variants_returns_list</code>
+          <button class="inline-copy-btn" onclick="event.stopPropagation(); copyFromBase64('dGVzdHMvc2VydmljZXMvdGVzdF9haV9zZXJ2aWNlLnB5OjpUZXN0QUlTZXJ2aWNlVmFyaWFudHM6OnRlc3RfZ2VuZXJhdGVfdmFyaWFudHNfcmV0dXJuc19saXN0', this)" title="Copy nodeid">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                         <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
@@ -716,17 +672,17 @@
 </div>
 
         
-<div class="test test-card" data-name="test_scenario_step_failure_strategies" data-link="" data-markers="">
+<div class="test test-card" data-name="test_generate_assertions_parses_status_code" data-link="" data-markers="">
   <div class="header passed" onclick="toggleDetails(this)">
     <div class="header-section test-info">
       <span class="toggle"></span>
-      <strong>test_scenario_step_failure_strategies</strong>
+      <strong>test_generate_assertions_parses_status_code</strong>
       <span>— PASSED</span>
     </div>
     <div class="header-section meta">
       <span class="nodeid-badge" style="display: flex; align-items: center; gap: 6px;">
-        <code style="font-size: 0.6em; color: #555;">tests/models/test_scenario.py::TestScenarioStep::test_scenario_step_failure_strategies</code>
-          <button class="inline-copy-btn" onclick="event.stopPropagation(); copyFromBase64('dGVzdHMvbW9kZWxzL3Rlc3Rfc2NlbmFyaW8ucHk6OlRlc3RTY2VuYXJpb1N0ZXA6OnRlc3Rfc2NlbmFyaW9fc3RlcF9mYWlsdXJlX3N0cmF0ZWdpZXM=', this)" title="Copy nodeid">
+        <code style="font-size: 0.6em; color: #555;">tests/services/test_ai_service.py::TestAIServiceAssertions::test_generate_assertions_parses_status_code</code>
+          <button class="inline-copy-btn" onclick="event.stopPropagation(); copyFromBase64('dGVzdHMvc2VydmljZXMvdGVzdF9haV9zZXJ2aWNlLnB5OjpUZXN0QUlTZXJ2aWNlQXNzZXJ0aW9uczo6dGVzdF9nZW5lcmF0ZV9hc3NlcnRpb25zX3BhcnNlc19zdGF0dXNfY29kZQ==', this)" title="Copy nodeid">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                         <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
@@ -760,17 +716,17 @@
 </div>
 
         
-<div class="test test-card" data-name="test_extract_rules_default" data-link="" data-markers="">
+<div class="test test-card" data-name="test_generate_assertions_returns_string" data-link="" data-markers="">
   <div class="header passed" onclick="toggleDetails(this)">
     <div class="header-section test-info">
       <span class="toggle"></span>
-      <strong>test_extract_rules_default</strong>
+      <strong>test_generate_assertions_returns_string</strong>
       <span>— PASSED</span>
     </div>
     <div class="header-section meta">
       <span class="nodeid-badge" style="display: flex; align-items: center; gap: 6px;">
-        <code style="font-size: 0.6em; color: #555;">tests/models/test_scenario.py::TestScenarioStepExtractInjectRules::test_extract_rules_default</code>
-          <button class="inline-copy-btn" onclick="event.stopPropagation(); copyFromBase64('dGVzdHMvbW9kZWxzL3Rlc3Rfc2NlbmFyaW8ucHk6OlRlc3RTY2VuYXJpb1N0ZXBFeHRyYWN0SW5qZWN0UnVsZXM6OnRlc3RfZXh0cmFjdF9ydWxlc19kZWZhdWx0', this)" title="Copy nodeid">
+        <code style="font-size: 0.6em; color: #555;">tests/services/test_ai_service.py::TestAIServiceAssertions::test_generate_assertions_returns_string</code>
+          <button class="inline-copy-btn" onclick="event.stopPropagation(); copyFromBase64('dGVzdHMvc2VydmljZXMvdGVzdF9haV9zZXJ2aWNlLnB5OjpUZXN0QUlTZXJ2aWNlQXNzZXJ0aW9uczo6dGVzdF9nZW5lcmF0ZV9hc3NlcnRpb25zX3JldHVybnNfc3RyaW5n', this)" title="Copy nodeid">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                         <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
@@ -804,17 +760,17 @@
 </div>
 
         
-<div class="test test-card" data-name="test_extract_rules_json" data-link="" data-markers="">
+<div class="test test-card" data-name="test_generate_assertions_valid_json_path" data-link="" data-markers="">
   <div class="header passed" onclick="toggleDetails(this)">
     <div class="header-section test-info">
       <span class="toggle"></span>
-      <strong>test_extract_rules_json</strong>
+      <strong>test_generate_assertions_valid_json_path</strong>
       <span>— PASSED</span>
     </div>
     <div class="header-section meta">
       <span class="nodeid-badge" style="display: flex; align-items: center; gap: 6px;">
-        <code style="font-size: 0.6em; color: #555;">tests/models/test_scenario.py::TestScenarioStepExtractInjectRules::test_extract_rules_json</code>
-          <button class="inline-copy-btn" onclick="event.stopPropagation(); copyFromBase64('dGVzdHMvbW9kZWxzL3Rlc3Rfc2NlbmFyaW8ucHk6OlRlc3RTY2VuYXJpb1N0ZXBFeHRyYWN0SW5qZWN0UnVsZXM6OnRlc3RfZXh0cmFjdF9ydWxlc19qc29u', this)" title="Copy nodeid">
+        <code style="font-size: 0.6em; color: #555;">tests/services/test_ai_service.py::TestAIServiceAssertions::test_generate_assertions_valid_json_path</code>
+          <button class="inline-copy-btn" onclick="event.stopPropagation(); copyFromBase64('dGVzdHMvc2VydmljZXMvdGVzdF9haV9zZXJ2aWNlLnB5OjpUZXN0QUlTZXJ2aWNlQXNzZXJ0aW9uczo6dGVzdF9nZW5lcmF0ZV9hc3NlcnRpb25zX3ZhbGlkX2pzb25fcGF0aA==', this)" title="Copy nodeid">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                         <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
@@ -848,17 +804,17 @@
 </div>
 
         
-<div class="test test-card" data-name="test_create_execution_run" data-link="" data-markers="">
+<div class="test test-card" data-name="test_analyze_failure_parses_root_cause" data-link="" data-markers="">
   <div class="header passed" onclick="toggleDetails(this)">
     <div class="header-section test-info">
       <span class="toggle"></span>
-      <strong>test_create_execution_run</strong>
+      <strong>test_analyze_failure_parses_root_cause</strong>
       <span>— PASSED</span>
     </div>
     <div class="header-section meta">
       <span class="nodeid-badge" style="display: flex; align-items: center; gap: 6px;">
-        <code style="font-size: 0.6em; color: #555;">tests/models/test_scenario.py::TestExecutionRun::test_create_execution_run</code>
-          <button class="inline-copy-btn" onclick="event.stopPropagation(); copyFromBase64('dGVzdHMvbW9kZWxzL3Rlc3Rfc2NlbmFyaW8ucHk6OlRlc3RFeGVjdXRpb25SdW46OnRlc3RfY3JlYXRlX2V4ZWN1dGlvbl9ydW4=', this)" title="Copy nodeid">
+        <code style="font-size: 0.6em; color: #555;">tests/services/test_ai_service.py::TestAIServiceFailureAnalysis::test_analyze_failure_parses_root_cause</code>
+          <button class="inline-copy-btn" onclick="event.stopPropagation(); copyFromBase64('dGVzdHMvc2VydmljZXMvdGVzdF9haV9zZXJ2aWNlLnB5OjpUZXN0QUlTZXJ2aWNlRmFpbHVyZUFuYWx5c2lzOjp0ZXN0X2FuYWx5emVfZmFpbHVyZV9wYXJzZXNfcm9vdF9jYXVzZQ==', this)" title="Copy nodeid">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                         <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
@@ -892,17 +848,17 @@
 </div>
 
         
-<div class="test test-card" data-name="test_execution_run_types" data-link="" data-markers="">
+<div class="test test-card" data-name="test_analyze_failure_valid_severity" data-link="" data-markers="">
   <div class="header passed" onclick="toggleDetails(this)">
     <div class="header-section test-info">
       <span class="toggle"></span>
-      <strong>test_execution_run_types</strong>
+      <strong>test_analyze_failure_valid_severity</strong>
       <span>— PASSED</span>
     </div>
     <div class="header-section meta">
       <span class="nodeid-badge" style="display: flex; align-items: center; gap: 6px;">
-        <code style="font-size: 0.6em; color: #555;">tests/models/test_scenario.py::TestExecutionRun::test_execution_run_types</code>
-          <button class="inline-copy-btn" onclick="event.stopPropagation(); copyFromBase64('dGVzdHMvbW9kZWxzL3Rlc3Rfc2NlbmFyaW8ucHk6OlRlc3RFeGVjdXRpb25SdW46OnRlc3RfZXhlY3V0aW9uX3J1bl90eXBlcw==', this)" title="Copy nodeid">
+        <code style="font-size: 0.6em; color: #555;">tests/services/test_ai_service.py::TestAIServiceFailureAnalysis::test_analyze_failure_valid_severity</code>
+          <button class="inline-copy-btn" onclick="event.stopPropagation(); copyFromBase64('dGVzdHMvc2VydmljZXMvdGVzdF9haV9zZXJ2aWNlLnB5OjpUZXN0QUlTZXJ2aWNlRmFpbHVyZUFuYWx5c2lzOjp0ZXN0X2FuYWx5emVfZmFpbHVyZV92YWxpZF9zZXZlcml0eQ==', this)" title="Copy nodeid">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                         <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
@@ -936,17 +892,17 @@
 </div>
 
         
-<div class="test test-card" data-name="test_execution_run_statuses" data-link="" data-markers="">
+<div class="test test-card" data-name="test_summarize_report_parses_markdown" data-link="" data-markers="">
   <div class="header passed" onclick="toggleDetails(this)">
     <div class="header-section test-info">
       <span class="toggle"></span>
-      <strong>test_execution_run_statuses</strong>
+      <strong>test_summarize_report_parses_markdown</strong>
       <span>— PASSED</span>
     </div>
     <div class="header-section meta">
       <span class="nodeid-badge" style="display: flex; align-items: center; gap: 6px;">
-        <code style="font-size: 0.6em; color: #555;">tests/models/test_scenario.py::TestExecutionRun::test_execution_run_statuses</code>
-          <button class="inline-copy-btn" onclick="event.stopPropagation(); copyFromBase64('dGVzdHMvbW9kZWxzL3Rlc3Rfc2NlbmFyaW8ucHk6OlRlc3RFeGVjdXRpb25SdW46OnRlc3RfZXhlY3V0aW9uX3J1bl9zdGF0dXNlcw==', this)" title="Copy nodeid">
+        <code style="font-size: 0.6em; color: #555;">tests/services/test_ai_service.py::TestAIServiceReportSummary::test_summarize_report_parses_markdown</code>
+          <button class="inline-copy-btn" onclick="event.stopPropagation(); copyFromBase64('dGVzdHMvc2VydmljZXMvdGVzdF9haV9zZXJ2aWNlLnB5OjpUZXN0QUlTZXJ2aWNlUmVwb3J0U3VtbWFyeTo6dGVzdF9zdW1tYXJpemVfcmVwb3J0X3BhcnNlc19tYXJrZG93bg==', this)" title="Copy nodeid">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                         <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
@@ -980,17 +936,17 @@
 </div>
 
         
-<div class="test test-card" data-name="test_execution_run_timing" data-link="" data-markers="">
+<div class="test test-card" data-name="test_summarize_report_risk_score_in_bounds" data-link="" data-markers="">
   <div class="header passed" onclick="toggleDetails(this)">
     <div class="header-section test-info">
       <span class="toggle"></span>
-      <strong>test_execution_run_timing</strong>
+      <strong>test_summarize_report_risk_score_in_bounds</strong>
       <span>— PASSED</span>
     </div>
     <div class="header-section meta">
       <span class="nodeid-badge" style="display: flex; align-items: center; gap: 6px;">
-        <code style="font-size: 0.6em; color: #555;">tests/models/test_scenario.py::TestExecutionRun::test_execution_run_timing</code>
-          <button class="inline-copy-btn" onclick="event.stopPropagation(); copyFromBase64('dGVzdHMvbW9kZWxzL3Rlc3Rfc2NlbmFyaW8ucHk6OlRlc3RFeGVjdXRpb25SdW46OnRlc3RfZXhlY3V0aW9uX3J1bl90aW1pbmc=', this)" title="Copy nodeid">
+        <code style="font-size: 0.6em; color: #555;">tests/services/test_ai_service.py::TestAIServiceReportSummary::test_summarize_report_risk_score_in_bounds</code>
+          <button class="inline-copy-btn" onclick="event.stopPropagation(); copyFromBase64('dGVzdHMvc2VydmljZXMvdGVzdF9haV9zZXJ2aWNlLnB5OjpUZXN0QUlTZXJ2aWNlUmVwb3J0U3VtbWFyeTo6dGVzdF9zdW1tYXJpemVfcmVwb3J0X3Jpc2tfc2NvcmVfaW5fYm91bmRz', this)" title="Copy nodeid">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                         <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
@@ -1024,17 +980,17 @@
 </div>
 
         
-<div class="test test-card" data-name="test_execution_run_summary" data-link="" data-markers="">
+<div class="test test-card" data-name="test_summarize_report_risk_score_zero" data-link="" data-markers="">
   <div class="header passed" onclick="toggleDetails(this)">
     <div class="header-section test-info">
       <span class="toggle"></span>
-      <strong>test_execution_run_summary</strong>
+      <strong>test_summarize_report_risk_score_zero</strong>
       <span>— PASSED</span>
     </div>
     <div class="header-section meta">
       <span class="nodeid-badge" style="display: flex; align-items: center; gap: 6px;">
-        <code style="font-size: 0.6em; color: #555;">tests/models/test_scenario.py::TestExecutionRun::test_execution_run_summary</code>
-          <button class="inline-copy-btn" onclick="event.stopPropagation(); copyFromBase64('dGVzdHMvbW9kZWxzL3Rlc3Rfc2NlbmFyaW8ucHk6OlRlc3RFeGVjdXRpb25SdW46OnRlc3RfZXhlY3V0aW9uX3J1bl9zdW1tYXJ5', this)" title="Copy nodeid">
+        <code style="font-size: 0.6em; color: #555;">tests/services/test_ai_service.py::TestAIServiceReportSummary::test_summarize_report_risk_score_zero</code>
+          <button class="inline-copy-btn" onclick="event.stopPropagation(); copyFromBase64('dGVzdHMvc2VydmljZXMvdGVzdF9haV9zZXJ2aWNlLnB5OjpUZXN0QUlTZXJ2aWNlUmVwb3J0U3VtbWFyeTo6dGVzdF9zdW1tYXJpemVfcmVwb3J0X3Jpc2tfc2NvcmVfemVybw==', this)" title="Copy nodeid">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                         <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>

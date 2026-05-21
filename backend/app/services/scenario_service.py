@@ -52,15 +52,18 @@ class ScenarioService:
             "id": scenario.id,
             "name": scenario.name,
             "description": scenario.description or "",
+            "scenario_type": scenario.scenario_type or "functional",
+            "priority": scenario.priority or "P2",
             "status": scenario.status or "draft",
             "version": scenario.version or 1,
             "created_by": scenario.created_by,
             "created_at": scenario.created_at.isoformat() if scenario.created_at else "",
+            "updated_at": scenario.updated_at.isoformat() if scenario.updated_at else "",
+            "step_count": len(scenario.steps) if scenario.steps else 0,
             "steps": [ScenarioService._serialize_step(s) for s in scenario.steps],
         }
 
-    @staticmethod
-    def _serialize_run(run: ExecutionRun) -> Dict[str, Any]:
+    def _serialize_run(self, run: ExecutionRun) -> Dict[str, Any]:
         """Serialize an ExecutionRun model to dict."""
         summary = run.summary
         if isinstance(summary, str):
@@ -68,16 +71,32 @@ class ScenarioService:
                 summary = json.loads(summary)
             except Exception:
                 summary = {}
+
+        # Resolve scenario_name via JOIN
+        scenario_name = None
+        if run.run_type == "scenario" and run.target_id:
+            from app.models.scenario import Scenario
+            scenario = self.db.query(Scenario).filter(Scenario.id == run.target_id).first()
+            if scenario:
+                scenario_name = scenario.name
+
         return {
             "id": run.id,
             "run_type": run.run_type,
             "target_id": run.target_id,
+            "scenario_name": scenario_name or (str(run.target_id) if run.target_id else None),
             "environment_id": run.environment_id,
             "status": run.status,
             "started_at": run.started_at.isoformat() if run.started_at else None,
             "finished_at": run.finished_at.isoformat() if run.finished_at else None,
             "duration_ms": run.duration_ms,
+            "duration": (run.duration_ms / 1000.0) if run.duration_ms else None,
+            "total_steps": summary.get("total_steps") if isinstance(summary, dict) else None,
+            "passed_steps": summary.get("passed", summary.get("passed_steps", 0)) if isinstance(summary, dict) else 0,
+            "failed_steps": summary.get("failed", summary.get("failed_steps", 0)) if isinstance(summary, dict) else 0,
+            "executed_steps": summary.get("executed", 0) if isinstance(summary, dict) else 0,
             "summary": summary or {},
+            "triggered_by": None,
         }
 
     # ── Scenario CRUD ────────────────────────────────────────────
@@ -87,6 +106,9 @@ class ScenarioService:
         scenario_data = {
             "name": data["name"],
             "description": data.get("description", ""),
+            "scenario_type": data.get("scenario_type", "functional"),
+            "priority": data.get("priority", "P2"),
+            "version": data.get("version", 1),
             "status": data.get("status", "draft"),
             "created_by": data.get("created_by"),
         }
@@ -274,3 +296,142 @@ class ScenarioService:
             run_type=run_type, target_id=target_id, status=status
         )
         return [self._serialize_run(r) for r in runs], total
+
+
+# ── Standalone background task (must be at module level for FastAPI BackgroundTasks) ──
+
+def _run_scenario_background(run_id: int, scenario_id: int) -> None:
+    """
+    Standalone background task: execute all steps of a scenario sequentially.
+    Creates its own DB session to avoid session lifetime issues.
+    """
+    import httpx
+
+    from app.database import SessionLocal
+    from app.models.test_case import TestCase
+    from app.models.scenario import ScenarioStep, ExecutionRun
+    from app.repositories.scenario_repository import ScenarioRepository
+    from app.repositories.execution_repository import ExecutionRepository
+
+    db = SessionLocal()
+    try:
+        repo = ScenarioRepository()
+        exec_repo = ExecutionRepository()
+
+        run = exec_repo.get_by_id(db, run_id)
+        if not run:
+            return
+        scenario = repo.get_by_id(db, scenario_id)
+        if not scenario or not scenario.steps:
+            _update_run_status(
+                db, run_id,
+                status="failed",
+                summary={"total_steps": 0, "executed": 0, "passed": 0, "failed": 0, "error": "No steps found"},
+            )
+            return
+
+        steps = sorted(scenario.steps, key=lambda s: s.sort_order)
+        summary = {"total_steps": len(steps), "executed": 0, "passed": 0, "failed": 0}
+        failed = False
+
+        for step in steps:
+            if not step.enabled:
+                continue
+
+            step_result = {"step_id": step.id, "case_id": step.case_id, "name": step.name, "status": "passed"}
+
+            try:
+                case = db.query(TestCase).filter(TestCase.id == step.case_id).first()
+                if not case:
+                    step_result["status"] = "failed"
+                    step_result["error"] = f"Case {step.case_id} not found"
+                    summary["failed"] += 1
+                else:
+                    try:
+                        with httpx.Client(timeout=step.timeout_ms / 1000) as client:
+                            resp = client.post(
+                                "http://localhost:8000/api/terminal/internal/run",
+                                json={
+                                    "method": case.method or "GET",
+                                    "url": case.url or "",
+                                    "headers": _load_json(case.headers),
+                                    "query_params": _load_json(case.query_params),
+                                    "body": case.body or "",
+                                    "body_type": case.body_type or "none",
+                                    "expected_status": case.expected_status or 200,
+                                },
+                            )
+                            if resp.status_code >= 400:
+                                step_result["status"] = "failed"
+                                step_result["error"] = f"HTTP {resp.status_code}: {resp.text[:200]}"
+                                summary["failed"] += 1
+                            else:
+                                step_result["response_status"] = resp.status_code
+                    except httpx.TimeoutException:
+                        step_result["status"] = "failed"
+                        step_result["error"] = f"Timeout after {step.timeout_ms}ms"
+                        summary["failed"] += 1
+                    except Exception as e:
+                        step_result["status"] = "failed"
+                        step_result["error"] = str(e)
+                        summary["failed"] += 1
+            except Exception as e:
+                step_result["status"] = "failed"
+                step_result["error"] = str(e)
+                summary["failed"] += 1
+
+            summary["executed"] += 1
+            if step_result["status"] == "passed":
+                summary["passed"] += 1
+
+            # Apply failure strategy
+            if step_result["status"] == "failed":
+                if step.failure_strategy == "stop":
+                    failed = True
+                    break
+                elif step.failure_strategy == "skip":
+                    continue
+
+        duration_ms = 0
+        if run.started_at:
+            duration_ms = int((datetime.utcnow() - run.started_at).total_seconds() * 1000)
+
+        _update_run_status(
+            db, run_id,
+            status="passed" if not failed and summary["failed"] == 0 else "failed",
+            finished_at=datetime.utcnow(),
+            duration_ms=duration_ms,
+            summary=summary,
+        )
+    finally:
+        db.close()
+
+
+def _update_run_status(
+    db,
+    run_id: int,
+    status: str,
+    finished_at=None,
+    duration_ms: int | None = None,
+    summary: dict | None = None,
+) -> None:
+    import json as _json
+    run = db.query(ExecutionRun).filter(ExecutionRun.id == run_id).first()
+    if not run:
+        return
+    run.status = status
+    if finished_at is not None:
+        run.finished_at = finished_at
+    if duration_ms is not None:
+        run.duration_ms = duration_ms
+    if summary is not None:
+        run.summary = _json.dumps(summary, ensure_ascii=False)
+    db.commit()
+
+
+def _load_json(text: str) -> dict:
+    import json as _json
+    try:
+        return _json.loads(text or "{}")
+    except Exception:
+        return {}

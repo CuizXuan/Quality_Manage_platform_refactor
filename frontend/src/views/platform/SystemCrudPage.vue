@@ -2,13 +2,23 @@
   <div class="page-stack">
     <section class="panel">
       <div class="panel-head">
-        <div>
-          <span class="section-kicker">{{ kicker }}</span>
-        </div>
+        <span class="section-label">{{ title }}</span>
         <el-button type="primary" @click="openCreate">{{ createLabel }}</el-button>
       </div>
 
-      <el-table :data="items" border stripe class="crud-table">
+      <div v-if="showSearch" class="toolbar">
+        <el-input
+          v-model="queryKeyword"
+          placeholder="搜索关键词"
+          prefix-icon="Search"
+          clearable
+          style="width: 240px"
+          @input="onQueryChange"
+        />
+        <slot name="search" />
+      </div>
+
+      <el-table :data="pagedItems" border class="data-table" v-loading="loading">
         <el-table-column
           v-for="field in visibleFields"
           :key="field.key"
@@ -27,29 +37,42 @@
             <span v-else>{{ formatValue(row[field.key], field) }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="220" fixed="right">
+        <el-table-column label="操作" :width="actionColWidth" fixed="right">
           <template #default="{ row }">
-            <el-button
-              v-for="action in actions"
-              :key="action.key"
-              size="small"
-              text
-              type="primary"
-              @click="$emit('action', { action, item: row })"
-            >
-              {{ action.label }}
-            </el-button>
-            <el-button size="small" text type="primary" @click="openEdit(row)">编辑</el-button>
-            <el-button size="small" text type="danger" @click="$emit('remove', row)">删除</el-button>
+            <div class="row-actions">
+              <el-button
+                v-for="action in actions"
+                :key="action.key"
+                size="small"
+                text
+                type="primary"
+                @click="$emit('action', { action, item: row })"
+              >
+                {{ action.label }}
+              </el-button>
+              <el-button size="small" text type="primary" @click="openEdit(row)">编辑</el-button>
+              <el-button size="small" text type="danger" @click="$emit('remove', row)">删除</el-button>
+            </div>
           </template>
         </el-table-column>
       </el-table>
+
+      <div class="pagination-bar">
+        <el-pagination
+          v-model:current-page="page"
+          v-model:page-size="pageSize"
+          :total="total"
+          :page-sizes="[15, 30, 50]"
+          layout="total, sizes, prev, pager, next"
+          background
+        />
+      </div>
     </section>
 
-    <el-drawer v-model="editing" :title="`${form.id ? '编辑' : '新建'}${title}`" size="420px">
+    <el-dialog v-model="editing" :title="`${form.id ? '编辑' : '新建'}${title}`" top="4vh" width="min(480px, 92vw)" destroy-on-close append-to-body>
       <el-form :model="form" label-position="top" class="drawer-form" @submit.prevent>
         <el-form-item v-for="field in editableFields" :key="field.key" :label="field.label" :required="field.required">
-          <el-select v-if="field.type === 'select'" v-model="form[field.key]" class="form-control">
+          <el-select v-if="field.type === 'select'" v-model="form[field.key]" class="full-width">
             <el-option
               v-for="option in field.options"
               :key="optionValue(option)"
@@ -74,7 +97,7 @@
           <el-input-number
             v-else-if="field.type === 'number'"
             v-model="form[field.key]"
-            class="form-control"
+            class="full-width"
             :min="field.min"
             :max="field.max"
           />
@@ -96,12 +119,12 @@
           <el-button type="primary" @click="submit">保存</el-button>
         </div>
       </template>
-    </el-drawer>
+    </el-dialog>
   </div>
 </template>
 
 <script setup>
-import { computed, reactive, ref } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 
 const props = defineProps({
   title: { type: String, required: true },
@@ -110,13 +133,26 @@ const props = defineProps({
   items: { type: Array, required: true },
   fields: { type: Array, required: true },
   actions: { type: Array, default: () => [] },
+  actionColWidth: { type: Number, default: 220 },
+  showSearch: { type: Boolean, default: true },
 })
 
-const emit = defineEmits(['create', 'update', 'remove', 'action'])
+const emit = defineEmits(['create', 'update', 'remove', 'action', 'query'])
+
+const loading = ref(false)
 const editing = ref(false)
 const form = reactive({})
+const queryKeyword = ref('')
+const page = ref(1)
+const pageSize = ref(15)
+const total = ref(0)
+
 const visibleFields = computed(() => props.fields.filter((field) => !field.hidden).slice(0, 5))
 const editableFields = computed(() => props.fields.filter((field) => !field.readonly))
+const pagedItems = computed(() => {
+  const start = (page.value - 1) * pageSize.value
+  return props.items.slice(start, start + pageSize.value)
+})
 
 function openCreate() {
   resetForm()
@@ -165,19 +201,33 @@ function cloneItem(item) {
     Object.entries(item).map(([key, value]) => [key, Array.isArray(value) ? [...value] : value]),
   )
 }
+
+let queryTimer = null
+function onQueryChange() {
+  clearTimeout(queryTimer)
+  queryTimer = setTimeout(() => {
+    page.value = 1
+    emit('query', { keyword: queryKeyword.value, page: page.value, page_size: pageSize.value })
+  }, 300)
+}
+
+function setItems(items) {
+  total.value = items.length || 0
+}
+
+defineExpose({ setItems })
+
+watch(page, () => emit('query', { keyword: queryKeyword.value, page: page.value, page_size: pageSize.value }))
+watch(pageSize, () => { page.value = 1; emit('query', { keyword: queryKeyword.value, page: page.value, page_size: pageSize.value }) })
 </script>
 
 <style scoped>
-.crud-table {
+.full-width {
   width: 100%;
 }
 
 .drawer-form {
   padding-right: var(--spacing-sm);
-}
-
-.form-control {
-  width: 100%;
 }
 
 .check-group {
@@ -204,5 +254,13 @@ function cloneItem(item) {
   display: flex;
   justify-content: flex-end;
   gap: var(--spacing-sm);
+}
+
+/* 工具栏 */
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md) var(--spacing-lg);
 }
 </style>

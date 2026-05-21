@@ -9,7 +9,9 @@ from app.routers.testcase import router as testcase_router
 from app.routers.case_folder import router as case_folder_router
 from app.routers.scenario import router as scenario_router
 from app.routers.report import router as report_router
-from app.routers.dictionary import router as dictionary_router
+from app.routers.dictionary import router as dictionary_router, public_router as dict_public_router
+from app.routers.ai import router as ai_router
+from app.routers.log import router as log_router
 
 app = FastAPI(title="Quality Manage Platform", version="2.0.0")
 
@@ -34,7 +36,10 @@ app.include_router(case_folder_router)
 app.include_router(testcase_router)
 app.include_router(scenario_router)
 app.include_router(report_router)
-app.include_router(dictionary_router)
+app.include_router(dictionary_router)  # 管理 API（需鉴权）
+app.include_router(dict_public_router)  # 公开查询 API（无需鉴权）
+app.include_router(ai_router)
+app.include_router(log_router)
 
 
 @app.on_event("startup")

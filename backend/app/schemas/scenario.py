@@ -67,6 +67,9 @@ class ScenarioCreate(BaseModel):
     """创建场景"""
     name: str = Field(..., max_length=200, description="场景名称")
     description: Optional[str] = Field(None, description="场景描述")
+    scenario_type: str = Field(default="functional", description="场景类型")
+    priority: str = Field(default="P2", description="优先级")
+    version: int = Field(default=1, ge=1, description="版本号")
     status: str = Field(default="draft", description="状态")
 
 
@@ -74,6 +77,9 @@ class ScenarioUpdate(BaseModel):
     """更新场景"""
     name: Optional[str] = Field(None, max_length=200)
     description: Optional[str] = None
+    scenario_type: Optional[str] = Field(None, description="场景类型")
+    priority: Optional[str] = Field(None, description="优先级")
+    version: Optional[int] = Field(None, ge=1, description="版本号")
     status: Optional[str] = None
 
 
@@ -82,10 +88,14 @@ class ScenarioResponse(BaseModel):
     id: int
     name: str
     description: str = ""
+    scenario_type: str = "functional"
+    priority: str = "P2"
     status: str = "draft"
     version: int = 1
     created_by: Optional[int] = None
     created_at: datetime
+    updated_at: Optional[str] = None
+    step_count: int = 0
     steps: List[ScenarioStepResponse] = []
 
     class Config:

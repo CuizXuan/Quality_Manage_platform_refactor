@@ -6,15 +6,16 @@
     @close="handleClose"
   >
     <el-form :model="form" label-width="100px">
-      <el-form-item label="用例类型" required>
-        <el-radio-group v-model="form.case_type">
-          <el-radio label="functional">功能测试用例</el-radio>
-          <el-radio label="api">接口测试用例</el-radio>
-        </el-radio-group>
+      <el-form-item label="用例类型">
+        <el-tag type="success">接口测试用例</el-tag>
       </el-form-item>
 
       <el-form-item label="用例名称" required>
         <el-input v-model="form.name" placeholder="请输入用例名称" />
+      </el-form-item>
+
+      <el-form-item label="用例编号">
+        <el-input :model-value="suggestedCaseId" disabled />
       </el-form-item>
 
       <el-form-item label="所属分类">
@@ -52,6 +53,7 @@
 import { ref, watch, computed } from 'vue'
 import { ElMessage } from 'element-plus'
 import { caseApi } from '@/api/case'
+import { nextCaseCode } from '@/views/case/caseUtils'
 
 const props = defineProps({
   modelValue: Boolean,
@@ -86,7 +88,10 @@ const form = ref({
 })
 
 const folders = ref([])
+const existingCases = ref([])
 const saving = ref(false)
+
+const suggestedCaseId = computed(() => nextCaseCode(form.value.case_type, existingCases.value))
 
 watch(() => props.requestData, (newData) => {
   if (newData) {
@@ -102,6 +107,7 @@ watch(() => props.requestData, (newData) => {
 watch(() => props.modelValue, (visible) => {
   if (visible) {
     loadFolders()
+    loadExistingCases()
   }
 })
 
@@ -123,6 +129,15 @@ async function loadFolders() {
   }
 }
 
+async function loadExistingCases() {
+  try {
+    const res = await caseApi.list({ case_type: form.value.case_type, page: 1, page_size: 500 })
+    existingCases.value = res.data?.items || []
+  } catch {
+    existingCases.value = []
+  }
+}
+
 async function handleSave() {
   if (!form.value.name) {
     ElMessage.warning('请输入用例名称')
@@ -131,7 +146,7 @@ async function handleSave() {
 
   saving.value = true
   try {
-    await caseApi.create(form.value)
+    await caseApi.create(buildPayload())
     ElMessage.success('保存成功')
     emit('success')
   } catch {
@@ -143,5 +158,33 @@ async function handleSave() {
 
 function handleClose() {
   dialogVisible.value = false
+}
+
+function buildPayload() {
+  return {
+    case_type: form.value.case_type,
+    name: form.value.name,
+    folder_id: form.value.folder_id,
+    description: form.value.description,
+    priority: 'P2',
+    tags: [],
+    pre_condition: '',
+    is_automated: false,
+    auto_script_path: '',
+    auto_script_config: {},
+    auto_case_id: suggestedCaseId.value,
+    source_debug_id: form.value.source_debug_id,
+    api_case: {
+      method: form.value.method,
+      url: form.value.url,
+      params: form.value.query_params || {},
+      headers: form.value.headers || {},
+      body_type: form.value.body_type || 'none',
+      body: form.value.body || '',
+      auth_config: form.value.auth_config || {},
+      expected_status: form.value.expected_status || 200,
+      assertions: [],
+    },
+  }
 }
 </script>

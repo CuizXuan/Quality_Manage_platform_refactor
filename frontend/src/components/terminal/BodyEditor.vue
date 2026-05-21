@@ -37,6 +37,7 @@ const localBodyType = ref(props.bodyType)
 
 watch(() => props.modelValue, (v) => { localBody.value = v })
 watch(() => props.bodyType, (v) => { localBodyType.value = v })
+watch(localBodyType, emitUpdate)
 
 function emitUpdate() {
   emit('update:modelValue', localBody.value)

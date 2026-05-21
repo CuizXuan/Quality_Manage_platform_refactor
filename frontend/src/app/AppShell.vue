@@ -58,7 +58,7 @@
             </el-select>
           </div>
           <el-button text :icon="isDark ? Sunny : Moon" @click="toggleTheme" />
-          <el-button text :icon="User" :title="`个人中心：${authStore.currentUsername || '用户'}`" />
+          <el-button text :icon="User" :title="`个人中心：${authStore.currentUsername || '用户'}`" @click="personalCenterRef.open()" />
           <el-button text type="danger" :icon="SwitchButton" title="退出登录" @click="handleLogout" />
         </div>
       </el-header>
@@ -70,6 +70,8 @@
           </keep-alive>
         </RouterView>
       </el-main>
+
+      <PersonalCenter ref="personalCenterRef" />
     </el-container>
   </el-container>
 </template>
@@ -101,6 +103,9 @@ import {
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import PersonalCenter from '@/views/platform/PersonalCenter.vue'
+
+const personalCenterRef = ref(null)
 
 const route = useRoute()
 const router = useRouter()
@@ -162,6 +167,8 @@ const menuList = [
       { title: '角色管理', icon: Document, path: '/system/roles' },
       { title: '组织管理', icon: Monitor, path: '/system/organizations' },
       { title: '菜单管理', icon: MenuIcon, path: '/system/menus' },
+      { title: '字典管理', icon: Setting, path: '/system/dictionaries' },
+      { title: '日志管理', icon: Bell, path: '/system/logs' },
     ],
   },
 ]
@@ -187,7 +194,7 @@ const breadcrumbs = computed(() => {
 
 const sidebarWidth = computed(() => isCollapse.value ? 'var(--sidebar-width-collapsed)' : 'var(--sidebar-width)')
 const FoldIcon = computed(() => isCollapse.value ? Expand : Fold)
-const isFullBleed = computed(() => route.name === 'Terminal')
+const isFullBleed = computed(() => ['Terminal', 'CaseManagement'].includes(route.name))
 
 function toggleTheme() {
   setTheme(!isDark.value)

@@ -1,0 +1,308 @@
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]: Q
+      - generic [ref=e7]:
+        - strong [ref=e8]: Quality Platform
+        - generic [ref=e9]: Command Center
+    - menubar [ref=e10]:
+      - menuitem "工作台" [ref=e11] [cursor=pointer]:
+        - img [ref=e13]
+        - text: 工作台
+      - menuitem "工具" [expanded] [ref=e15]:
+        - generic [ref=e16] [cursor=pointer]:
+          - img [ref=e18]
+          - generic [ref=e20]: 工具
+          - img [ref=e22]
+        - menu [ref=e24]:
+          - menuitem "终端调试台" [ref=e25] [cursor=pointer]:
+            - img [ref=e27]
+            - text: 终端调试台
+          - menuitem "用例管理" [ref=e30] [cursor=pointer]:
+            - img [ref=e32]
+            - text: 用例管理
+      - menuitem "测试执行" [ref=e34]:
+        - generic [ref=e35] [cursor=pointer]:
+          - img [ref=e37]
+          - generic [ref=e39]: 测试执行
+          - img [ref=e41]
+      - menuitem "质量中心" [ref=e43]:
+        - generic [ref=e44] [cursor=pointer]:
+          - img [ref=e46]
+          - generic [ref=e49]: 质量中心
+          - img [ref=e51]
+      - menuitem "AI 中枢" [ref=e53]:
+        - generic [ref=e54] [cursor=pointer]:
+          - img [ref=e56]
+          - generic [ref=e58]: AI 中枢
+          - img [ref=e60]
+      - menuitem "系统管理" [ref=e62]:
+        - generic [ref=e63] [cursor=pointer]:
+          - img [ref=e65]
+          - generic [ref=e67]: 系统管理
+          - img [ref=e69]
+  - generic [ref=e71]:
+    - generic [ref=e72]:
+      - generic [ref=e73]:
+        - button [ref=e74] [cursor=pointer]:
+          - img [ref=e76]
+        - navigation "面包屑" [ref=e78]:
+          - generic [ref=e79]:
+            - link "工具" [ref=e80]
+            - text: /
+          - link "用例管理" [ref=e82]
+      - generic [ref=e83]:
+        - generic [ref=e84]:
+          - generic [ref=e85]: 环境
+          - generic [ref=e87] [cursor=pointer]:
+            - generic:
+              - combobox [ref=e89]
+              - generic [ref=e90]: 本地环境
+            - img [ref=e93]
+        - button [ref=e95] [cursor=pointer]:
+          - img [ref=e97]
+        - button "个人中心：系统管理员" [ref=e99] [cursor=pointer]:
+          - img [ref=e101]
+        - button "退出登录" [ref=e103] [cursor=pointer]:
+          - img [ref=e105]
+    - main [ref=e108]:
+      - generic [ref=e109]:
+        - generic [ref=e111]:
+          - heading "用例管理" [level=1] [ref=e112]
+          - paragraph [ref=e113]: 统计区、筛选区与资产列表分层呈现，实时度量自动化覆盖情况。
+        - generic [ref=e114]:
+          - article [ref=e115]:
+            - generic [ref=e116]:
+              - generic [ref=e117]: 总用例数
+              - img [ref=e119]
+            - strong [ref=e121]: "17"
+            - generic [ref=e122]: 当前视图 17
+          - article [ref=e123]:
+            - generic [ref=e124]:
+              - generic [ref=e125]: 接口用例数
+              - img [ref=e127]
+            - strong [ref=e130]: "17"
+            - generic [ref=e131]: 占比 100.0%
+          - article [ref=e132]:
+            - generic [ref=e133]:
+              - generic [ref=e134]: 功能用例数
+              - img [ref=e136]
+            - strong [ref=e138]: "0"
+            - generic [ref=e139]: 占比 0.0%
+          - article [ref=e140]:
+            - generic [ref=e141]:
+              - generic [ref=e142]: 自动化覆盖率
+              - img [ref=e144]
+            - strong [ref=e146]: 0%
+            - generic [ref=e147]: 已自动化 0
+        - generic [ref=e148]:
+          - tablist [ref=e152]:
+            - tab "接口用例" [selected] [ref=e154]
+            - tab "功能用例" [ref=e155]
+          - tabpanel "接口用例" [ref=e157]:
+            - generic [ref=e2499]:
+              - complementary [ref=e2500]:
+                - generic [ref=e2501]:
+                  - generic [ref=e2502]:
+                    - generic [ref=e2503]:
+                      - generic [ref=e2504]: 接口分类
+                      - generic [ref=e2505]: 按系统模块维护接口
+                    - button [ref=e2506] [cursor=pointer]:
+                      - img [ref=e2508]
+                  - generic [ref=e2512]:
+                    - img [ref=e2515]
+                    - textbox "搜索分类" [ref=e2517]
+                  - tree [ref=e2521]:
+                    - treeitem "全部分类" [expanded] [ref=e2522]:
+                      - generic [ref=e2523] [cursor=pointer]:
+                        - img [ref=e2525]
+                        - generic [ref=e2527]:
+                          - img [ref=e2529]
+                          - generic [ref=e2531]: 全部分类
+                      - group [ref=e2532]:
+                        - treeitem "一级目录" [expanded] [ref=e2533]:
+                          - generic [ref=e2534] [cursor=pointer]:
+                            - img [ref=e2536]
+                            - generic [ref=e2538]:
+                              - img [ref=e2540]
+                              - generic [ref=e2542]: 一级目录
+                          - group [ref=e2543]:
+                            - treeitem "二级目录" [expanded] [ref=e2544]:
+                              - generic [ref=e2546] [cursor=pointer]:
+                                - img [ref=e2548]
+                                - generic [ref=e2550]: 二级目录
+                              - group
+                        - treeitem "Test Folder API" [expanded] [ref=e2551]:
+                          - generic [ref=e2553] [cursor=pointer]:
+                            - img [ref=e2555]
+                            - generic [ref=e2557]: Test Folder API
+                          - group
+              - main [ref=e2558]:
+                - generic [ref=e2559]:
+                  - generic [ref=e2562]:
+                    - generic [ref=e2564]:
+                      - generic [ref=e2565]: 请求方式：
+                      - generic [ref=e2568] [cursor=pointer]:
+                        - generic:
+                          - combobox "请求方式：" [ref=e2570]
+                          - generic [ref=e2571]: 请求方式
+                        - img [ref=e2574]
+                    - generic [ref=e2577]:
+                      - generic [ref=e2578]: 优先级：
+                      - generic [ref=e2581] [cursor=pointer]:
+                        - generic:
+                          - combobox "优先级：" [ref=e2583]
+                          - generic [ref=e2584]: 优先级
+                        - img [ref=e2587]
+                    - generic [ref=e2590]:
+                      - generic [ref=e2591]: 自动化：
+                      - generic [ref=e2594] [cursor=pointer]:
+                        - generic:
+                          - combobox "自动化：" [ref=e2596]
+                          - generic [ref=e2597]: 自动化状态
+                        - img [ref=e2600]
+                    - generic [ref=e2603]:
+                      - generic [ref=e2604]: 创建日期：
+                      - generic [ref=e2606]:
+                        - img [ref=e2608]
+                        - combobox "创建日期：" [ref=e2610]
+                        - generic [ref=e2611]: 至
+                        - combobox "结束日期" [ref=e2612]
+                  - generic [ref=e2613]:
+                    - generic [ref=e2614]:
+                      - generic [ref=e2615]: 关键词：
+                      - generic [ref=e2618]:
+                        - img [ref=e2621]
+                        - textbox "关键词：" [ref=e2623]:
+                          - /placeholder: 搜索用例名称
+                    - generic [ref=e2624]:
+                      - button "查询" [ref=e2625] [cursor=pointer]:
+                        - img [ref=e2627]
+                        - generic [ref=e2629]: 查询
+                      - button "重置" [ref=e2630] [cursor=pointer]:
+                        - img [ref=e2632]
+                        - generic [ref=e2634]: 重置
+                      - button "新增接口用例" [ref=e2635] [cursor=pointer]:
+                        - img [ref=e2637]
+                        - generic [ref=e2639]: 新增接口用例
+                - generic [ref=e2640]:
+                  - generic [ref=e2643]:
+                    - table [ref=e2645]:
+                      - rowgroup [ref=e2657]:
+                        - row "选择所有行 编号 / 用例名称 Method 按 Method 排序 URL 按 URL 排序 描述 优先级 按 优先级 排序 自动化 更新时间 按 更新时间 排序 创建人 操作" [ref=e2658]:
+                          - columnheader "选择所有行" [ref=e2659]:
+                            - generic "选择所有行" [ref=e2661] [cursor=pointer]:
+                              - generic [ref=e2662]:
+                                - checkbox "选择所有行"
+                          - columnheader "编号 / 用例名称" [ref=e2664]:
+                            - generic [ref=e2665]: 编号 / 用例名称
+                          - columnheader "Method 按 Method 排序" [ref=e2666] [cursor=pointer]:
+                            - generic [ref=e2667]:
+                              - text: Method
+                              - button "按 Method 排序" [ref=e2668]
+                          - columnheader "URL 按 URL 排序" [ref=e2671] [cursor=pointer]:
+                            - generic [ref=e2672]:
+                              - text: URL
+                              - button "按 URL 排序" [ref=e2673]
+                          - columnheader "描述" [ref=e2676]:
+                            - generic [ref=e2677]: 描述
+                          - columnheader "优先级 按 优先级 排序" [ref=e2678] [cursor=pointer]:
+                            - generic [ref=e2679]:
+                              - text: 优先级
+                              - button "按 优先级 排序" [ref=e2680]
+                          - columnheader "自动化" [ref=e2683]:
+                            - generic [ref=e2684]: 自动化
+                          - columnheader "更新时间 按 更新时间 排序" [ref=e2685] [cursor=pointer]:
+                            - generic [ref=e2686]:
+                              - text: 更新时间
+                              - button "按 更新时间 排序" [ref=e2687]
+                          - columnheader "创建人" [ref=e2690]:
+                            - generic [ref=e2691]: 创建人
+                          - columnheader "操作" [ref=e2692]:
+                            - generic [ref=e2693]: 操作
+                    - table [ref=e2698]:
+                      - rowgroup [ref=e2710]:
+                        - 'row "选择当前行 #2 test-case GET http://example.com - ● P2 未自动化 2026-05-20 09:10 系统管理员 编辑 复制 删除" [ref=e3419]':
+                          - cell "选择当前行" [ref=e3420]:
+                            - generic "选择当前行" [ref=e3422] [cursor=pointer]:
+                              - generic [ref=e3423]:
+                                - checkbox "选择当前行"
+                          - cell "#2 test-case" [ref=e3425]:
+                            - generic [ref=e3427]:
+                              - generic [ref=e3428]: "#2"
+                              - button "test-case" [ref=e3429] [cursor=pointer]
+                          - cell "GET" [ref=e3430]:
+                            - generic [ref=e3432]: GET
+                          - cell "http://example.com" [ref=e3433]:
+                            - generic [ref=e3435]: http://example.com
+                          - cell "-" [ref=e3436]:
+                            - generic [ref=e3438]: "-"
+                          - cell "● P2" [ref=e3439]:
+                            - generic [ref=e3441]: ● P2
+                          - cell "未自动化" [ref=e3442]:
+                            - generic [ref=e3444]:
+                              - switch
+                              - generic [ref=e3448] [cursor=pointer]: 未自动化
+                          - cell "2026-05-20 09:10" [ref=e3450]:
+                            - generic [ref=e3451]: 2026-05-20 09:10
+                          - cell "系统管理员" [ref=e3452]:
+                            - generic [ref=e3454]: 系统管理员
+                          - cell "编辑 复制 删除" [ref=e3455]:
+                            - generic [ref=e3457]:
+                              - button "编辑" [ref=e3458] [cursor=pointer]:
+                                - generic [ref=e3459]: 编辑
+                              - button "复制" [ref=e3460] [cursor=pointer]:
+                                - generic [ref=e3461]: 复制
+                              - button "删除" [ref=e3462] [cursor=pointer]:
+                                - generic [ref=e3463]: 删除
+                        - 'row "选择当前行 #1 测试 GET - - ● P2 未自动化 2026-05-19 09:29 系统管理员 编辑 复制 删除" [ref=e3464]':
+                          - cell "选择当前行" [ref=e3465]:
+                            - generic "选择当前行" [ref=e3467] [cursor=pointer]:
+                              - generic [ref=e3468]:
+                                - checkbox "选择当前行"
+                          - cell "#1 测试" [ref=e3470]:
+                            - generic [ref=e3472]:
+                              - generic [ref=e3473]: "#1"
+                              - button "测试" [ref=e3474] [cursor=pointer]
+                          - cell "GET" [ref=e3475]:
+                            - generic [ref=e3477]: GET
+                          - cell "-" [ref=e3478]:
+                            - generic [ref=e3480]: "-"
+                          - cell "-" [ref=e3481]:
+                            - generic [ref=e3483]: "-"
+                          - cell "● P2" [ref=e3484]:
+                            - generic [ref=e3486]: ● P2
+                          - cell "未自动化" [ref=e3487]:
+                            - generic [ref=e3489]:
+                              - switch
+                              - generic [ref=e3493] [cursor=pointer]: 未自动化
+                          - cell "2026-05-19 09:29" [ref=e3495]:
+                            - generic [ref=e3496]: 2026-05-19 09:29
+                          - cell "系统管理员" [ref=e3497]:
+                            - generic [ref=e3499]: 系统管理员
+                          - cell "编辑 复制 删除" [ref=e3500]:
+                            - generic [ref=e3502]:
+                              - button "编辑" [ref=e3503] [cursor=pointer]:
+                                - generic [ref=e3504]: 编辑
+                              - button "复制" [ref=e3505] [cursor=pointer]:
+                                - generic [ref=e3506]: 复制
+                              - button "删除" [ref=e3507] [cursor=pointer]:
+                                - generic [ref=e3508]: 删除
+                  - generic [ref=e3387]:
+                    - generic [ref=e3388]: 共 17 条
+                    - generic [ref=e3391] [cursor=pointer]:
+                      - generic:
+                        - combobox [ref=e3393]
+                        - generic [ref=e3394]: 15条/页
+                      - img [ref=e3397]
+                    - button "上一页" [ref=e3399] [cursor=pointer]:
+                      - generic: 上一页
+                    - list [ref=e3400]:
+                      - listitem "第 1 页" [ref=e3401] [cursor=pointer]: "1"
+                      - listitem "第 2 页" [ref=e3402]: "2"
+                    - button "下一页" [disabled] [ref=e3403]:
+                      - generic: 下一页
+                    - generic [ref=e3404]:
+                      - generic [ref=e3405]: 前往
+                      - spinbutton "页" [ref=e3408]: "2"
+                      - generic [ref=e3409]: 页

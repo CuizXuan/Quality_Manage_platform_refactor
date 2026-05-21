@@ -72,4 +72,6 @@ html.dark {
   --el-color-danger: var(--color-danger);
   --el-color-info: var(--text-secondary);
   --el-box-shadow-light: var(--box-shadow-light);
+  --el-segmented-active-color: var(--el-color-primary);
+  --el-segmented-active-bg-color: var(--el-color-primary-light-9);
 }

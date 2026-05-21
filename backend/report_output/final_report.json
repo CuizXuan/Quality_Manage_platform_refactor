@@ -1,24 +1,24 @@
 {
   "filters": {
-    "untracked": 12,
-    "total": 12,
-    "passed": 12,
+    "untracked": 11,
+    "total": 11,
+    "passed": 11,
     "marker_counts": {}
   },
   "results": [
     {
-      "test": "test_create_scenario",
-      "nodeid": "tests/models/test_scenario.py::TestScenario::test_create_scenario",
+      "test": "test_generate_variants_filters_invalid_type",
+      "nodeid": "tests/services/test_ai_service.py::TestAIServiceVariants::test_generate_variants_filters_invalid_type",
       "status": "passed",
-      "duration": 0.017187156998261344,
+      "duration": 0.0003945909993490204,
       "trace": null,
       "error": null,
       "markers": [],
-      "file": "tests/models/test_scenario.py",
-      "line": 36,
+      "file": "tests/services/test_ai_service.py",
+      "line": 38,
       "stdout": "",
       "stderr": "",
-      "timestamp": "2026-05-19T15:13:44.732415Z",
+      "timestamp": "2026-05-19T17:21:07.537138Z",
       "screenshot": "screenshots",
       "logs": [],
       "worker": "main",
@@ -28,8 +28,8 @@
           "status": "passed",
           "trace": null,
           "error": null,
-          "duration": 0.017187156998261344,
-          "timestamp": "2026-05-19T15:13:44.732427Z"
+          "duration": 0.0003945909993490204,
+          "timestamp": "2026-05-19T17:21:07.537151Z"
         }
       ],
       "attempt_count": 1,
@@ -41,18 +41,18 @@
       "first_failure": null
     },
     {
-      "test": "test_scenario_default_values",
-      "nodeid": "tests/models/test_scenario.py::TestScenario::test_scenario_default_values",
+      "test": "test_generate_variants_parses_edge_case",
+      "nodeid": "tests/services/test_ai_service.py::TestAIServiceVariants::test_generate_variants_parses_edge_case",
       "status": "passed",
-      "duration": 0.001578766001330223,
+      "duration": 0.0004065510001964867,
       "trace": null,
       "error": null,
       "markers": [],
-      "file": "tests/models/test_scenario.py",
-      "line": 56,
+      "file": "tests/services/test_ai_service.py",
+      "line": 26,
       "stdout": "",
       "stderr": "",
-      "timestamp": "2026-05-19T15:13:44.740016Z",
+      "timestamp": "2026-05-19T17:21:07.538802Z",
       "screenshot": "screenshots",
       "logs": [],
       "worker": "main",
@@ -62,8 +62,8 @@
           "status": "passed",
           "trace": null,
           "error": null,
-          "duration": 0.001578766001330223,
-          "timestamp": "2026-05-19T15:13:44.740027Z"
+          "duration": 0.0004065510001964867,
+          "timestamp": "2026-05-19T17:21:07.538809Z"
         }
       ],
       "attempt_count": 1,
@@ -75,18 +75,18 @@
       "first_failure": null
     },
     {
-      "test": "test_create_scenario_step",
-      "nodeid": "tests/models/test_scenario.py::TestScenarioStep::test_create_scenario_step",
+      "test": "test_generate_variants_returns_list",
+      "nodeid": "tests/services/test_ai_service.py::TestAIServiceVariants::test_generate_variants_returns_list",
       "status": "passed",
-      "duration": 0.0034728809987427667,
+      "duration": 0.00032833700242917985,
       "trace": null,
       "error": null,
       "markers": [],
-      "file": "tests/models/test_scenario.py",
-      "line": 70,
+      "file": "tests/services/test_ai_service.py",
+      "line": 33,
       "stdout": "",
       "stderr": "",
-      "timestamp": "2026-05-19T15:13:44.749424Z",
+      "timestamp": "2026-05-19T17:21:07.540205Z",
       "screenshot": "screenshots",
       "logs": [],
       "worker": "main",
@@ -96,8 +96,8 @@
           "status": "passed",
           "trace": null,
           "error": null,
-          "duration": 0.0034728809987427667,
-          "timestamp": "2026-05-19T15:13:44.749433Z"
+          "duration": 0.00032833700242917985,
+          "timestamp": "2026-05-19T17:21:07.540211Z"
         }
       ],
       "attempt_count": 1,
@@ -109,18 +109,188 @@
       "first_failure": null
     },
     {
-      "test": "test_scenario_step_with_variant_id",
-      "nodeid": "tests/models/test_scenario.py::TestScenarioStep::test_scenario_step_with_variant_id",
+      "test": "test_generate_assertions_parses_status_code",
+      "nodeid": "tests/services/test_ai_service.py::TestAIServiceAssertions::test_generate_assertions_parses_status_code",
       "status": "passed",
-      "duration": 0.0022954220039537176,
+      "duration": 0.00034924499777844176,
       "trace": null,
       "error": null,
       "markers": [],
-      "file": "tests/models/test_scenario.py",
+      "file": "tests/services/test_ai_service.py",
+      "line": 53,
+      "stdout": "",
+      "stderr": "",
+      "timestamp": "2026-05-19T17:21:07.541682Z",
+      "screenshot": "screenshots",
+      "logs": [],
+      "worker": "main",
+      "links": [],
+      "attempts": [
+        {
+          "status": "passed",
+          "trace": null,
+          "error": null,
+          "duration": 0.00034924499777844176,
+          "timestamp": "2026-05-19T17:21:07.541688Z"
+        }
+      ],
+      "attempt_count": 1,
+      "flaky": false,
+      "attempt_statuses": [
+        "passed"
+      ],
+      "first_failure_index": null,
+      "first_failure": null
+    },
+    {
+      "test": "test_generate_assertions_returns_string",
+      "nodeid": "tests/services/test_ai_service.py::TestAIServiceAssertions::test_generate_assertions_returns_string",
+      "status": "passed",
+      "duration": 0.00034453200350981206,
+      "trace": null,
+      "error": null,
+      "markers": [],
+      "file": "tests/services/test_ai_service.py",
+      "line": 60,
+      "stdout": "",
+      "stderr": "",
+      "timestamp": "2026-05-19T17:21:07.543074Z",
+      "screenshot": "screenshots",
+      "logs": [],
+      "worker": "main",
+      "links": [],
+      "attempts": [
+        {
+          "status": "passed",
+          "trace": null,
+          "error": null,
+          "duration": 0.00034453200350981206,
+          "timestamp": "2026-05-19T17:21:07.543079Z"
+        }
+      ],
+      "attempt_count": 1,
+      "flaky": false,
+      "attempt_statuses": [
+        "passed"
+      ],
+      "first_failure_index": null,
+      "first_failure": null
+    },
+    {
+      "test": "test_generate_assertions_valid_json_path",
+      "nodeid": "tests/services/test_ai_service.py::TestAIServiceAssertions::test_generate_assertions_valid_json_path",
+      "status": "passed",
+      "duration": 0.00032775600266177207,
+      "trace": null,
+      "error": null,
+      "markers": [],
+      "file": "tests/services/test_ai_service.py",
+      "line": 65,
+      "stdout": "",
+      "stderr": "",
+      "timestamp": "2026-05-19T17:21:07.544450Z",
+      "screenshot": "screenshots",
+      "logs": [],
+      "worker": "main",
+      "links": [],
+      "attempts": [
+        {
+          "status": "passed",
+          "trace": null,
+          "error": null,
+          "duration": 0.00032775600266177207,
+          "timestamp": "2026-05-19T17:21:07.544456Z"
+        }
+      ],
+      "attempt_count": 1,
+      "flaky": false,
+      "attempt_statuses": [
+        "passed"
+      ],
+      "first_failure_index": null,
+      "first_failure": null
+    },
+    {
+      "test": "test_analyze_failure_parses_root_cause",
+      "nodeid": "tests/services/test_ai_service.py::TestAIServiceFailureAnalysis::test_analyze_failure_parses_root_cause",
+      "status": "passed",
+      "duration": 0.00036388500302564353,
+      "trace": null,
+      "error": null,
+      "markers": [],
+      "file": "tests/services/test_ai_service.py",
+      "line": 80,
+      "stdout": "",
+      "stderr": "",
+      "timestamp": "2026-05-19T17:21:07.545863Z",
+      "screenshot": "screenshots",
+      "logs": [],
+      "worker": "main",
+      "links": [],
+      "attempts": [
+        {
+          "status": "passed",
+          "trace": null,
+          "error": null,
+          "duration": 0.00036388500302564353,
+          "timestamp": "2026-05-19T17:21:07.545869Z"
+        }
+      ],
+      "attempt_count": 1,
+      "flaky": false,
+      "attempt_statuses": [
+        "passed"
+      ],
+      "first_failure_index": null,
+      "first_failure": null
+    },
+    {
+      "test": "test_analyze_failure_valid_severity",
+      "nodeid": "tests/services/test_ai_service.py::TestAIServiceFailureAnalysis::test_analyze_failure_valid_severity",
+      "status": "passed",
+      "duration": 0.0003536119984346442,
+      "trace": null,
+      "error": null,
+      "markers": [],
+      "file": "tests/services/test_ai_service.py",
+      "line": 88,
+      "stdout": "",
+      "stderr": "",
+      "timestamp": "2026-05-19T17:21:07.547395Z",
+      "screenshot": "screenshots",
+      "logs": [],
+      "worker": "main",
+      "links": [],
+      "attempts": [
+        {
+          "status": "passed",
+          "trace": null,
+          "error": null,
+          "duration": 0.0003536119984346442,
+          "timestamp": "2026-05-19T17:21:07.547403Z"
+        }
+      ],
+      "attempt_count": 1,
+      "flaky": false,
+      "attempt_statuses": [
+        "passed"
+      ],
+      "first_failure_index": null,
+      "first_failure": null
+    },
+    {
+      "test": "test_summarize_report_parses_markdown",
+      "nodeid": "tests/services/test_ai_service.py::TestAIServiceReportSummary::test_summarize_report_parses_markdown",
+      "status": "passed",
+      "duration": 0.0005532289942493662,
+      "trace": null,
+      "error": null,
+      "markers": [],
+      "file": "tests/services/test_ai_service.py",
       "line": 103,
       "stdout": "",
       "stderr": "",
-      "timestamp": "2026-05-19T15:13:44.756455Z",
+      "timestamp": "2026-05-19T17:21:07.549572Z",
       "screenshot": "screenshots",
       "logs": [],
       "worker": "main",
@@ -130,8 +300,8 @@
           "status": "passed",
           "trace": null,
           "error": null,
-          "duration": 0.0022954220039537176,
-          "timestamp": "2026-05-19T15:13:44.756463Z"
+          "duration": 0.0005532289942493662,
+          "timestamp": "2026-05-19T17:21:07.549580Z"
         }
       ],
       "attempt_count": 1,
@@ -143,18 +313,18 @@
       "first_failure": null
     },
     {
-      "test": "test_scenario_step_failure_strategies",
-      "nodeid": "tests/models/test_scenario.py::TestScenarioStep::test_scenario_step_failure_strategies",
+      "test": "test_summarize_report_risk_score_in_bounds",
+      "nodeid": "tests/services/test_ai_service.py::TestAIServiceReportSummary::test_summarize_report_risk_score_in_bounds",
       "status": "passed",
-      "duration": 0.004453020002983976,
+      "duration": 0.0003550059991539456,
       "trace": null,
       "error": null,
       "markers": [],
-      "file": "tests/models/test_scenario.py",
-      "line": 125,
+      "file": "tests/services/test_ai_service.py",
+      "line": 112,
       "stdout": "",
       "stderr": "",
-      "timestamp": "2026-05-19T15:13:44.765486Z",
+      "timestamp": "2026-05-19T17:21:07.551269Z",
       "screenshot": "screenshots",
       "logs": [],
       "worker": "main",
@@ -164,8 +334,8 @@
           "status": "passed",
           "trace": null,
           "error": null,
-          "duration": 0.004453020002983976,
-          "timestamp": "2026-05-19T15:13:44.765501Z"
+          "duration": 0.0003550059991539456,
+          "timestamp": "2026-05-19T17:21:07.551275Z"
         }
       ],
       "attempt_count": 1,
@@ -177,18 +347,18 @@
       "first_failure": null
     },
     {
-      "test": "test_extract_rules_default",
-      "nodeid": "tests/models/test_scenario.py::TestScenarioStepExtractInjectRules::test_extract_rules_default",
+      "test": "test_summarize_report_risk_score_zero",
+      "nodeid": "tests/services/test_ai_service.py::TestAIServiceReportSummary::test_summarize_report_risk_score_zero",
       "status": "passed",
-      "duration": 0.002363735002290923,
+      "duration": 0.0003560979967005551,
       "trace": null,
       "error": null,
       "markers": [],
-      "file": "tests/models/test_scenario.py",
-      "line": 153,
+      "file": "tests/services/test_ai_service.py",
+      "line": 119,
       "stdout": "",
       "stderr": "",
-      "timestamp": "2026-05-19T15:13:44.772527Z",
+      "timestamp": "2026-05-19T17:21:07.552747Z",
       "screenshot": "screenshots",
       "logs": [],
       "worker": "main",
@@ -198,212 +368,8 @@
           "status": "passed",
           "trace": null,
           "error": null,
-          "duration": 0.002363735002290923,
-          "timestamp": "2026-05-19T15:13:44.772537Z"
-        }
-      ],
-      "attempt_count": 1,
-      "flaky": false,
-      "attempt_statuses": [
-        "passed"
-      ],
-      "first_failure_index": null,
-      "first_failure": null
-    },
-    {
-      "test": "test_extract_rules_json",
-      "nodeid": "tests/models/test_scenario.py::TestScenarioStepExtractInjectRules::test_extract_rules_json",
-      "status": "passed",
-      "duration": 0.003048058002605103,
-      "trace": null,
-      "error": null,
-      "markers": [],
-      "file": "tests/models/test_scenario.py",
-      "line": 175,
-      "stdout": "",
-      "stderr": "",
-      "timestamp": "2026-05-19T15:13:44.780523Z",
-      "screenshot": "screenshots",
-      "logs": [],
-      "worker": "main",
-      "links": [],
-      "attempts": [
-        {
-          "status": "passed",
-          "trace": null,
-          "error": null,
-          "duration": 0.003048058002605103,
-          "timestamp": "2026-05-19T15:13:44.780534Z"
-        }
-      ],
-      "attempt_count": 1,
-      "flaky": false,
-      "attempt_statuses": [
-        "passed"
-      ],
-      "first_failure_index": null,
-      "first_failure": null
-    },
-    {
-      "test": "test_create_execution_run",
-      "nodeid": "tests/models/test_scenario.py::TestExecutionRun::test_create_execution_run",
-      "status": "passed",
-      "duration": 0.0017382099977112375,
-      "trace": null,
-      "error": null,
-      "markers": [],
-      "file": "tests/models/test_scenario.py",
-      "line": 218,
-      "stdout": "",
-      "stderr": "",
-      "timestamp": "2026-05-19T15:13:44.786947Z",
-      "screenshot": "screenshots",
-      "logs": [],
-      "worker": "main",
-      "links": [],
-      "attempts": [
-        {
-          "status": "passed",
-          "trace": null,
-          "error": null,
-          "duration": 0.0017382099977112375,
-          "timestamp": "2026-05-19T15:13:44.786957Z"
-        }
-      ],
-      "attempt_count": 1,
-      "flaky": false,
-      "attempt_statuses": [
-        "passed"
-      ],
-      "first_failure_index": null,
-      "first_failure": null
-    },
-    {
-      "test": "test_execution_run_types",
-      "nodeid": "tests/models/test_scenario.py::TestExecutionRun::test_execution_run_types",
-      "status": "passed",
-      "duration": 0.0018633419967954978,
-      "trace": null,
-      "error": null,
-      "markers": [],
-      "file": "tests/models/test_scenario.py",
-      "line": 239,
-      "stdout": "",
-      "stderr": "",
-      "timestamp": "2026-05-19T15:13:44.793455Z",
-      "screenshot": "screenshots",
-      "logs": [],
-      "worker": "main",
-      "links": [],
-      "attempts": [
-        {
-          "status": "passed",
-          "trace": null,
-          "error": null,
-          "duration": 0.0018633419967954978,
-          "timestamp": "2026-05-19T15:13:44.793466Z"
-        }
-      ],
-      "attempt_count": 1,
-      "flaky": false,
-      "attempt_statuses": [
-        "passed"
-      ],
-      "first_failure_index": null,
-      "first_failure": null
-    },
-    {
-      "test": "test_execution_run_statuses",
-      "nodeid": "tests/models/test_scenario.py::TestExecutionRun::test_execution_run_statuses",
-      "status": "passed",
-      "duration": 0.0032242879969999194,
-      "trace": null,
-      "error": null,
-      "markers": [],
-      "file": "tests/models/test_scenario.py",
-      "line": 252,
-      "stdout": "",
-      "stderr": "",
-      "timestamp": "2026-05-19T15:13:44.802699Z",
-      "screenshot": "screenshots",
-      "logs": [],
-      "worker": "main",
-      "links": [],
-      "attempts": [
-        {
-          "status": "passed",
-          "trace": null,
-          "error": null,
-          "duration": 0.0032242879969999194,
-          "timestamp": "2026-05-19T15:13:44.802712Z"
-        }
-      ],
-      "attempt_count": 1,
-      "flaky": false,
-      "attempt_statuses": [
-        "passed"
-      ],
-      "first_failure_index": null,
-      "first_failure": null
-    },
-    {
-      "test": "test_execution_run_timing",
-      "nodeid": "tests/models/test_scenario.py::TestExecutionRun::test_execution_run_timing",
-      "status": "passed",
-      "duration": 0.0011916719959117472,
-      "trace": null,
-      "error": null,
-      "markers": [],
-      "file": "tests/models/test_scenario.py",
-      "line": 267,
-      "stdout": "",
-      "stderr": "",
-      "timestamp": "2026-05-19T15:13:44.808103Z",
-      "screenshot": "screenshots",
-      "logs": [],
-      "worker": "main",
-      "links": [],
-      "attempts": [
-        {
-          "status": "passed",
-          "trace": null,
-          "error": null,
-          "duration": 0.0011916719959117472,
-          "timestamp": "2026-05-19T15:13:44.808112Z"
-        }
-      ],
-      "attempt_count": 1,
-      "flaky": false,
-      "attempt_statuses": [
-        "passed"
-      ],
-      "first_failure_index": null,
-      "first_failure": null
-    },
-    {
-      "test": "test_execution_run_summary",
-      "nodeid": "tests/models/test_scenario.py::TestExecutionRun::test_execution_run_summary",
-      "status": "passed",
-      "duration": 0.0015012009971542284,
-      "trace": null,
-      "error": null,
-      "markers": [],
-      "file": "tests/models/test_scenario.py",
-      "line": 288,
-      "stdout": "",
-      "stderr": "",
-      "timestamp": "2026-05-19T15:13:44.813746Z",
-      "screenshot": "screenshots",
-      "logs": [],
-      "worker": "main",
-      "links": [],
-      "attempts": [
-        {
-          "status": "passed",
-          "trace": null,
-          "error": null,
-          "duration": 0.0015012009971542284,
-          "timestamp": "2026-05-19T15:13:44.813757Z"
+          "duration": 0.0003560979967005551,
+          "timestamp": "2026-05-19T17:21:07.552754Z"
         }
       ],
       "attempt_count": 1,

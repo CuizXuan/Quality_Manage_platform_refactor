@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
@@ -8,6 +8,9 @@ from app.models.platform import PlatformUser
 from app.routers.platform_auth import get_current_platform_user
 from app.schemas.case_variant import CaseVariantCreate, CaseVariantListResponse
 from app.schemas.test_case import (
+    BatchActionResponse,
+    BatchDeleteRequest,
+    BatchUpdateRequest,
     DeleteResponse,
     TestCaseCreate,
     TestCaseListResponse,
@@ -15,6 +18,7 @@ from app.schemas.test_case import (
     TestCaseUpdate,
 )
 from app.services.test_case_service import TestCaseService
+from app.services.log_service import LogService
 
 router = APIRouter(prefix="/api/case", tags=["用例管理"])
 
@@ -30,6 +34,7 @@ def create_testcase(
     data = case.model_dump()
     data["created_by"] = current_user.id
     result = service.create_case(data)
+    LogService(db, current_user.id, current_user.username).log_crud("创建", "用例管理", result["name"], result["id"])
     return result
 
 
@@ -39,16 +44,58 @@ def list_testcases(
     page_size: int = Query(20, ge=1, le=100),
     case_type: Optional[str] = Query(None, description="用例类型: functional 或 api"),
     folder_id: Optional[int] = Query(None),
+    folder_ids: Optional[List[int]] = Query(None),
     keyword: Optional[str] = Query(None),
+    methods: Optional[List[str]] = Query(None),
+    priorities: Optional[List[str]] = Query(None),
+    created_start: Optional[str] = Query(None),
+    created_end: Optional[str] = Query(None),
+    is_automated: Optional[bool] = Query(None),
     current_user: PlatformUser = Depends(get_current_platform_user),
     db: Session = Depends(get_db),
 ):
     """List test cases with pagination."""
     service = TestCaseService(db)
-    items, total = service.list_cases(
-        page=page, page_size=page_size, case_type=case_type, folder_id=folder_id, keyword=keyword
+    items, total, stats = service.list_cases(
+        page=page,
+        page_size=page_size,
+        case_type=case_type,
+        folder_id=folder_id,
+        folder_ids=folder_ids,
+        keyword=keyword,
+        methods=methods,
+        priorities=priorities,
+        created_start=created_start,
+        created_end=created_end,
+        is_automated=is_automated,
     )
-    return TestCaseListResponse(items=items, total=total, page=page, page_size=page_size)
+    return TestCaseListResponse(items=items, total=total, page=page, page_size=page_size, stats=stats)
+
+
+@router.put("/batch", response_model=BatchActionResponse)
+def batch_update_testcases(
+    body: BatchUpdateRequest,
+    current_user: PlatformUser = Depends(get_current_platform_user),
+    db: Session = Depends(get_db),
+):
+    """Batch update test case automation status or priority."""
+    service = TestCaseService(db)
+    count = service.batch_update_cases(body.ids, body.model_dump(exclude={"ids"}, exclude_unset=True))
+    LogService(db, current_user.id, current_user.username).log_crud("批量更新", "用例管理", f"{count} 条用例", None)
+    return {"count": count}
+
+
+@router.post("/batch-delete", response_model=BatchActionResponse)
+def batch_delete_testcases(
+    body: BatchDeleteRequest,
+    current_user: PlatformUser = Depends(get_current_platform_user),
+    db: Session = Depends(get_db),
+):
+    """Batch delete test cases."""
+    service = TestCaseService(db)
+    count = service.batch_delete_cases(body.ids)
+    LogService(db, current_user.id, current_user.username).log_crud("批量删除", "用例管理", f"{count} 条用例", None)
+    return {"count": count}
 
 
 @router.get("/{case_id}", response_model=TestCaseResponse)
@@ -78,6 +125,7 @@ def update_testcase(
     result = service.update_case(case_id, data)
     if not result:
         raise HTTPException(status_code=404, detail="Test case not found")
+    LogService(db, current_user.id, current_user.username).log_crud("更新", "用例管理", result["name"], case_id)
     return result
 
 
@@ -89,9 +137,13 @@ def delete_testcase(
 ):
     """Delete a test case."""
     service = TestCaseService(db)
+    # Get case name before deletion for logging
+    existing = service.get_case(case_id)
+    casename = existing["name"] if existing else str(case_id)
     success = service.delete_case(case_id)
     if not success:
         raise HTTPException(status_code=404, detail="Test case not found")
+    LogService(db, current_user.id, current_user.username).log_crud("删除", "用例管理", casename, case_id)
     return {"id": case_id}
 
 
@@ -106,6 +158,7 @@ def copy_testcase(
     result = service.copy_case(case_id, current_user.id)
     if not result:
         raise HTTPException(status_code=404, detail="Test case not found")
+    LogService(db, current_user.id, current_user.username).log_crud("复制", "用例管理", result["name"], result["id"])
     return result
 
 

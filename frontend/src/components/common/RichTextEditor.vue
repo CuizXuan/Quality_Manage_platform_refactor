@@ -1,7 +1,7 @@
 <template>
   <div class="rich-text-editor">
     <QuillEditor
-      :content="modelValue"
+      :content="normalizedContent"
       content-type="html"
       theme="snow"
       :toolbar="toolbarOptions"
@@ -11,10 +11,11 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css'
 
-defineProps({
+const props = defineProps({
   modelValue: {
     type: String,
     default: '',
@@ -31,6 +32,12 @@ const toolbarOptions = [
   ['link'],
   ['clean'],
 ]
+
+const normalizedContent = computed(() => {
+  const value = props.modelValue || ''
+  if (value === '<p><br></p>' || value === '<pre>{}</pre>') return ''
+  return value
+})
 
 function handleUpdate(value) {
   emit('update:modelValue', value || '')

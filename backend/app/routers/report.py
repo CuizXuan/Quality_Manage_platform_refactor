@@ -28,7 +28,7 @@ from app.services.report_service import ReportService
 from app.services.defect_service import DefectService
 from app.services.quality_gate_service import QualityGateService
 
-router = APIRouter(prefix="/reports", tags=["reports"])
+router = APIRouter(prefix="/api/reports", tags=["reports"])
 
 
 # ── Dependency helpers ────────────────────────────────────────────────────────

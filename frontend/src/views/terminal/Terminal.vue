@@ -80,7 +80,6 @@
             @keyup.enter="sendRequest"
           />
           <el-button type="primary" :loading="sending" @click="sendRequest">发送</el-button>
-          <el-button @click="saveDraft">保存</el-button>
         </div>
 
         <div v-if="parseHint" class="parse-notice">
@@ -641,7 +640,6 @@ function downloadResponse() {
 
 function handleSaveToCaseSuccess() {
   showSaveToCaseDialog.value = false
-  feedback.success('已保存为用例')
 }
 
 async function runAiAnalysis(showMessage = false) {

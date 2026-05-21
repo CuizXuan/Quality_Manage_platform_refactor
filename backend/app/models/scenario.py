@@ -21,9 +21,12 @@ class Scenario(Base):
     name = Column(String(200), nullable=False)
     description = Column(Text, default="")
     status = Column(String(20), default="draft")  # draft|active|archived
+    scenario_type = Column(String(50), default="functional")  # functional|api|e2e
+    priority = Column(String(10), default="P2")  # P0|P1|P2|P3
     version = Column(Integer, default=1)
     created_by = Column(Integer, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     steps = relationship(
         "ScenarioStep",
