@@ -10,44 +10,39 @@
 
     <!-- 输入区 -->
     <section class="variant-generator__input">
-      <div class="input-group">
-        <label class="input-label">原始用例</label>
-        <el-select
-          v-model="sourceCaseId"
-          placeholder="选择或搜索用例"
-          filterable
-          remote
-          :remote-method="searchCases"
-          class="case-select"
-          @keyup.enter="handleGenerate"
-        >
-          <el-option
-            v-for="c in caseOptions"
-            :key="c.id"
-            :label="c.name"
-            :value="c.id"
-          />
-        </el-select>
-      </div>
-
-      <div class="input-group">
-        <label class="input-label">变体数量</label>
-        <el-input-number v-model="variantCount" :min="1" :max="20" />
-      </div>
-
-      <div class="input-group">
-        <label class="input-label">变异策略</label>
-        <el-checkbox-group v-model="strategies" class="strategy-group">
-          <el-checkbox value="boundary">边界值</el-checkbox>
-          <el-checkbox value="equivalence">等价类</el-checkbox>
-          <el-checkbox value="negative">逆向思维</el-checkbox>
-          <el-checkbox value="noise">噪声注入</el-checkbox>
-        </el-checkbox-group>
-      </div>
-
-      <div class="input-actions">
-        <el-button type="primary" :loading="aiStore.loading" @click="handleGenerate">生成变体</el-button>
-      </div>
+      <el-form :model="{}" inline label-position="left" class="filter-form">
+        <el-form-item label="原始用例" class="filter-item">
+          <el-select
+            v-model="sourceCaseId"
+            placeholder="选择或搜索用例"
+            filterable
+            remote
+            :remote-method="searchCases"
+            class="case-select"
+          >
+            <el-option
+              v-for="c in caseOptions"
+              :key="c.id"
+              :label="c.name"
+              :value="c.id"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="变体数量" class="filter-item">
+          <el-input-number v-model="variantCount" :min="1" :max="20" />
+        </el-form-item>
+        <el-form-item label="变异策略" class="filter-item">
+          <el-checkbox-group v-model="strategies" class="strategy-group">
+            <el-checkbox value="boundary">边界值</el-checkbox>
+            <el-checkbox value="equivalence">等价类</el-checkbox>
+            <el-checkbox value="negative">逆向思维</el-checkbox>
+            <el-checkbox value="noise">噪声注入</el-checkbox>
+          </el-checkbox-group>
+        </el-form-item>
+        <el-form-item class="filter-item filter-actions">
+          <el-button type="primary" :loading="aiStore.loading" @click="handleGenerate">生成变体</el-button>
+        </el-form-item>
+      </el-form>
     </section>
 
     <!-- 加载状态 -->
@@ -146,6 +141,7 @@ async function handleAdopt(variant) {
 <style scoped>
 /* ── 页面容器 ── */
 .variant-generator {
+  position: relative;
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -155,13 +151,66 @@ async function handleAdopt(variant) {
   gap: 10px;
   padding: 12px;
   background:
-    radial-gradient(circle at top right, rgba(56, 189, 248, 0.13), transparent 30%),
+    linear-gradient(rgba(56, 189, 248, 0.095) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.085) 1px, transparent 1px),
+    linear-gradient(145deg, rgba(34, 211, 166, 0.18), transparent 30%),
+    linear-gradient(225deg, rgba(56, 189, 248, 0.22), transparent 36%),
+    linear-gradient(0deg, rgba(22, 119, 255, 0.12), transparent 50%),
     var(--bg-page);
+  background-size: 28px 28px, 28px 28px, auto, auto, auto, auto;
   overflow: hidden;
+}
+
+.variant-generator::before {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(110deg, transparent 0 24%, rgba(56, 189, 248, 0.16) 44%, transparent 62%),
+    repeating-linear-gradient(90deg, transparent 0 92px, rgba(56, 189, 248, 0.075) 92px 93px);
+  content: "";
+  animation: case-scan 14s linear infinite;
+}
+
+.variant-generator::after {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle, rgba(125, 211, 252, 0.72) 0 1.2px, transparent 1.8px),
+    radial-gradient(circle, rgba(45, 212, 191, 0.52) 0 1.1px, transparent 1.7px);
+  background-position: 8% 16%, 80% 42%;
+  background-size: 180px 160px, 240px 220px;
+  opacity: 0.48;
+  content: "";
+  animation: case-particles 18s ease-in-out infinite alternate;
+}
+
+@keyframes case-scan {
+  from { transform: translateX(-24%); }
+  to { transform: translateX(24%); }
+}
+
+@keyframes case-particles {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(26px, -18px, 0); }
+}
+
+@keyframes case-form-scan {
+  from { transform: translateX(-22%); }
+  to { transform: translateX(22%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .variant-generator::before,
+  .variant-generator::after {
+    animation: none;
+  }
 }
 
 /* ── 标题区 ── */
 .variant-generator__header {
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -169,9 +218,22 @@ async function handleAdopt(variant) {
   padding: 12px 16px;
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius-base);
-  background: rgba(20, 22, 27, 0.7);
-  box-shadow: var(--box-shadow-light);
+  background:
+    linear-gradient(rgba(56, 189, 248, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.045) 1px, transparent 1px);
+  background-size: 32px 32px;
   backdrop-filter: blur(10px);
+}
+
+.variant-generator__header::before {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(110deg, transparent 0 36%, rgba(56, 189, 248, 0.12) 50%, transparent 66%);
+  opacity: 0.6;
+  content: "";
+  animation: case-form-scan 10s linear infinite;
 }
 
 html:not(.dark) .variant-generator__header {
@@ -197,15 +259,29 @@ html:not(.dark) .variant-generator__header {
 
 /* ── 输入区 ── */
 .variant-generator__input {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 14px;
   padding: 14px;
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius-base);
-  background: rgba(20, 22, 27, 0.7);
-  box-shadow: var(--box-shadow-light);
+  background:
+    linear-gradient(rgba(56, 189, 248, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.045) 1px, transparent 1px);
+  background-size: 32px 32px;
   backdrop-filter: blur(10px);
+}
+
+.variant-generator__input::before {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(110deg, transparent 0 36%, rgba(56, 189, 248, 0.12) 50%, transparent 66%);
+  opacity: 0.6;
+  content: "";
+  animation: case-form-scan 10s linear infinite;
 }
 
 html:not(.dark) .variant-generator__input {
@@ -224,6 +300,31 @@ html:not(.dark) .variant-generator__input {
   font-weight: 500;
   color: var(--text-secondary);
   flex-shrink: 0;
+}
+
+.filter-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 16px;
+  align-items: center;
+}
+
+.filter-form :deep(.el-form-item) {
+  margin-bottom: 0;
+}
+
+.filter-form :deep(.el-form-item__label) {
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.filter-item {
+  display: inline-flex;
+  align-items: center;
+}
+
+.filter-actions {
+  margin-left: auto;
 }
 
 .case-select {
@@ -245,10 +346,14 @@ html:not(.dark) .variant-generator__input {
 /* ── 加载/空状态 ── */
 .variant-generator__loading,
 .variant-generator__empty {
+  position: relative;
   padding: 40px;
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius-base);
-  background: rgba(20, 22, 27, 0.7);
+  background:
+    linear-gradient(rgba(56, 189, 248, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.045) 1px, transparent 1px);
+  background-size: 32px 32px;
   backdrop-filter: blur(10px);
   text-align: center;
 }
@@ -268,16 +373,30 @@ html:not(.dark) .variant-generator__empty {
 
 /* ── 结果表格 ── */
 .variant-generator__result {
+  position: relative;
   flex: 1;
   min-height: 0;
   display: flex;
   flex-direction: column;
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius-base);
-  background: rgba(20, 22, 27, 0.7);
-  box-shadow: var(--box-shadow-light);
+  background:
+    linear-gradient(rgba(56, 189, 248, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.045) 1px, transparent 1px);
+  background-size: 32px 32px;
   backdrop-filter: blur(10px);
   overflow: hidden;
+}
+
+.variant-generator__result::before {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(110deg, transparent 0 36%, rgba(56, 189, 248, 0.12) 50%, transparent 66%);
+  opacity: 0.6;
+  content: "";
+  animation: case-form-scan 10s linear infinite;
 }
 
 html:not(.dark) .variant-generator__result {

@@ -11,30 +11,34 @@
 
     <!-- 查询区 -->
     <section class="ai-prompt-templates-page__filters">
-      <div class="filter-bar">
-        <el-select
-          v-model="draftFilters.template_type"
-          placeholder="全部类型"
-          clearable
-          class="filter-control"
-        >
-          <el-option label="变体生成" value="variant_generation" />
-          <el-option label="断言生成" value="assertion_generation" />
-          <el-option label="失败分析" value="failure_analysis" />
-          <el-option label="报告总结" value="report_summary" />
-        </el-select>
-      </div>
-      <div class="search-bar">
-        <el-input
-          v-model="draftFilters.keyword"
-          placeholder="搜索模板名称"
-          clearable
-          class="search-bar__input"
-          @keyup.enter="handleSearch"
-        />
-        <el-button type="primary" :icon="Search" @click="handleSearch">查询</el-button>
-        <el-button :icon="RefreshLeft" @click="handleReset">重置</el-button>
-      </div>
+      <el-form :model="draftFilters" inline label-position="left" class="filter-form">
+        <el-form-item label="模板类型" class="filter-item">
+          <el-select
+            v-model="draftFilters.template_type"
+            placeholder="全部类型"
+            clearable
+            class="filter-control"
+          >
+            <el-option label="变体生成" value="variant_generation" />
+            <el-option label="断言生成" value="assertion_generation" />
+            <el-option label="失败分析" value="failure_analysis" />
+            <el-option label="报告总结" value="report_summary" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="关键词" class="filter-item">
+          <el-input
+            v-model="draftFilters.keyword"
+            placeholder="搜索模板名称"
+            clearable
+            class="search-bar__input"
+            @keyup.enter="handleSearch"
+          />
+        </el-form-item>
+        <el-form-item class="filter-item filter-actions">
+          <el-button type="primary" :icon="Search" @click="handleSearch">查询</el-button>
+          <el-button :icon="RefreshLeft" @click="handleReset">重置</el-button>
+        </el-form-item>
+      </el-form>
     </section>
 
     <!-- 数据列表 -->
@@ -341,6 +345,27 @@ function renderPreview(template) {
 </script>
 
 <style scoped>
+/* ── 动画关键帧 ── */
+@keyframes case-scan {
+  from { transform: translateX(-24%); }
+  to { transform: translateX(24%); }
+}
+
+@keyframes case-particles {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(26px, -18px, 0); }
+}
+
+@keyframes case-form-scan {
+  from { transform: translateY(-8%); }
+  to { transform: translateY(108%); }
+}
+
+@keyframes case-table-scan {
+  from { transform: translateY(-6%); }
+  to { transform: translateY(106%); }
+}
+
 /* ── 页面容器 ── */
 .ai-prompt-templates-page {
   display: flex;
@@ -352,32 +377,95 @@ function renderPreview(template) {
   gap: 10px;
   padding: 12px;
   background:
-    radial-gradient(circle at top right, rgba(56, 189, 248, 0.13), transparent 30%),
+    linear-gradient(rgba(56, 189, 248, 0.095) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.085) 1px, transparent 1px),
+    linear-gradient(145deg, rgba(34, 211, 166, 0.18), transparent 30%),
+    linear-gradient(225deg, rgba(56, 189, 248, 0.22), transparent 36%),
+    linear-gradient(0deg, rgba(22, 119, 255, 0.12), transparent 50%),
     var(--bg-page);
+  background-size: 28px 28px, 28px 28px, auto, auto, auto, auto;
   overflow: hidden;
+  position: relative;
+}
+
+.ai-prompt-templates-page::before {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(110deg, transparent 0 24%, rgba(56, 189, 248, 0.16) 44%, transparent 62%),
+    repeating-linear-gradient(90deg, transparent 0 92px, rgba(56, 189, 248, 0.075) 92px 93px);
+  content: "";
+  animation: case-scan 14s linear infinite;
+}
+
+.ai-prompt-templates-page::after {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle, rgba(125, 211, 252, 0.72) 0 1.2px, transparent 1.8px),
+    radial-gradient(circle, rgba(45, 212, 191, 0.52) 0 1.1px, transparent 1.7px);
+  background-position: 8% 16%, 80% 42%;
+  background-size: 180px 160px, 240px 220px;
+  opacity: 0.48;
+  content: "";
+  animation: case-particles 18s ease-in-out infinite alternate;
+}
+
+html:not(.dark) .ai-prompt-templates-page {
+  background:
+    linear-gradient(rgba(22, 119, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(22, 119, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(145deg, rgba(14, 116, 144, 0.12), transparent 30%),
+    linear-gradient(225deg, rgba(22, 119, 255, 0.16), transparent 36%),
+    linear-gradient(0deg, rgba(56, 189, 248, 0.08), transparent 50%),
+    var(--bg-page);
 }
 
 /* ── 标题区 ── */
 .ai-prompt-templates-page__header {
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
   min-height: 56px;
   padding: 12px 16px;
-  border: 1px solid var(--border-color);
+  border: 1px solid rgba(56, 189, 248, 0.22);
   border-radius: var(--border-radius-base);
-  background: rgba(20, 22, 27, 0.7);
-  box-shadow: var(--box-shadow-light);
-  backdrop-filter: blur(10px);
+  background:
+    linear-gradient(135deg, rgba(15, 23, 42, 0.68), rgba(15, 23, 42, 0.42)),
+    rgba(20, 22, 27, 0.48);
+  box-shadow: 0 18px 48px rgba(2, 8, 23, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(18px) saturate(1.25);
+  overflow: hidden;
+  z-index: 1;
+}
+
+.ai-prompt-templates-page__header::after {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(56, 189, 248, 0.22), transparent 18% 82%, rgba(34, 211, 166, 0.18)),
+    repeating-linear-gradient(90deg, transparent 0 42px, rgba(56, 189, 248, 0.06) 42px 43px);
+  opacity: 0.65;
+  content: "";
 }
 
 html:not(.dark) .ai-prompt-templates-page__header {
-  background: rgba(255, 255, 255, 0.86);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.86), rgba(245, 250, 255, 0.68)),
+    rgba(255, 255, 255, 0.72);
+  box-shadow: 0 18px 46px rgba(20, 42, 76, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.82);
+  border-color: rgba(22, 119, 255, 0.18);
 }
 
 .ai-prompt-templates-page__header h1,
 .ai-prompt-templates-page__header p {
   margin: 0;
+  position: relative;
+  z-index: 1;
 }
 
 .ai-prompt-templates-page__header h1 {
@@ -393,6 +481,8 @@ html:not(.dark) .ai-prompt-templates-page__header {
 }
 
 .btn-primary-add {
+  position: relative;
+  z-index: 1;
   border: 0;
   background: var(--brand-gradient);
   font-weight: 700;
@@ -406,19 +496,47 @@ html:not(.dark) .ai-prompt-templates-page__header {
 
 /* ── 查询区 ── */
 .ai-prompt-templates-page__filters {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 10px;
   padding: 14px;
-  border: 1px solid var(--border-color);
+  border: 1px solid rgba(56, 189, 248, 0.18);
   border-radius: var(--border-radius-base);
-  background: rgba(20, 22, 27, 0.7);
-  box-shadow: var(--box-shadow-light);
-  backdrop-filter: blur(10px);
+  background:
+    linear-gradient(rgba(56, 189, 248, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.045) 1px, transparent 1px),
+    rgba(20, 22, 27, 0.58);
+  background-size: 28px 28px, 28px 28px;
+  box-shadow: 0 18px 48px rgba(2, 8, 23, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(16px) saturate(1.2);
+  overflow: hidden;
+  z-index: 1;
+}
+
+.ai-prompt-templates-page__filters::before {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(110deg, transparent 0 36%, rgba(56, 189, 248, 0.1) 50%, transparent 66%);
+  opacity: 0.7;
+  content: "";
+  animation: case-form-scan 12s linear infinite;
 }
 
 html:not(.dark) .ai-prompt-templates-page__filters {
-  background: rgba(255, 255, 255, 0.86);
+  background:
+    linear-gradient(rgba(22, 119, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(22, 119, 255, 0.035) 1px, transparent 1px),
+    rgba(255, 255, 255, 0.72);
+  background-size: 28px 28px, 28px 28px;
+  border-color: rgba(22, 119, 255, 0.14);
+}
+
+html:not(.dark) .ai-prompt-templates-page__filters::before {
+  background:
+    linear-gradient(110deg, transparent 0 36%, rgba(22, 119, 255, 0.08) 50%, transparent 66%);
 }
 
 .filter-bar {
@@ -426,6 +544,31 @@ html:not(.dark) .ai-prompt-templates-page__filters {
   flex-wrap: wrap;
   gap: 10px 12px;
   align-items: center;
+}
+
+.filter-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 16px;
+  align-items: center;
+}
+
+.filter-form :deep(.el-form-item) {
+  margin-bottom: 0;
+}
+
+.filter-form :deep(.el-form-item__label) {
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.filter-item {
+  display: inline-flex;
+  align-items: center;
+}
+
+.filter-actions {
+  margin-left: auto;
 }
 
 .filter-control {
@@ -436,6 +579,7 @@ html:not(.dark) .ai-prompt-templates-page__filters {
   display: flex;
   gap: 12px;
   align-items: center;
+  justify-content: flex-end;
 }
 
 .search-bar__input {
@@ -444,24 +588,73 @@ html:not(.dark) .ai-prompt-templates-page__filters {
 
 /* ── 表格区 ── */
 .ai-prompt-templates-page__table {
+  position: relative;
   display: flex;
   flex: 1;
   min-height: 0;
   flex-direction: column;
-  border: 1px solid var(--border-color);
+  border: 1px solid rgba(56, 189, 248, 0.18);
   border-radius: var(--border-radius-base);
-  background: rgba(20, 22, 27, 0.7);
-  box-shadow: var(--box-shadow-light);
-  backdrop-filter: blur(10px);
+  background:
+    linear-gradient(rgba(56, 189, 248, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.045) 1px, transparent 1px),
+    rgba(20, 22, 27, 0.48);
+  background-size: 32px 32px, 32px 32px;
+  box-shadow: 0 18px 48px rgba(2, 8, 23, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(16px) saturate(1.2);
   overflow: hidden;
+  z-index: 1;
+}
+
+.ai-prompt-templates-page__table::before {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(110deg, transparent 0 36%, rgba(56, 189, 248, 0.12) 50%, transparent 66%),
+    radial-gradient(circle at 88% 16%, rgba(34, 211, 166, 0.14), transparent 26%);
+  opacity: 0.8;
+  content: "";
+  animation: case-table-scan 12s linear infinite;
 }
 
 html:not(.dark) .ai-prompt-templates-page__table {
-  background: rgba(255, 255, 255, 0.86);
+  background:
+    linear-gradient(rgba(22, 119, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(22, 119, 255, 0.035) 1px, transparent 1px),
+    rgba(255, 255, 255, 0.64);
+  background-size: 32px 32px, 32px 32px;
+  border-color: rgba(22, 119, 255, 0.14);
+}
+
+html:not(.dark) .ai-prompt-templates-page__table::before {
+  background:
+    linear-gradient(110deg, transparent 0 36%, rgba(22, 119, 255, 0.1) 50%, transparent 66%);
 }
 
 .ai-prompt-templates-page__table :deep(.el-table) {
   flex: 1;
+  --el-table-bg-color: transparent;
+  --el-table-tr-bg-color: rgba(8, 18, 32, 0.34);
+  --el-table-header-bg-color: rgba(15, 31, 52, 0.46);
+  --el-table-row-hover-bg-color: rgba(56, 189, 248, 0.1);
+  --el-table-expanded-cell-bg-color: rgba(8, 18, 32, 0.42);
+  background:
+    linear-gradient(rgba(56, 189, 248, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.03) 1px, transparent 1px),
+    rgba(8, 18, 32, 0.32);
+  background-size: 28px 28px, 28px 28px, auto;
+}
+
+html:not(.dark) .ai-prompt-templates-page__table :deep(.el-table) {
+  --el-table-tr-bg-color: rgba(255, 255, 255, 0.54);
+  --el-table-header-bg-color: rgba(240, 247, 255, 0.68);
+  --el-table-expanded-cell-bg-color: rgba(255, 255, 255, 0.64);
+  background:
+    linear-gradient(rgba(22, 119, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(22, 119, 255, 0.03) 1px, transparent 1px),
+    rgba(255, 255, 255, 0.44);
+  background-size: 28px 28px, 28px 28px, auto;
 }
 
 .ai-prompt-templates-page__table :deep(.el-table__header th) {
@@ -484,7 +677,11 @@ html:not(.dark) .ai-prompt-templates-page__table {
   display: flex;
   justify-content: flex-end;
   padding: 10px 16px;
-  border-top: 1px solid var(--border-color-lighter, #f0f0f0);
+  border-top: 1px solid rgba(56, 189, 248, 0.12);
+}
+
+html:not(.dark) .ai-prompt-templates-page__pagination {
+  border-top-color: rgba(22, 119, 255, 0.12);
 }
 
 /* ── 通用 ── */
@@ -535,5 +732,15 @@ html:not(.dark) .ai-prompt-templates-page__table {
 
 .variable-preview code {
   font-family: var(--font-mono);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ai-prompt-templates-page::before,
+  .ai-prompt-templates-page::after,
+  .ai-prompt-templates-page__header::after,
+  .ai-prompt-templates-page__filters::before,
+  .ai-prompt-templates-page__table::before {
+    animation: none;
+  }
 }
 </style>

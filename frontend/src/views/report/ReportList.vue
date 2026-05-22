@@ -10,40 +10,48 @@
 
     <!-- 查询区 -->
     <section class="report-list-page__filters">
-      <div class="filter-bar">
-        <el-select
-          v-model="draftFilters.report_type"
-          placeholder="全部类型"
-          clearable
-          class="filter-control"
-        >
-          <el-option label="执行报告" value="execution" />
-          <el-option label="场景报告" value="scenario" />
-          <el-option label="套件报告" value="suite" />
-        </el-select>
-        <el-select
-          v-model="draftFilters.environment"
-          placeholder="全部环境"
-          clearable
-          class="filter-control"
-        >
-          <el-option label="开发环境" value="dev" />
-          <el-option label="测试环境" value="test" />
-          <el-option label="预发环境" value="staging" />
-          <el-option label="生产环境" value="prod" />
-        </el-select>
-      </div>
-      <div class="search-bar">
-        <el-input
-          v-model="draftFilters.keyword"
-          placeholder="搜索报告名称"
-          clearable
-          class="search-bar__input"
-          @keyup.enter="handleSearch"
-        />
-        <el-button type="primary" :icon="Search" @click="handleSearch">查询</el-button>
-        <el-button :icon="RefreshLeft" @click="handleReset">重置</el-button>
-      </div>
+      <el-form :model="draftFilters" label-position="left" class="filter-form">
+        <div class="filter-form__row">
+          <el-form-item label="报告类型：" class="filter-item filter-item--type">
+            <el-select
+              v-model="draftFilters.report_type"
+              placeholder="全部类型"
+              clearable
+              class="filter-control"
+            >
+              <el-option label="执行报告" value="execution" />
+              <el-option label="场景报告" value="scenario" />
+              <el-option label="套件报告" value="suite" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="环境：" class="filter-item filter-item--env">
+            <el-select
+              v-model="draftFilters.environment"
+              placeholder="全部环境"
+              clearable
+              class="filter-control"
+            >
+              <el-option label="开发环境" value="dev" />
+              <el-option label="测试环境" value="test" />
+              <el-option label="预发环境" value="staging" />
+              <el-option label="生产环境" value="prod" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="关键词：" class="filter-item filter-item--keyword">
+            <el-input
+              v-model="draftFilters.keyword"
+              placeholder="搜索报告名称"
+              clearable
+              class="search-bar__input"
+              @keyup.enter="handleSearch"
+            />
+          </el-form-item>
+          <div class="filter-actions">
+            <el-button type="primary" :icon="Search" @click="handleSearch">查询</el-button>
+            <el-button :icon="RefreshLeft" @click="handleReset">重置</el-button>
+          </div>
+        </div>
+      </el-form>
     </section>
 
     <!-- 数据列表 -->
@@ -224,6 +232,27 @@ function getPassRateColor(rate) {
 </script>
 
 <style scoped>
+/* ── 动画关键帧 ── */
+@keyframes report-list-scan {
+  from { transform: translateX(-24%); }
+  to { transform: translateX(24%); }
+}
+
+@keyframes report-list-particles {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(26px, -18px, 0); }
+}
+
+@keyframes report-list-form-scan {
+  from { transform: translateY(-8%); }
+  to { transform: translateY(108%); }
+}
+
+@keyframes report-list-table-scan {
+  from { transform: translateY(-6%); }
+  to { transform: translateY(106%); }
+}
+
 /* ── 页面容器 ── */
 .report-list-page {
   display: flex;
@@ -235,32 +264,95 @@ function getPassRateColor(rate) {
   gap: 10px;
   padding: 12px;
   background:
-    radial-gradient(circle at top right, rgba(56, 189, 248, 0.13), transparent 30%),
+    linear-gradient(rgba(56, 189, 248, 0.095) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.085) 1px, transparent 1px),
+    linear-gradient(145deg, rgba(34, 211, 166, 0.18), transparent 30%),
+    linear-gradient(225deg, rgba(56, 189, 248, 0.22), transparent 36%),
+    linear-gradient(0deg, rgba(22, 119, 255, 0.12), transparent 50%),
     var(--bg-page);
+  background-size: 28px 28px, 28px 28px, auto, auto, auto, auto;
   overflow: hidden;
+  position: relative;
+}
+
+.report-list-page::before {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(110deg, transparent 0 24%, rgba(56, 189, 248, 0.16) 44%, transparent 62%),
+    repeating-linear-gradient(90deg, transparent 0 92px, rgba(56, 189, 248, 0.075) 92px 93px);
+  content: "";
+  animation: report-list-scan 14s linear infinite;
+}
+
+.report-list-page::after {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle, rgba(125, 211, 252, 0.72) 0 1.2px, transparent 1.8px),
+    radial-gradient(circle, rgba(45, 212, 191, 0.52) 0 1.1px, transparent 1.7px);
+  background-position: 8% 16%, 80% 42%;
+  background-size: 180px 160px, 240px 220px;
+  opacity: 0.48;
+  content: "";
+  animation: report-list-particles 18s ease-in-out infinite alternate;
+}
+
+html:not(.dark) .report-list-page {
+  background:
+    linear-gradient(rgba(56, 189, 248, 0.095) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.085) 1px, transparent 1px),
+    linear-gradient(145deg, rgba(34, 211, 166, 0.18), transparent 30%),
+    linear-gradient(225deg, rgba(56, 189, 248, 0.22), transparent 36%),
+    linear-gradient(0deg, rgba(22, 119, 255, 0.12), transparent 50%),
+    var(--bg-page);
 }
 
 /* ── 标题区 ── */
 .report-list-page__header {
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
   min-height: 56px;
   padding: 12px 16px;
-  border: 1px solid var(--border-color);
+  border: 1px solid rgba(56, 189, 248, 0.22);
   border-radius: var(--border-radius-base);
-  background: rgba(20, 22, 27, 0.7);
-  box-shadow: var(--box-shadow-light);
-  backdrop-filter: blur(10px);
+  background:
+    linear-gradient(135deg, rgba(15, 23, 42, 0.68), rgba(15, 23, 42, 0.42)),
+    rgba(20, 22, 27, 0.48);
+  box-shadow: 0 18px 48px rgba(2, 8, 23, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(18px) saturate(1.25);
+  overflow: hidden;
+  z-index: 1;
+}
+
+.report-list-page__header::after {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(56, 189, 248, 0.22), transparent 18% 82%, rgba(34, 211, 166, 0.18)),
+    repeating-linear-gradient(90deg, transparent 0 42px, rgba(56, 189, 248, 0.06) 42px 43px);
+  opacity: 0.65;
+  content: "";
 }
 
 html:not(.dark) .report-list-page__header {
-  background: rgba(255, 255, 255, 0.86);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.86), rgba(245, 250, 255, 0.68)),
+    rgba(255, 255, 255, 0.72);
+  box-shadow: 0 18px 46px rgba(20, 42, 76, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.82);
+  border-color: rgba(22, 119, 255, 0.18);
 }
 
 .report-list-page__header h1,
 .report-list-page__header p {
   margin: 0;
+  position: relative;
+  z-index: 1;
 }
 
 .report-list-page__header h1 {
@@ -277,73 +369,219 @@ html:not(.dark) .report-list-page__header {
 
 /* ── 查询区 ── */
 .report-list-page__filters {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
   padding: 14px;
-  border: 1px solid var(--border-color);
+  border: 1px solid rgba(56, 189, 248, 0.18);
   border-radius: var(--border-radius-base);
-  background: rgba(20, 22, 27, 0.7);
-  box-shadow: var(--box-shadow-light);
-  backdrop-filter: blur(10px);
+  background:
+    linear-gradient(rgba(56, 189, 248, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.05) 1px, transparent 1px),
+    linear-gradient(145deg, rgba(15, 23, 42, 0.54), rgba(15, 23, 42, 0.34)),
+    rgba(20, 22, 27, 0.36);
+  background-size: 26px 26px, 26px 26px, auto, auto;
+  box-shadow: 0 18px 48px rgba(2, 8, 23, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(16px) saturate(1.2);
+  overflow: hidden;
+  z-index: 1;
+}
+
+.report-list-page__filters::before {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(110deg, transparent 0 36%, rgba(56, 189, 248, 0.1) 50%, transparent 66%);
+  opacity: 0.7;
+  content: "";
+  animation: report-list-form-scan 12s linear infinite;
 }
 
 html:not(.dark) .report-list-page__filters {
-  background: rgba(255, 255, 255, 0.86);
+  background:
+    linear-gradient(rgba(22, 119, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(22, 119, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.76), rgba(245, 250, 255, 0.58)),
+    rgba(255, 255, 255, 0.62);
+  background-size: 26px 26px, 26px 26px, auto, auto;
+  border-color: rgba(22, 119, 255, 0.14);
 }
 
-.filter-bar {
+html:not(.dark) .report-list-page__filters::before {
+  background:
+    linear-gradient(110deg, transparent 0 36%, rgba(22, 119, 255, 0.08) 50%, transparent 66%);
+}
+
+.filter-form {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+}
+
+.filter-form__row {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px 12px;
+  gap: 12px;
+  align-items: flex-end;
+  width: 100%;
+}
+
+.filter-form :deep(.el-form-item) {
+  margin-bottom: 0;
+}
+
+.filter-form :deep(.el-form-item__label) {
+  display: flex;
   align-items: center;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 34px;
+}
+
+.filter-item {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: flex-end;
+}
+
+.filter-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-end;
+  margin-left: auto;
+}
+
+.filter-actions :deep(.el-button),
+.filter-actions .el-button {
+  min-width: 76px;
+  height: 34px;
+  margin-left: 0;
 }
 
 .filter-control {
-  width: 160px;
-}
-
-.search-bar {
-  display: flex;
-  gap: 12px;
-  align-items: center;
+  width: 180px;
 }
 
 .search-bar__input {
-  width: 320px;
+  width: 280px;
 }
 
 /* ── 表格区 ── */
 .report-list-page__table {
+  position: relative;
   display: flex;
   flex: 1;
   min-height: 0;
   flex-direction: column;
-  border: 1px solid var(--border-color);
+  border: 1px solid rgba(56, 189, 248, 0.18);
   border-radius: var(--border-radius-base);
-  background: rgba(20, 22, 27, 0.7);
-  box-shadow: var(--box-shadow-light);
-  backdrop-filter: blur(10px);
+  background:
+    linear-gradient(rgba(56, 189, 248, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.045) 1px, transparent 1px),
+    linear-gradient(145deg, rgba(15, 23, 42, 0.54), rgba(15, 23, 42, 0.34)),
+    rgba(20, 22, 27, 0.36);
+  background-size: 32px 32px, 32px 32px, auto, auto;
+  box-shadow: 0 18px 48px rgba(2, 8, 23, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(16px) saturate(1.2);
   overflow: hidden;
+  z-index: 1;
+}
+
+.report-list-page__table::before {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(110deg, transparent 0 36%, rgba(56, 189, 248, 0.12) 50%, transparent 66%),
+    radial-gradient(circle at 88% 16%, rgba(34, 211, 166, 0.14), transparent 26%);
+  opacity: 0.8;
+  content: "";
+  animation: report-list-table-scan 12s linear infinite;
 }
 
 html:not(.dark) .report-list-page__table {
-  background: rgba(255, 255, 255, 0.86);
+  background:
+    linear-gradient(rgba(22, 119, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(22, 119, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.76), rgba(245, 250, 255, 0.58)),
+    rgba(255, 255, 255, 0.62);
+  background-size: 32px 32px, 32px 32px, auto, auto;
+  border-color: rgba(22, 119, 255, 0.14);
+}
+
+html:not(.dark) .report-list-page__table::before {
+  background:
+    linear-gradient(110deg, transparent 0 36%, rgba(22, 119, 255, 0.1) 50%, transparent 66%);
 }
 
 .report-list-page__table :deep(.el-table) {
   flex: 1;
+  --el-table-bg-color: transparent;
+  --el-table-tr-bg-color: rgba(8, 18, 32, 0.34);
+  --el-table-header-bg-color: rgba(15, 31, 52, 0.46);
+  --el-table-row-hover-bg-color: var(--color-primary-soft);
+  --el-table-expanded-cell-bg-color: rgba(8, 18, 32, 0.42);
+  background:
+    linear-gradient(rgba(56, 189, 248, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.03) 1px, transparent 1px),
+    rgba(8, 18, 32, 0.32);
+  background-size: 28px 28px, 28px 28px, auto;
+}
+
+html:not(.dark) .report-list-page__table :deep(.el-table) {
+  --el-table-tr-bg-color: rgba(255, 255, 255, 0.54);
+  --el-table-header-bg-color: rgba(240, 247, 255, 0.68);
+  --el-table-expanded-cell-bg-color: rgba(255, 255, 255, 0.64);
+  --el-table-row-hover-bg-color: var(--color-primary-soft);
+  background:
+    linear-gradient(rgba(22, 119, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(22, 119, 255, 0.03) 1px, transparent 1px),
+    rgba(255, 255, 255, 0.44);
+  background-size: 28px 28px, 28px 28px, auto;
 }
 
 .report-list-page__table :deep(.el-table__header th) {
-  background: var(--bg-container-soft) !important;
+  height: 44px;
+  background: var(--el-table-header-bg-color) !important;
+  background-color: var(--el-table-header-bg-color) !important;
   color: var(--text-secondary);
   font-weight: 700;
-  font-size: 12px;
+  font-size: 13px;
+}
+
+.report-list-page__table :deep(.el-table .cell) {
+  padding: 0 10px;
+}
+
+.report-list-page__table :deep(.el-table__body td) {
+  height: 48px;
+  background: var(--el-table-tr-bg-color) !important;
+  background-color: var(--el-table-tr-bg-color) !important;
+}
+
+.report-list-page__table :deep(.el-table__body tr:nth-child(even) td.el-table__cell) {
+  background: rgba(15, 31, 52, 0.28) !important;
+  background-color: rgba(15, 31, 52, 0.28) !important;
+}
+
+html:not(.dark) .report-list-page__table :deep(.el-table__body tr:nth-child(even) td.el-table__cell) {
+  background: rgba(245, 250, 255, 0.5) !important;
+  background-color: rgba(245, 250, 255, 0.5) !important;
 }
 
 .report-list-page__table :deep(.el-table__row:hover > td) {
-  background: rgba(56, 189, 248, 0.1) !important;
+  background: var(--el-table-row-hover-bg-color) !important;
+  background-color: var(--el-table-row-hover-bg-color) !important;
+}
+
+.report-list-page__table :deep(.el-table__row:hover > td.el-table-fixed-column--right),
+.report-list-page__table :deep(.el-table__row:hover > td.el-table-fixed-column--left) {
+  background: var(--el-table-row-hover-bg-color) !important;
+  background-color: var(--el-table-row-hover-bg-color) !important;
 }
 
 .report-list-page__table :deep(.el-table__cell) {
@@ -399,6 +637,20 @@ html:not(.dark) .report-list-page__table {
   display: flex;
   justify-content: flex-end;
   padding: 10px 16px;
-  border-top: 1px solid var(--border-color-lighter, #f0f0f0);
+  border-top: 1px solid rgba(56, 189, 248, 0.12);
+}
+
+html:not(.dark) .report-list-page__pagination {
+  border-top-color: rgba(22, 119, 255, 0.12);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .report-list-page::before,
+  .report-list-page::after,
+  .report-list-page__header::after,
+  .report-list-page__filters::before,
+  .report-list-page__table::before {
+    animation: none;
+  }
 }
 </style>

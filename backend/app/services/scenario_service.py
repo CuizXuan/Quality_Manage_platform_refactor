@@ -412,8 +412,8 @@ def _update_run_status(
     run_id: int,
     status: str,
     finished_at=None,
-    duration_ms: int | None = None,
-    summary: dict | None = None,
+    duration_ms: Optional[int] = None,
+    summary: Optional[dict] = None,
 ) -> None:
     import json as _json
     run = db.query(ExecutionRun).filter(ExecutionRun.id == run_id).first()

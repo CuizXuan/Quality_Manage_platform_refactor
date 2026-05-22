@@ -453,20 +453,61 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* ── 页面容器 ── */
 .dictionary-page {
+  position: relative;
+  width: 100%;
   height: 100%;
-  background-color: var(--bg-page);
+  background:
+    linear-gradient(rgba(56, 189, 248, 0.095) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.085) 1px, transparent 1px),
+    linear-gradient(145deg, rgba(34, 211, 166, 0.18), transparent 30%),
+    linear-gradient(225deg, rgba(56, 189, 248, 0.22), transparent 36%),
+    linear-gradient(0deg, rgba(22, 119, 255, 0.12), transparent 50%),
+    var(--bg-page);
+  background-size: 28px 28px, 28px 28px, auto, auto, auto, auto;
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-md);
+  gap: 10px;
+  padding: 12px;
+  overflow: hidden;
+}
+
+.dictionary-page::before {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(110deg, transparent 0 24%, rgba(56, 189, 248, 0.16) 44%, transparent 62%),
+    repeating-linear-gradient(90deg, transparent 0 92px, rgba(56, 189, 248, 0.075) 92px 93px);
+  content: "";
+  animation: case-scan 14s linear infinite;
+}
+
+.dictionary-page::after {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle, rgba(125, 211, 252, 0.72) 0 1.2px, transparent 1.8px),
+    radial-gradient(circle, rgba(45, 212, 191, 0.52) 0 1.1px, transparent 1.7px);
+  background-position: 8% 16%, 80% 42%;
+  background-size: 180px 160px, 240px 220px;
+  opacity: 0.48;
+  content: "";
+  animation: case-particles 18s ease-in-out infinite alternate;
 }
 
 .page-header {
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: center;
 }
 
 .page-title {
+  position: relative;
+  z-index: 1;
   font-size: 16px;
   font-weight: 600;
   color: var(--text-primary);
@@ -474,32 +515,76 @@ onMounted(() => {
 }
 
 .dict-layout {
+  position: relative;
+  z-index: 1;
   display: flex;
-  gap: var(--spacing-md);
+  gap: 10px;
   flex: 1;
   min-height: 0;
   height: calc(100vh - 140px);
 }
 
-/* ===== 统一面板（复用 global.css .panel） ===== */
+/* ===== 统一面板（带扫描动画和背景网格） ===== */
 .panel {
+  position: relative;
   flex: 1;
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-md);
+  gap: 0;
+  border: 1px solid rgba(56, 189, 248, 0.18);
+  border-radius: var(--border-radius-base);
+  background:
+    linear-gradient(rgba(56, 189, 248, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.045) 1px, transparent 1px),
+    rgba(20, 22, 27, 0.48);
+  background-size: 32px 32px;
+  box-shadow: 0 14px 36px rgba(2, 8, 23, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(16px) saturate(1.2);
+  overflow: hidden;
 }
 
-/* panel-head 复用 global.css .panel-head 样式（min-height: 64px, padding, border-bottom） */
+.panel::before {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(110deg, transparent 0 36%, rgba(56, 189, 248, 0.1) 50%, transparent 66%),
+    radial-gradient(circle at 88% 16%, rgba(34, 211, 166, 0.12), transparent 26%);
+  opacity: 0.8;
+  content: "";
+  animation: case-form-scan 12s linear infinite;
+}
+
+html:not(.dark) .panel {
+  background:
+    linear-gradient(rgba(22, 119, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(22, 119, 255, 0.035) 1px, transparent 1px),
+    rgba(255, 255, 255, 0.64);
+  background-size: 32px 32px;
+  box-shadow: 0 14px 34px rgba(20, 42, 76, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.86);
+}
+
+html:not(.dark) .panel::before {
+  background:
+    linear-gradient(110deg, transparent 0 36%, rgba(22, 119, 255, 0.08) 50%, transparent 66%),
+    radial-gradient(circle at 88% 16%, rgba(22, 119, 255, 0.1), transparent 26%);
+}
 
 .panel-head {
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--spacing-md);
   min-height: 64px;
   padding: 0 var(--spacing-lg);
-  border-bottom: 1px solid var(--border-color-lighter);
+  border-bottom: 1px solid rgba(56, 189, 248, 0.1);
+}
+
+html:not(.dark) .panel-head {
+  border-bottom-color: rgba(22, 119, 255, 0.1);
 }
 
 .section-label {
@@ -510,6 +595,8 @@ onMounted(() => {
 
 /* ===== 工具栏 ===== */
 .toolbar {
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
@@ -518,9 +605,42 @@ onMounted(() => {
 
 /* ===== data-table 复用 global.css ===== */
 .data-table {
+  position: relative;
+  z-index: 1;
   width: 100%;
   flex: 1;
   overflow: auto;
+}
+
+.data-table :deep(.el-table) {
+  --el-table-bg-color: transparent;
+  --el-table-tr-bg-color: rgba(8, 18, 32, 0.34);
+  --el-table-header-bg-color: rgba(15, 31, 52, 0.46);
+  --el-table-expanded-cell-bg-color: rgba(8, 18, 32, 0.42);
+  background:
+    linear-gradient(rgba(56, 189, 248, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.03) 1px, transparent 1px),
+    rgba(8, 18, 32, 0.32);
+  background-size: 28px 28px, 28px 28px, auto;
+}
+
+html:not(.dark) .data-table :deep(.el-table) {
+  --el-table-tr-bg-color: rgba(255, 255, 255, 0.54);
+  --el-table-header-bg-color: rgba(240, 247, 255, 0.68);
+  --el-table-expanded-cell-bg-color: rgba(255, 255, 255, 0.64);
+  background:
+    linear-gradient(rgba(22, 119, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(22, 119, 255, 0.03) 1px, transparent 1px),
+    rgba(255, 255, 255, 0.44);
+  background-size: 28px 28px, 28px 28px, auto;
+}
+
+.data-table :deep(.el-table__row:hover > td) {
+  background: rgba(56, 189, 248, 0.1) !important;
+}
+
+html:not(.dark) .data-table :deep(.el-table__row:hover > td) {
+  background: rgba(22, 119, 255, 0.08) !important;
 }
 
 /* 行操作按钮不换行 */
@@ -552,14 +672,23 @@ onMounted(() => {
 
 /* ===== 分页栏 ===== */
 .pagination-bar {
+  position: relative;
+  z-index: 1;
   display: flex;
   justify-content: flex-end;
   align-items: center;
   padding: var(--spacing-sm) var(--spacing-lg);
+  border-top: 1px solid rgba(56, 189, 248, 0.1);
+}
+
+html:not(.dark) .pagination-bar {
+  border-top-color: rgba(22, 119, 255, 0.1);
 }
 
 /* ===== 空状态 ===== */
 .empty-state {
+  position: relative;
+  z-index: 1;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -587,5 +716,28 @@ onMounted(() => {
   display: flex;
   justify-content: flex-end;
   gap: var(--spacing-sm);
+}
+
+@keyframes case-scan {
+  from { transform: translateX(-24%); }
+  to { transform: translateX(24%); }
+}
+
+@keyframes case-particles {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(26px, -18px, 0); }
+}
+
+@keyframes case-form-scan {
+  from { transform: translateX(-20%); }
+  to { transform: translateX(20%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dictionary-page::before,
+  .dictionary-page::after,
+  .panel::before {
+    animation: none;
+  }
 }
 </style>

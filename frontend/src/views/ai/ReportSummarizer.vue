@@ -10,18 +10,20 @@
 
     <!-- 查询区 -->
     <section class="report-summarizer__query">
-      <div class="query-row">
-        <el-input-number
-          v-model="queryForm.report_id"
-          :min="1"
-          placeholder="输入报告ID"
-          class="input-report-id"
-        />
-        <div class="query-actions">
+      <el-form :model="queryForm" inline label-position="left" class="filter-form">
+        <el-form-item label="报告ID" class="filter-item">
+          <el-input-number
+            v-model="queryForm.report_id"
+            :min="1"
+            placeholder="输入报告ID"
+            class="input-report-id"
+          />
+        </el-form-item>
+        <el-form-item class="filter-item filter-actions">
           <el-button type="primary" :loading="aiStore.loading" @click="handleSummarize">生成总结</el-button>
           <el-button @click="handleReset">重置</el-button>
-        </div>
-      </div>
+        </el-form-item>
+      </el-form>
     </section>
 
     <!-- 错误提示 -->
@@ -137,6 +139,7 @@ function handleReset() {
 <style scoped>
 /* ── 页面容器 ── */
 .report-summarizer {
+  position: relative;
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -146,13 +149,44 @@ function handleReset() {
   gap: 10px;
   padding: 12px;
   background:
-    radial-gradient(circle at top right, rgba(56, 189, 248, 0.13), transparent 30%),
+    linear-gradient(rgba(56, 189, 248, 0.095) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.085) 1px, transparent 1px),
+    linear-gradient(145deg, rgba(34, 211, 166, 0.18), transparent 30%),
+    linear-gradient(225deg, rgba(56, 189, 248, 0.22), transparent 36%),
+    linear-gradient(0deg, rgba(22, 119, 255, 0.12), transparent 50%),
     var(--bg-page);
+  background-size: 28px 28px, 28px 28px, auto, auto, auto, auto;
   overflow: hidden;
+}
+
+.report-summarizer::before {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(110deg, transparent 0 24%, rgba(56, 189, 248, 0.16) 44%, transparent 62%),
+    repeating-linear-gradient(90deg, transparent 0 92px, rgba(56, 189, 248, 0.075) 92px 93px);
+  content: "";
+  animation: case-scan 14s linear infinite;
+}
+
+.report-summarizer::after {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle, rgba(125, 211, 252, 0.72) 0 1.2px, transparent 1.8px),
+    radial-gradient(circle, rgba(45, 212, 191, 0.52) 0 1.1px, transparent 1.7px);
+  background-position: 8% 16%, 80% 42%;
+  background-size: 180px 160px, 240px 220px;
+  opacity: 0.48;
+  content: "";
+  animation: case-particles 18s ease-in-out infinite alternate;
 }
 
 /* ── 标题区 ── */
 .report-summarizer__header {
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -160,9 +194,46 @@ function handleReset() {
   padding: 12px 16px;
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius-base);
-  background: rgba(20, 22, 27, 0.7);
-  box-shadow: var(--box-shadow-light);
+  background:
+    linear-gradient(rgba(56, 189, 248, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.045) 1px, transparent 1px);
+  background-size: 32px 32px;
   backdrop-filter: blur(10px);
+}
+
+.report-summarizer__header::before {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(110deg, transparent 0 36%, rgba(56, 189, 248, 0.12) 50%, transparent 66%);
+  opacity: 0.6;
+  content: "";
+  animation: case-form-scan 10s linear infinite;
+}
+
+/* ── 查询区 ── */
+.report-summarizer__query {
+  position: relative;
+  padding: 14px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-base);
+  background:
+    linear-gradient(rgba(56, 189, 248, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.045) 1px, transparent 1px);
+  background-size: 32px 32px;
+  backdrop-filter: blur(10px);
+}
+
+.report-summarizer__query::before {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(110deg, transparent 0 36%, rgba(56, 189, 248, 0.12) 50%, transparent 66%);
+  opacity: 0.6;
+  content: "";
+  animation: case-form-scan 10s linear infinite;
 }
 
 html:not(.dark) .report-summarizer__header {
@@ -186,24 +257,35 @@ html:not(.dark) .report-summarizer__header {
   font-size: 13px;
 }
 
-/* ── 查询区 ── */
-.report-summarizer__query {
-  padding: 14px;
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius-base);
-  background: rgba(20, 22, 27, 0.7);
-  box-shadow: var(--box-shadow-light);
-  backdrop-filter: blur(10px);
-}
-
-html:not(.dark) .report-summarizer__query {
-  background: rgba(255, 255, 255, 0.86);
-}
-
 .query-row {
   display: flex;
   align-items: center;
   gap: 16px;
+}
+
+.filter-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 16px;
+  align-items: center;
+}
+
+.filter-form :deep(.el-form-item) {
+  margin-bottom: 0;
+}
+
+.filter-form :deep(.el-form-item__label) {
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.filter-item {
+  display: inline-flex;
+  align-items: center;
+}
+
+.filter-actions {
+  margin-left: auto;
 }
 
 .input-report-id {
@@ -217,49 +299,51 @@ html:not(.dark) .report-summarizer__query {
 
 /* ── 错误提示 ── */
 .report-summarizer__error {
+  position: relative;
   padding: 0;
 }
 
 /* ── 加载/空状态 ── */
 .report-summarizer__loading,
 .report-summarizer__empty {
+  position: relative;
   padding: 40px;
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius-base);
-  background: rgba(20, 22, 27, 0.7);
+  background:
+    linear-gradient(rgba(56, 189, 248, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.045) 1px, transparent 1px);
+  background-size: 32px 32px;
   backdrop-filter: blur(10px);
   text-align: center;
-}
-
-html:not(.dark) .report-summarizer__loading,
-html:not(.dark) .report-summarizer__empty {
-  background: rgba(255, 255, 255, 0.86);
-}
-
-.loading-content {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  color: var(--text-secondary);
 }
 
 /* ── 结果区 ── */
 .report-summarizer__risk,
 .report-summarizer__factors,
 .report-summarizer__summary {
+  position: relative;
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius-base);
-  background: rgba(20, 22, 27, 0.7);
-  box-shadow: var(--box-shadow-light);
+  background:
+    linear-gradient(rgba(56, 189, 248, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.045) 1px, transparent 1px);
+  background-size: 32px 32px;
   backdrop-filter: blur(10px);
   overflow: hidden;
 }
 
-html:not(.dark) .report-summarizer__risk,
-html:not(.dark) .report-summarizer__factors,
-html:not(.dark) .report-summarizer__summary {
-  background: rgba(255, 255, 255, 0.86);
+.report-summarizer__risk::before,
+.report-summarizer__factors::before,
+.report-summarizer__summary::before {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(110deg, transparent 0 36%, rgba(56, 189, 248, 0.12) 50%, transparent 66%);
+  opacity: 0.6;
+  content: "";
+  animation: case-form-scan 10s linear infinite;
 }
 
 .result-header {
@@ -334,5 +418,27 @@ html:not(.dark) .report-summarizer__summary {
   word-break: break-word;
   overflow-x: auto;
   margin: 0;
+}
+
+@keyframes case-scan {
+  from { transform: translateX(-24%); }
+  to { transform: translateX(24%); }
+}
+
+@keyframes case-particles {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(26px, -18px, 0); }
+}
+
+@keyframes case-form-scan {
+  from { transform: translateX(-22%); }
+  to { transform: translateX(22%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .report-summarizer::before,
+  .report-summarizer::after {
+    animation: none;
+  }
 }
 </style>

@@ -162,6 +162,7 @@ function maskKey(key) {
 <style scoped>
 /* ── 页面容器 ── */
 .ai-model-config {
+  position: relative;
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -171,9 +172,56 @@ function maskKey(key) {
   gap: 10px;
   padding: 12px;
   background:
-    radial-gradient(circle at top right, rgba(56, 189, 248, 0.13), transparent 30%),
+    linear-gradient(rgba(56, 189, 248, 0.095) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.085) 1px, transparent 1px),
+    linear-gradient(145deg, rgba(34, 211, 166, 0.18), transparent 30%),
+    linear-gradient(225deg, rgba(56, 189, 248, 0.22), transparent 36%),
+    linear-gradient(0deg, rgba(22, 119, 255, 0.12), transparent 50%),
     var(--bg-page);
+  background-size: 28px 28px, 28px 28px, auto, auto, auto, auto;
   overflow: hidden;
+}
+
+.ai-model-config::before {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(110deg, transparent 0 24%, rgba(56, 189, 248, 0.16) 44%, transparent 62%),
+    repeating-linear-gradient(90deg, transparent 0 92px, rgba(56, 189, 248, 0.075) 92px 93px);
+  content: "";
+  animation: case-scan 14s linear infinite;
+}
+
+.ai-model-config::after {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle, rgba(125, 211, 252, 0.72) 0 1.2px, transparent 1.8px),
+    radial-gradient(circle, rgba(45, 212, 191, 0.52) 0 1.1px, transparent 1.7px);
+  background-position: 8% 16%, 80% 42%;
+  background-size: 180px 160px, 240px 220px;
+  opacity: 0.48;
+  content: "";
+  animation: case-particles 18s ease-in-out infinite alternate;
+}
+
+@keyframes case-scan {
+  from { transform: translateX(-24%); }
+  to { transform: translateX(24%); }
+}
+
+@keyframes case-particles {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(26px, -18px, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ai-model-config::before,
+  .ai-model-config::after {
+    animation: none;
+  }
 }
 
 /* ── 标题区 ── */
@@ -213,64 +261,92 @@ html:not(.dark) .ai-model-config__header {
 
 /* ── 表单区 ── */
 .ai-model-config__form {
+  position: relative;
   padding: 14px;
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius-base);
-  background: rgba(20, 22, 27, 0.7);
-  box-shadow: var(--box-shadow-light);
+  background:
+    linear-gradient(rgba(56, 189, 248, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.045) 1px, transparent 1px);
+  background-size: 32px 32px;
   backdrop-filter: blur(10px);
 }
 
+.ai-model-config__form::before {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(110deg, transparent 0 36%, rgba(56, 189, 248, 0.12) 50%, transparent 66%);
+  opacity: 0.6;
+  content: "";
+  animation: case-form-scan 10s linear infinite;
+}
+
 html:not(.dark) .ai-model-config__form {
-  background: rgba(255, 255, 255, 0.86);
+  background:
+    linear-gradient(rgba(22, 119, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(22, 119, 255, 0.03) 1px, transparent 1px),
+    rgba(255, 255, 255, 0.44);
+  background-size: 32px 32px, 32px 32px, auto;
 }
 
-.config-form {
-  max-width: 600px;
-}
-
-.form-control {
-  width: 280px;
-}
-
-.form-control-wide {
-  width: 400px;
-}
-
-.form-control-xwide {
-  width: 500px;
-}
-
-.btn-row {
-  display: flex;
-  gap: 12px;
+@keyframes case-form-scan {
+  from { transform: translateX(-22%); }
+  to { transform: translateX(22%); }
 }
 
 /* ── 测试结果 ── */
 .ai-model-config__test-result {
+  position: relative;
   padding: 12px;
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius-base);
-  background: rgba(20, 22, 27, 0.7);
+  background:
+    linear-gradient(rgba(56, 189, 248, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.045) 1px, transparent 1px);
+  background-size: 32px 32px;
   backdrop-filter: blur(10px);
 }
 
 html:not(.dark) .ai-model-config__test-result {
-  background: rgba(255, 255, 255, 0.86);
+  background:
+    linear-gradient(rgba(22, 119, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(22, 119, 255, 0.03) 1px, transparent 1px),
+    rgba(255, 255, 255, 0.44);
+  background-size: 32px 32px, 32px 32px, auto;
 }
 
 /* ── 配置状态 ── */
 .ai-model-config__status {
+  position: relative;
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius-base);
-  background: rgba(20, 22, 27, 0.7);
-  box-shadow: var(--box-shadow-light);
+  background:
+    linear-gradient(rgba(56, 189, 248, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.045) 1px, transparent 1px);
+  background-size: 32px 32px;
   backdrop-filter: blur(10px);
   overflow: hidden;
 }
 
+.ai-model-config__status::before {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(110deg, transparent 0 36%, rgba(56, 189, 248, 0.12) 50%, transparent 66%);
+  opacity: 0.6;
+  content: "";
+  animation: case-form-scan 10s linear infinite;
+}
+
 html:not(.dark) .ai-model-config__status {
-  background: rgba(255, 255, 255, 0.86);
+  background:
+    linear-gradient(rgba(22, 119, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(22, 119, 255, 0.03) 1px, transparent 1px),
+    rgba(255, 255, 255, 0.44);
+  background-size: 32px 32px, 32px 32px, auto;
 }
 
 .result-header {

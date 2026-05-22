@@ -770,13 +770,78 @@ watch(() => route.query.id, async (id) => {
 </script>
 
 <style scoped>
+/* ── 动画关键帧 ── */
+@keyframes case-scan {
+  from { transform: translateX(-24%); }
+  to { transform: translateX(24%); }
+}
+
+@keyframes case-particles {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(26px, -18px, 0); }
+}
+
+@keyframes case-form-scan {
+  from { transform: translateY(-8%); }
+  to { transform: translateY(108%); }
+}
+
+@keyframes case-table-scan {
+  from { transform: translateY(-6%); }
+  to { transform: translateY(106%); }
+}
+
 .terminal-page {
   display: grid;
   grid-template-columns: 260px minmax(620px, 1fr) 340px;
   height: 100%;
   min-height: calc(100vh - 72px);
-  background: var(--bg-page);
+  padding: 12px;
+  background:
+    linear-gradient(rgba(56, 189, 248, 0.095) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.085) 1px, transparent 1px),
+    linear-gradient(145deg, rgba(34, 211, 166, 0.18), transparent 30%),
+    linear-gradient(225deg, rgba(56, 189, 248, 0.22), transparent 36%),
+    linear-gradient(0deg, rgba(22, 119, 255, 0.12), transparent 50%),
+    var(--bg-page);
+  background-size: 28px 28px, 28px 28px, auto, auto, auto, auto;
   overflow: hidden;
+  position: relative;
+}
+
+.terminal-page::before {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(110deg, transparent 0 24%, rgba(56, 189, 248, 0.16) 44%, transparent 62%),
+    repeating-linear-gradient(90deg, transparent 0 92px, rgba(56, 189, 248, 0.075) 92px 93px);
+  content: "";
+  animation: case-scan 14s linear infinite;
+}
+
+.terminal-page::after {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle, rgba(125, 211, 252, 0.72) 0 1.2px, transparent 1.8px),
+    radial-gradient(circle, rgba(45, 212, 191, 0.52) 0 1.1px, transparent 1.7px);
+  background-position: 8% 16%, 80% 42%;
+  background-size: 180px 160px, 240px 220px;
+  opacity: 0.48;
+  content: "";
+  animation: case-particles 18s ease-in-out infinite alternate;
+}
+
+html:not(.dark) .terminal-page {
+  background:
+    linear-gradient(rgba(22, 119, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(22, 119, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(145deg, rgba(14, 116, 144, 0.12), transparent 30%),
+    linear-gradient(225deg, rgba(22, 119, 255, 0.16), transparent 36%),
+    linear-gradient(0deg, rgba(56, 189, 248, 0.08), transparent 50%),
+    var(--bg-page);
 }
 
 .history-panel,
@@ -784,7 +849,42 @@ watch(() => route.query.id, async (id) => {
   display: flex;
   flex-direction: column;
   min-height: 0;
-  background: var(--bg-container);
+  background:
+    linear-gradient(rgba(56, 189, 248, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.045) 1px, transparent 1px),
+    rgba(20, 22, 27, 0.62);
+  background-size: 32px 32px, 32px 32px;
+  position: relative;
+  overflow: hidden;
+}
+
+.history-panel::before,
+.analysis-panel::before {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(110deg, transparent 0 36%, rgba(56, 189, 248, 0.12) 50%, transparent 66%),
+    radial-gradient(circle at 88% 16%, rgba(34, 211, 166, 0.14), transparent 26%);
+  opacity: 0.8;
+  content: "";
+  animation: case-form-scan 12s linear infinite;
+}
+
+html:not(.dark) .history-panel,
+html:not(.dark) .analysis-panel {
+  background:
+    linear-gradient(rgba(22, 119, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(22, 119, 255, 0.035) 1px, transparent 1px),
+    rgba(255, 255, 255, 0.62);
+  background-size: 32px 32px, 32px 32px;
+}
+
+html:not(.dark) .history-panel::before,
+html:not(.dark) .analysis-panel::before {
+  background:
+    linear-gradient(110deg, transparent 0 36%, rgba(22, 119, 255, 0.1) 50%, transparent 66%);
+  opacity: 0.6;
 }
 
 .history-panel {
@@ -951,16 +1051,76 @@ watch(() => route.query.id, async (id) => {
   gap: 14px;
   min-width: 0;
   min-height: 0;
-  padding: 14px;
+  padding: 0;
   overflow: hidden;
+  position: relative;
+}
+
+.main-workspace::before {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(110deg, transparent 0 36%, rgba(56, 189, 248, 0.12) 50%, transparent 66%),
+    radial-gradient(circle at 88% 16%, rgba(34, 211, 166, 0.14), transparent 26%);
+  opacity: 0.8;
+  content: "";
+  animation: case-table-scan 12s linear infinite;
+}
+
+html:not(.dark) .main-workspace::before {
+  background:
+    linear-gradient(110deg, transparent 0 36%, rgba(22, 119, 255, 0.1) 50%, transparent 66%);
+  opacity: 0.6;
+}
+
+html:not(.dark) .main-workspace {
+  background:
+    linear-gradient(rgba(22, 119, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(22, 119, 255, 0.03) 1px, transparent 1px),
+    rgba(255, 255, 255, 0.54);
+  background-size: 28px 28px, 28px 28px;
 }
 
 .tool-card {
-  border: 1px solid var(--border-color);
+  border: 1px solid rgba(56, 189, 248, 0.22);
   border-radius: 10px;
-  background: var(--bg-container);
-  box-shadow: var(--box-shadow-light);
+  background:
+    linear-gradient(rgba(56, 189, 248, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.045) 1px, transparent 1px),
+    rgba(20, 22, 27, 0.68);
+  background-size: 28px 28px, 28px 28px;
+  box-shadow: 0 18px 48px rgba(2, 8, 23, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(18px) saturate(1.25);
   overflow: hidden;
+  position: relative;
+}
+
+.tool-card::after {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(56, 189, 248, 0.12), transparent 18% 82%, rgba(34, 211, 166, 0.1)),
+    repeating-linear-gradient(90deg, transparent 0 42px, rgba(56, 189, 248, 0.06) 42px 43px);
+  opacity: 0.65;
+  content: "";
+}
+
+html:not(.dark) .tool-card {
+  border-color: rgba(22, 119, 255, 0.18);
+  background:
+    linear-gradient(rgba(22, 119, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(22, 119, 255, 0.035) 1px, transparent 1px),
+    rgba(255, 255, 255, 0.62);
+  background-size: 28px 28px, 28px 28px;
+  box-shadow: 0 18px 46px rgba(20, 42, 76, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.82);
+}
+
+html:not(.dark) .tool-card::after {
+  background:
+    linear-gradient(90deg, rgba(22, 119, 255, 0.1), transparent 18% 82%, rgba(14, 116, 144, 0.08));
+  opacity: 0.5;
 }
 
 .request-toolbar {
@@ -1243,9 +1403,53 @@ watch(() => route.query.id, async (id) => {
   min-width: 0;
 }
 
+/* ── 面板通用 ── */
+.panel-header,
+.request-toolbar,
+.response-summary {
+  position: relative;
+  overflow: hidden;
+}
+
+.panel-header::before,
+.request-toolbar::before,
+.response-summary::before {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(56, 189, 248, 0.12), transparent 18% 82%, rgba(34, 211, 166, 0.1)),
+    repeating-linear-gradient(90deg, transparent 0 42px, rgba(56, 189, 248, 0.05) 42px 43px);
+  opacity: 0.6;
+  content: "";
+  animation: case-form-scan 14s linear infinite;
+}
+
+html:not(.dark) .panel-header::before,
+html:not(.dark) .request-toolbar::before,
+html:not(.dark) .response-summary::before {
+  background:
+    linear-gradient(90deg, rgba(22, 119, 255, 0.1), transparent 18% 82%, rgba(14, 116, 144, 0.08));
+  opacity: 0.45;
+}
+
 @media (max-width: 1280px) {
   .terminal-page {
     grid-template-columns: 230px minmax(520px, 1fr) 300px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .terminal-page::before,
+  .terminal-page::after,
+  .history-panel::before,
+  .analysis-panel::before,
+  .main-workspace::before,
+  .tool-card::after,
+  .panel-header::before,
+  .request-toolbar::before,
+  .response-summary::before {
+    animation: none;
   }
 }
 </style>

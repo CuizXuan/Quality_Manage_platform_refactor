@@ -10,27 +10,28 @@
 
     <!-- 输入区域 -->
     <section class="assertion-generator__input">
-      <div class="input-row">
-        <el-input
-          v-model.number="caseId"
-          type="number"
-          placeholder="输入用例ID"
-          class="input-case-id"
-          @keyup.enter="handleGenerate"
-        />
-        <span class="divider-text">或</span>
-        <el-input
-          v-model="responseJson"
-          type="textarea"
-          :rows="4"
-          placeholder="粘贴响应 JSON body"
-          class="input-json"
-          @keyup.enter="handleGenerate"
-        />
-      </div>
-      <div class="input-actions">
-        <el-button type="primary" :loading="aiStore.loading" @click="handleGenerate">生成断言</el-button>
-      </div>
+      <el-form :model="{}" inline label-position="left" class="filter-form">
+        <el-form-item label="用例ID" class="filter-item">
+          <el-input
+            v-model.number="caseId"
+            type="number"
+            placeholder="输入用例ID"
+            class="input-case-id"
+          />
+        </el-form-item>
+        <el-form-item label="响应JSON" class="filter-item filter-json">
+          <el-input
+            v-model="responseJson"
+            type="textarea"
+            :rows="4"
+            placeholder="粘贴响应 JSON body"
+            class="input-json"
+          />
+        </el-form-item>
+        <el-form-item class="filter-item filter-actions">
+          <el-button type="primary" :loading="aiStore.loading" @click="handleGenerate">生成断言</el-button>
+        </el-form-item>
+      </el-form>
       <div v-if="aiStore.error" class="error-tip">{{ aiStore.error }}</div>
     </section>
 
@@ -132,6 +133,7 @@ async function handleAccept(id) {
 <style scoped>
 /* ── 页面容器 ── */
 .assertion-generator {
+  position: relative;
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -141,13 +143,44 @@ async function handleAccept(id) {
   gap: 10px;
   padding: 12px;
   background:
-    radial-gradient(circle at top right, rgba(56, 189, 248, 0.13), transparent 30%),
+    linear-gradient(rgba(56, 189, 248, 0.095) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.085) 1px, transparent 1px),
+    linear-gradient(145deg, rgba(34, 211, 166, 0.18), transparent 30%),
+    linear-gradient(225deg, rgba(56, 189, 248, 0.22), transparent 36%),
+    linear-gradient(0deg, rgba(22, 119, 255, 0.12), transparent 50%),
     var(--bg-page);
+  background-size: 28px 28px, 28px 28px, auto, auto, auto, auto;
   overflow: hidden;
+}
+
+.assertion-generator::before {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(110deg, transparent 0 24%, rgba(56, 189, 248, 0.16) 44%, transparent 62%),
+    repeating-linear-gradient(90deg, transparent 0 92px, rgba(56, 189, 248, 0.075) 92px 93px);
+  content: "";
+  animation: case-scan 14s linear infinite;
+}
+
+.assertion-generator::after {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle, rgba(125, 211, 252, 0.72) 0 1.2px, transparent 1.8px),
+    radial-gradient(circle, rgba(45, 212, 191, 0.52) 0 1.1px, transparent 1.7px);
+  background-position: 8% 16%, 80% 42%;
+  background-size: 180px 160px, 240px 220px;
+  opacity: 0.48;
+  content: "";
+  animation: case-particles 18s ease-in-out infinite alternate;
 }
 
 /* ── 标题区 ── */
 .assertion-generator__header {
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -155,9 +188,22 @@ async function handleAccept(id) {
   padding: 12px 16px;
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius-base);
-  background: rgba(20, 22, 27, 0.7);
-  box-shadow: var(--box-shadow-light);
+  background:
+    linear-gradient(rgba(56, 189, 248, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.045) 1px, transparent 1px);
+  background-size: 32px 32px;
   backdrop-filter: blur(10px);
+}
+
+.assertion-generator__header::before {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(110deg, transparent 0 36%, rgba(56, 189, 248, 0.12) 50%, transparent 66%);
+  opacity: 0.6;
+  content: "";
+  animation: case-form-scan 10s linear infinite;
 }
 
 html:not(.dark) .assertion-generator__header {
@@ -183,15 +229,29 @@ html:not(.dark) .assertion-generator__header {
 
 /* ── 输入区 ── */
 .assertion-generator__input {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 12px;
   padding: 14px;
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius-base);
-  background: rgba(20, 22, 27, 0.7);
-  box-shadow: var(--box-shadow-light);
+  background:
+    linear-gradient(rgba(56, 189, 248, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.045) 1px, transparent 1px);
+  background-size: 32px 32px;
   backdrop-filter: blur(10px);
+}
+
+.assertion-generator__input::before {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(110deg, transparent 0 36%, rgba(56, 189, 248, 0.12) 50%, transparent 66%);
+  opacity: 0.6;
+  content: "";
+  animation: case-form-scan 10s linear infinite;
 }
 
 html:not(.dark) .assertion-generator__input {
@@ -203,6 +263,36 @@ html:not(.dark) .assertion-generator__input {
   align-items: flex-start;
   gap: 12px;
   flex-wrap: wrap;
+}
+
+.filter-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 16px;
+  align-items: center;
+}
+
+.filter-form :deep(.el-form-item) {
+  margin-bottom: 0;
+}
+
+.filter-form :deep(.el-form-item__label) {
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.filter-item {
+  display: inline-flex;
+  align-items: center;
+}
+
+.filter-json {
+  flex: 1;
+  min-width: 300px;
+}
+
+.filter-actions {
+  margin-left: auto;
 }
 
 .input-case-id {
@@ -235,10 +325,14 @@ html:not(.dark) .assertion-generator__input {
 /* ── 加载/空状态 ── */
 .assertion-generator__loading,
 .assertion-generator__empty {
+  position: relative;
   padding: 40px;
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius-base);
-  background: rgba(20, 22, 27, 0.7);
+  background:
+    linear-gradient(rgba(56, 189, 248, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.045) 1px, transparent 1px);
+  background-size: 32px 32px;
   backdrop-filter: blur(10px);
   text-align: center;
 }
@@ -258,16 +352,30 @@ html:not(.dark) .assertion-generator__empty {
 
 /* ── 结果表格 ── */
 .assertion-generator__result {
+  position: relative;
   flex: 1;
   min-height: 0;
   display: flex;
   flex-direction: column;
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius-base);
-  background: rgba(20, 22, 27, 0.7);
-  box-shadow: var(--box-shadow-light);
+  background:
+    linear-gradient(rgba(56, 189, 248, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.045) 1px, transparent 1px);
+  background-size: 32px 32px;
   backdrop-filter: blur(10px);
   overflow: hidden;
+}
+
+.assertion-generator__result::before {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(110deg, transparent 0 36%, rgba(56, 189, 248, 0.12) 50%, transparent 66%);
+  opacity: 0.6;
+  content: "";
+  animation: case-form-scan 10s linear infinite;
 }
 
 html:not(.dark) .assertion-generator__result {
@@ -287,5 +395,30 @@ html:not(.dark) .assertion-generator__result {
 
 .assertion-generator__result :deep(.el-table) {
   flex: 1;
+}
+
+@keyframes case-scan {
+  from { transform: translateX(-24%); }
+  to { transform: translateX(24%); }
+}
+
+@keyframes case-particles {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(26px, -18px, 0); }
+}
+
+@keyframes case-form-scan {
+  from { transform: translateX(-22%); }
+  to { transform: translateX(22%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .assertion-generator::before,
+  .assertion-generator::after,
+  .assertion-generator__header::before,
+  .assertion-generator__input::before,
+  .assertion-generator__result::before {
+    animation: none;
+  }
 }
 </style>
