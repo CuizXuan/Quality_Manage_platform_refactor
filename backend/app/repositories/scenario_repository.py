@@ -30,6 +30,9 @@ class ScenarioRepository:
         page_size: int = 20,
         keyword: Optional[str] = None,
         status: Optional[str] = None,
+        project_id: Optional[int] = None,
+        version_id: Optional[int] = None,
+        iteration_id: Optional[int] = None,
     ) -> Tuple[list[Scenario], int]:
         """List scenarios with pagination and filtering."""
         query = db.query(Scenario)
@@ -40,9 +43,16 @@ class ScenarioRepository:
         if status:
             query = query.filter(Scenario.status == status)
 
+        if project_id is not None:
+            query = query.filter(Scenario.project_id == project_id)
+        if version_id is not None:
+            query = query.filter(Scenario.version_id == version_id)
+        if iteration_id is not None:
+            query = query.filter(Scenario.iteration_id == iteration_id)
+
         total = query.count()
         items = (
-            query.order_by(Scenario.created_at.desc())
+            query.order_by(Scenario.create_at.desc())
             .options(joinedload(Scenario.steps))
             .offset((page - 1) * page_size)
             .limit(page_size)

@@ -38,7 +38,7 @@
       v-model:current-page="currentPage"
       v-model:page-size="currentPageSize"
       :total="total"
-      :page-sizes="[10, 20, 50]"
+      :page-sizes="[15, 30, 50, 100]"
       layout="total, prev, pager, next"
       style="margin-top: 12px"
       small

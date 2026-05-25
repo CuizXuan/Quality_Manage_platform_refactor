@@ -30,6 +30,11 @@ class Report(Base):
     triggered_by = Column(Integer, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
+    # 质量基础关联字段
+    project_id = Column(Integer, nullable=True)
+    version_id = Column(Integer, nullable=True)
+    iteration_id = Column(Integer, nullable=True)
+
 
 class Defect(Base):
     """缺陷 - 记录测试发现的缺陷，支持状态流转"""
@@ -55,6 +60,13 @@ class Defect(Base):
     closed_at = Column(DateTime, nullable=True)
     tags = Column(JSON, default=list)  # ["登录", "支付"]
     attachments = Column(JSON, default=list)  # [{"name": "...", "url": "..."}]
+
+    # 质量基础关联字段
+    version_id = Column(Integer, nullable=True)
+    iteration_id = Column(Integer, nullable=True)
+    requirement_id = Column(Integer, ForeignKey("requirement_items.id"), nullable=True)
+
+    requirement = relationship("RequirementItem", back_populates="defects")
 
 
 class QualityGate(Base):

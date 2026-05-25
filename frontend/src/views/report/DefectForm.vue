@@ -48,6 +48,41 @@
           <el-option v-for="tag in availableTags" :key="tag" :label="tag" :value="tag" />
         </el-select>
       </el-form-item>
+
+      <el-divider content-position="left">归属信息</el-divider>
+
+      <el-row :gutter="12">
+        <el-col :span="8">
+          <el-form-item label="项目">
+            <el-select v-model="defectForm.project_id" placeholder="请选择项目" clearable filterable @change="onProjectChange">
+              <el-option v-for="p in foundationProjects" :key="p.id" :label="p.name" :value="p.id" />
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="版本">
+            <el-select v-model="defectForm.version_id" placeholder="请选择版本" clearable filterable :disabled="!defectForm.project_id" @change="onVersionChange">
+              <el-option v-for="v in foundationVersions" :key="v.id" :label="v.name" :value="v.id" />
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="迭代">
+            <el-select v-model="defectForm.iteration_id" placeholder="请选择迭代" clearable filterable :disabled="!defectForm.version_id" @change="onIterationChange">
+              <el-option v-for="i in foundationIterations" :key="i.id" :label="i.name" :value="i.id" />
+            </el-select>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="12">
+          <el-form-item label="需求">
+            <el-select v-model="defectForm.requirement_id" placeholder="请选择需求" clearable filterable :disabled="!defectForm.project_id">
+              <el-option v-for="r in foundationRequirements" :key="r.id" :label="r.title" :value="r.id" />
+            </el-select>
+          </el-form-item>
+        </el-col>
+      </el-row>
     </el-form>
 
     <template #footer>
@@ -61,6 +96,7 @@
 import { ref, computed, watch } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useReportStore } from '@/stores/reportStore'
+import { useQualityFoundationStore } from '@/stores/qualityFoundationStore'
 
 const props = defineProps({
   modelValue: {
@@ -86,6 +122,46 @@ const isEdit = computed(() => !!props.defect?.id)
 const saving = ref(false)
 const availableTags = ref(['登录', '支付', '接口', 'UI', '性能', '安全'])
 
+const foundationStore = useQualityFoundationStore()
+const foundationProjects = computed(() => foundationStore.projects)
+const foundationVersions = computed(() => foundationStore.versions)
+const foundationIterations = computed(() => foundationStore.iterations)
+const foundationRequirements = computed(() => foundationStore.requirements)
+
+function onProjectChange(projectId) {
+  defectForm.value.version_id = null
+  defectForm.value.iteration_id = null
+  defectForm.value.requirement_id = null
+  if (projectId) {
+    foundationStore.fetchVersions(projectId)
+    foundationStore.fetchRequirements({ project_id: projectId })
+  } else {
+    foundationStore.clearVersions()
+    foundationStore.clearIterations()
+    foundationStore.clearRequirements()
+  }
+}
+
+function onVersionChange(versionId) {
+  defectForm.value.iteration_id = null
+  if (versionId) {
+    foundationStore.fetchIterations({ version_id: versionId })
+  } else {
+    foundationStore.clearIterations()
+  }
+}
+
+function onIterationChange(iterationId) {
+  defectForm.value.requirement_id = null
+  if (iterationId && defectForm.value.project_id) {
+    foundationStore.fetchRequirements({
+      project_id: defectForm.value.project_id,
+      version_id: defectForm.value.version_id,
+      iteration_id: iterationId,
+    })
+  }
+}
+
 const defaultForm = () => ({
   title: '',
   description: '',
@@ -93,6 +169,10 @@ const defaultForm = () => ({
   priority: 'P2',
   defect_type: 'functional',
   tags: [],
+  project_id: null,
+  version_id: null,
+  iteration_id: null,
+  requirement_id: null,
 })
 
 const defectForm = ref(defaultForm())
@@ -101,6 +181,7 @@ watch(
   () => props.modelValue,
   (val) => {
     if (val) {
+      foundationStore.fetchProjects()
       if (props.defect) {
         defectForm.value = {
           title: props.defect.title || '',
@@ -109,6 +190,25 @@ watch(
           priority: props.defect.priority || 'P2',
           defect_type: props.defect.defect_type || 'functional',
           tags: props.defect.tags || [],
+          project_id: props.defect.project_id ?? null,
+          version_id: props.defect.version_id ?? null,
+          iteration_id: props.defect.iteration_id ?? null,
+          requirement_id: props.defect.requirement_id ?? null,
+        }
+        // 加载级联数据
+        if (props.defect.project_id) {
+          foundationStore.fetchVersions(props.defect.project_id)
+          foundationStore.fetchRequirements({ project_id: props.defect.project_id })
+        }
+        if (props.defect.version_id) {
+          foundationStore.fetchIterations({ version_id: props.defect.version_id })
+        }
+        if (props.defect.iteration_id && props.defect.project_id) {
+          foundationStore.fetchRequirements({
+            project_id: props.defect.project_id,
+            version_id: props.defect.version_id,
+            iteration_id: props.defect.iteration_id,
+          })
         }
       } else {
         defectForm.value = defaultForm()

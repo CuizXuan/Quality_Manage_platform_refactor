@@ -1,0 +1,29 @@
+{
+  "name": "接口设计说明书",
+  "description": "从需求规格说明书+OpenAPI生成接口设计文档",
+  
+  "template": "概要设计说明书-模板_新.docx",
+  
+  "leafBlocks": [
+    {"title": "接口概况", "source": "api_summary", "type": "text"},
+    {"title": "接口列表", "source": "api_endpoints", "type": "table"},
+    {"title": "请求参数", "source": "api_params", "type": "table"},
+    {"title": "响应说明", "source": "api_responses", "type": "text"}
+  ],
+  
+  "levelRules": {
+    "defaultContentLevel": 6,
+    "overrides": {
+      "3": 4,
+      "4": 5,
+      "5": 6
+    }
+  },
+  
+  "formatting": {
+    "bodyFont": "仿宋_GB2312",
+    "bodySize": 14,
+    "bodyIndent": 28,
+    "tableStyle": "表格内容"
+  }
+}

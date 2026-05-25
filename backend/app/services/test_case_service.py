@@ -100,6 +100,11 @@ class TestCaseService:
             "body": getattr(obj, "body", "") or "",
             "auth_config": json.loads(obj.auth_config) if getattr(obj, "auth_config", None) else {},
             "expected_status": getattr(obj, "expected_status", 200),
+            # 质量基础关联字段
+            "project_id": getattr(obj, "project_id", None),
+            "version_id": getattr(obj, "version_id", None),
+            "iteration_id": getattr(obj, "iteration_id", None),
+            "requirement_id": getattr(obj, "requirement_id", None),
         }
 
     def create_case(self, data: dict) -> Dict[str, Any]:
@@ -119,6 +124,10 @@ class TestCaseService:
             "auto_script_path": data.get("auto_script_path", ""),
             "auto_script_config": json.dumps(data.get("auto_script_config", {})),
             "auto_case_id": data.get("auto_case_id") or self._next_auto_case_id(data.get("case_type", "api")),
+            "project_id": data.get("project_id"),
+            "version_id": data.get("version_id"),
+            "iteration_id": data.get("iteration_id"),
+            "requirement_id": data.get("requirement_id"),
         }
 
         # For API cases, populate legacy debug fields on main table (required by DB schema)
@@ -191,6 +200,10 @@ class TestCaseService:
         created_start: Optional[str] = None,
         created_end: Optional[str] = None,
         is_automated: Optional[bool] = None,
+        project_id: Optional[int] = None,
+        version_id: Optional[int] = None,
+        iteration_id: Optional[int] = None,
+        requirement_id: Optional[int] = None,
     ) -> Tuple[list[Dict[str, Any]], int, Dict[str, Any]]:
         """List test cases with pagination."""
         filters = self._build_filters(
@@ -203,6 +216,10 @@ class TestCaseService:
             created_start=created_start,
             created_end=created_end,
             is_automated=is_automated,
+            project_id=project_id,
+            version_id=version_id,
+            iteration_id=iteration_id,
+            requirement_id=requirement_id,
         )
         cases, total = self.repo.list(self.db, filters=filters, page=page, page_size=page_size)
         items = [self._serialize_case_summary(c) for c in cases]
@@ -221,6 +238,10 @@ class TestCaseService:
             created_start=self._parse_date(kwargs.get("created_start"), False),
             created_end=self._parse_date(kwargs.get("created_end"), True),
             is_automated=kwargs.get("is_automated"),
+            project_id=kwargs.get("project_id"),
+            version_id=kwargs.get("version_id"),
+            iteration_id=kwargs.get("iteration_id"),
+            requirement_id=kwargs.get("requirement_id"),
         )
 
     def _parse_date(self, value: Optional[str], end_of_day: bool) -> Optional[datetime]:
@@ -324,6 +345,10 @@ class TestCaseService:
             "auto_script_path",
             "auto_script_config",
             "auto_case_id",
+            "project_id",
+            "version_id",
+            "iteration_id",
+            "requirement_id",
         ]
         for field in fields:
             if field in data and data[field] is not None:
@@ -478,6 +503,10 @@ class TestCaseService:
             "auto_script_path": original_data.get("auto_script_path", ""),
             "auto_script_config": json.dumps(original_data.get("auto_script_config", {})),
             "auto_case_id": self._next_auto_case_id(original_data.get("case_type", "api")),
+            "project_id": original_data.get("project_id"),
+            "version_id": original_data.get("version_id"),
+            "iteration_id": original_data.get("iteration_id"),
+            "requirement_id": original_data.get("requirement_id"),
         }
 
         # Copy legacy API fields to main table if API case

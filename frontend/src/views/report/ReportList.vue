@@ -12,6 +12,40 @@
     <section class="report-list-page__filters">
       <el-form :model="draftFilters" label-position="left" class="filter-form">
         <div class="filter-form__row">
+          <el-form-item label="项目：" class="filter-item filter-item--project">
+            <el-select
+              v-model="draftFilters.projectId"
+              placeholder="选择项目"
+              clearable
+              class="filter-control"
+              @change="onProjectChange"
+            >
+              <el-option v-for="p in foundationStore.projects" :key="p.id" :label="p.name" :value="p.id" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="版本：" class="filter-item filter-item--version">
+            <el-select
+              v-model="draftFilters.versionId"
+              placeholder="选择版本"
+              clearable
+              class="filter-control"
+              :disabled="!draftFilters.projectId"
+              @change="onVersionChange"
+            >
+              <el-option v-for="v in foundationStore.versions" :key="v.id" :label="v.name" :value="v.id" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="迭代：" class="filter-item filter-item--iteration">
+            <el-select
+              v-model="draftFilters.iterationId"
+              placeholder="选择迭代"
+              clearable
+              class="filter-control"
+              :disabled="!draftFilters.versionId"
+            >
+              <el-option v-for="i in foundationStore.iterations" :key="i.id" :label="i.name" :value="i.id" />
+            </el-select>
+          </el-form-item>
           <el-form-item label="报告类型：" class="filter-item filter-item--type">
             <el-select
               v-model="draftFilters.report_type"
@@ -140,17 +174,25 @@ import { useRouter } from 'vue-router'
 import { Search, RefreshLeft } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useReportStore } from '@/stores/reportStore'
+import { useQualityFoundationStore } from '@/stores/qualityFoundationStore'
 
 const router = useRouter()
 const reportStore = useReportStore()
+const foundationStore = useQualityFoundationStore()
 
 const draftFilters = ref({
+  projectId: null,
+  versionId: null,
+  iterationId: null,
   keyword: '',
   report_type: '',
   environment: '',
 })
 
 const appliedFilters = ref({
+  projectId: null,
+  versionId: null,
+  iterationId: null,
   keyword: '',
   report_type: '',
   environment: '',
@@ -162,16 +204,35 @@ const pagination = ref({
 })
 
 onMounted(() => {
+  foundationStore.fetchProjects({ page: 1, page_size: 100 })
   reportStore.fetchReports({ page: 1, page_size: pagination.value.pageSize })
 })
+
+function onProjectChange(projectId) {
+  draftFilters.value.versionId = null
+  draftFilters.value.iterationId = null
+  if (projectId) {
+    foundationStore.fetchVersions({ project_id: projectId })
+  }
+}
+
+function onVersionChange(versionId) {
+  draftFilters.value.iterationId = null
+  if (versionId) {
+    foundationStore.fetchIterations({ project_id: draftFilters.value.projectId, version_id: versionId })
+  }
+}
 
 function buildQueryParams() {
   return {
     page: pagination.value.page,
     page_size: pagination.value.pageSize,
-    ...(appliedFilters.value.keyword && { keyword: appliedFilters.value.keyword }),
-    ...(appliedFilters.value.report_type && { report_type: appliedFilters.value.report_type }),
-    ...(appliedFilters.value.environment && { environment: appliedFilters.value.environment }),
+    keyword: appliedFilters.value.keyword || undefined,
+    report_type: appliedFilters.value.report_type || undefined,
+    environment: appliedFilters.value.environment || undefined,
+    project_id: appliedFilters.value.projectId || undefined,
+    version_id: appliedFilters.value.versionId || undefined,
+    iteration_id: appliedFilters.value.iterationId || undefined,
   }
 }
 
@@ -182,8 +243,8 @@ function handleSearch() {
 }
 
 function handleReset() {
-  draftFilters.value = { keyword: '', report_type: '', environment: '' }
-  appliedFilters.value = { keyword: '', report_type: '', environment: '' }
+  draftFilters.value = { projectId: null, versionId: null, iterationId: null, keyword: '', report_type: '', environment: '' }
+  appliedFilters.value = { projectId: null, versionId: null, iterationId: null, keyword: '', report_type: '', environment: '' }
   pagination.value.page = 1
   reportStore.fetchReports({ page: 1, page_size: pagination.value.pageSize })
 }

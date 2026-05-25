@@ -3,6 +3,40 @@
   font-weight: 700;
 }
 
+.el-button--primary:not(.is-link):not(.is-text):not(.is-plain) {
+  border: 0;
+  background: var(--brand-gradient);
+  box-shadow: 0 10px 24px rgba(32, 180, 255, 0.18);
+}
+
+.el-button--primary:not(.is-link):not(.is-text):not(.is-plain):hover,
+.el-button--primary:not(.is-link):not(.is-text):not(.is-plain):focus-visible {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+
+.el-button--primary:not(.is-link):not(.is-text):not(.is-plain):active {
+  filter: brightness(0.98);
+  transform: translateY(0);
+}
+
+.el-button--success:not(.is-link):not(.is-text):not(.is-plain) {
+  border-color: transparent;
+  background: linear-gradient(135deg, #22c55e, #12a87b);
+  box-shadow: 0 10px 24px rgba(18, 168, 123, 0.16);
+}
+
+.el-button--success:not(.is-link):not(.is-text):not(.is-plain):hover,
+.el-button--success:not(.is-link):not(.is-text):not(.is-plain):focus-visible {
+  filter: brightness(1.06);
+  transform: translateY(-1px);
+}
+
+.el-button--success:not(.is-link):not(.is-text):not(.is-plain):active {
+  filter: brightness(0.98);
+  transform: translateY(0);
+}
+
 .el-dialog {
   --el-dialog-content-font-size: var(--font-size-base);
 }
@@ -22,7 +56,7 @@
   color: var(--text-primary);
   font-size: var(--font-size-base);
   font-weight: 700;
-  line-height: 1.45;
+  line-height: 34px;
 }
 
 .el-input,
@@ -64,24 +98,32 @@
   box-shadow: 0 0 0 1px var(--color-primary) inset;
 }
 
+/* ── Popper / Dropdown base ── */
 .el-popper,
 .el-select__popper,
 .el-picker__popper {
-  border-color: var(--border-color);
-  background: var(--el-bg-color-overlay);
-  box-shadow: var(--box-shadow-heavy);
-}
-
-.el-popper.is-dark {
   border: 1px solid var(--border-color);
-  color: var(--text-primary);
-  background: var(--el-bg-color-overlay);
+  background: var(--bg-container);
   box-shadow: var(--box-shadow-heavy);
+  color: var(--text-primary);
 }
 
-.el-popper.is-dark .el-popper__arrow::before {
+.el-popper .el-popper__arrow::before,
+.el-select__popper .el-popper__arrow::before {
   border-color: var(--border-color);
-  background: var(--el-bg-color-overlay);
+  background: var(--bg-container);
+}
+
+/* Light theme is the default */
+.el-popper.is-light {
+  background: var(--bg-container);
+  color: var(--text-primary);
+}
+
+/* Dark theme — Element Plus uses .is-dark class internally */
+.el-popper.is-dark {
+  background: var(--bg-container);
+  color: var(--text-primary);
 }
 
 .el-popper.overflow-text-tooltip {
@@ -89,7 +131,7 @@
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius-base);
   color: var(--text-primary);
-  background: var(--el-bg-color-overlay);
+  background: var(--bg-container);
   box-shadow: var(--box-shadow-heavy);
   font-size: var(--font-size-sm);
   line-height: 1.6;
@@ -100,12 +142,14 @@
 
 .el-popper.overflow-text-tooltip .el-popper__arrow::before {
   border-color: var(--border-color);
-  background: var(--el-bg-color-overlay);
+  background: var(--bg-container);
 }
 
+/* ── Select dropdown ── */
 .el-select-dropdown,
 .el-dropdown-menu {
-  background: var(--el-bg-color-overlay);
+  background: var(--bg-container);
+  border: 1px solid var(--border-color);
 }
 
 .el-select-dropdown__item {

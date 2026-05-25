@@ -28,6 +28,11 @@ class Scenario(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
+    # 质量基础关联字段
+    project_id = Column(Integer, nullable=True)
+    version_id = Column(Integer, nullable=True)
+    iteration_id = Column(Integer, nullable=True)
+
     steps = relationship(
         "ScenarioStep",
         back_populates="scenario",

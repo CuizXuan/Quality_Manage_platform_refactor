@@ -761,6 +761,28 @@ onMounted(async () => {
   await loadHistory()
   if (route.query.id) {
     await loadRequest(Number(route.query.id))
+  } else if (route.query.method || route.query.url) {
+    // Pre-fill from API Asset Center debug
+    requestForm.value.method = route.query.method || 'GET'
+    requestForm.value.url = route.query.url || ''
+    requestForm.value.bodyType = route.query.body_type || 'none'
+    requestForm.value.body = route.query.body || ''
+    if (route.query.headers) {
+      try {
+        const headers = JSON.parse(route.query.headers)
+        requestForm.value.headers = Object.entries(headers).map(([key, value]) => ({ key, value }))
+      } catch {
+        requestForm.value.headers = []
+      }
+    }
+    if (route.query.query_params) {
+      try {
+        const qp = JSON.parse(route.query.query_params)
+        requestForm.value.queryParams = Object.entries(qp).map(([key, value]) => ({ key, value }))
+      } catch {
+        requestForm.value.queryParams = []
+      }
+    }
   }
 })
 

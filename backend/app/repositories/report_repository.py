@@ -31,6 +31,9 @@ class ReportRepository:
         keyword: Optional[str] = None,
         report_type: Optional[str] = None,
         environment: Optional[str] = None,
+        project_id: Optional[int] = None,
+        version_id: Optional[int] = None,
+        iteration_id: Optional[int] = None,
     ) -> Tuple[list[Report], int]:
         """List reports with pagination and filtering."""
         query = db.query(Report)
@@ -43,6 +46,13 @@ class ReportRepository:
 
         if environment:
             query = query.filter(Report.environment == environment)
+
+        if project_id is not None:
+            query = query.filter(Report.project_id == project_id)
+        if version_id is not None:
+            query = query.filter(Report.version_id == version_id)
+        if iteration_id is not None:
+            query = query.filter(Report.iteration_id == iteration_id)
 
         total = query.count()
         items = (

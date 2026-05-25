@@ -12,6 +12,9 @@ from app.routers.report import router as report_router
 from app.routers.dictionary import router as dictionary_router, public_router as dict_public_router
 from app.routers.ai import router as ai_router
 from app.routers.log import router as log_router
+from app.routers.docgen import router as docgen_router
+from app.routers.quality_foundation import router as foundation_router
+from app.routers.api_asset import router as api_asset_router
 
 app = FastAPI(title="Quality Manage Platform", version="2.0.0")
 
@@ -40,6 +43,9 @@ app.include_router(dictionary_router)  # 管理 API（需鉴权）
 app.include_router(dict_public_router)  # 公开查询 API（无需鉴权）
 app.include_router(ai_router)
 app.include_router(log_router)
+app.include_router(docgen_router)
+app.include_router(foundation_router)
+app.include_router(api_asset_router)
 
 
 @app.on_event("startup")

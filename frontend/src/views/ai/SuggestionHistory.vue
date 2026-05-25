@@ -10,35 +10,37 @@
 
     <!-- 筛选区 -->
     <section class="suggestion-history__filters">
-      <el-form :model="draftFilters" inline label-position="left" class="filter-form">
-        <el-form-item label="采纳状态" class="filter-item">
-          <el-select
-            v-model="draftFilters.accepted"
-            placeholder="全部状态"
-            clearable
-            class="filter-control"
-          >
-            <el-option label="已采纳" value="true" />
-            <el-option label="待采纳" value="false" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="建议类型" class="filter-item">
-          <el-select
-            v-model="draftFilters.suggestion_type"
-            placeholder="全部类型"
-            clearable
-            class="filter-control"
-          >
-            <el-option label="修复建议" value="fix" />
-            <el-option label="优化建议" value="optimization" />
-            <el-option label="测试建议" value="test" />
-            <el-option label="安全建议" value="security" />
-          </el-select>
-        </el-form-item>
-        <el-form-item class="filter-item filter-actions">
-          <el-button type="primary" @click="handleSearch">查询</el-button>
-          <el-button @click="handleReset">重置</el-button>
-        </el-form-item>
+      <el-form :model="draftFilters" label-position="left" class="filter-form">
+        <div class="filter-form__row">
+          <el-form-item label="采纳状态：" class="filter-item">
+            <el-select
+              v-model="draftFilters.accepted"
+              placeholder="全部状态"
+              clearable
+              class="filter-control"
+            >
+              <el-option label="已采纳" value="true" />
+              <el-option label="待采纳" value="false" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="建议类型：" class="filter-item">
+            <el-select
+              v-model="draftFilters.suggestion_type"
+              placeholder="全部类型"
+              clearable
+              class="filter-control"
+            >
+              <el-option label="修复建议" value="fix" />
+              <el-option label="优化建议" value="optimization" />
+              <el-option label="测试建议" value="test" />
+              <el-option label="安全建议" value="security" />
+            </el-select>
+          </el-form-item>
+          <div class="filter-actions">
+            <el-button type="primary" @click="handleSearch">查询</el-button>
+            <el-button @click="handleReset">重置</el-button>
+          </div>
+        </div>
       </el-form>
     </section>
 
@@ -102,7 +104,7 @@
           v-model:current-page="pagination.page"
           v-model:page-size="pagination.pageSize"
           :total="total"
-          :page-sizes="[10, 20, 50, 100]"
+          :page-sizes="[15, 30, 50, 100]"
           layout="total, sizes, prev, pager, next, jumper"
           prev-text="上一页"
           next-text="下一页"
@@ -395,20 +397,23 @@ html:not(.dark) .suggestion-history__filters::before {
     radial-gradient(circle at 88% 16%, rgba(22, 119, 255, 0.1), transparent 26%);
 }
 
-.filter-row {
+.filter-form {
   position: relative;
   z-index: 1;
+  width: 100%;
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 12px;
-  flex-wrap: wrap;
 }
 
-.filter-form {
+.filter-form__row {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-wrap: wrap;
   gap: 12px 16px;
   align-items: center;
+  width: 100%;
 }
 
 .filter-form :deep(.el-form-item) {
@@ -416,8 +421,12 @@ html:not(.dark) .suggestion-history__filters::before {
 }
 
 .filter-form :deep(.el-form-item__label) {
+  display: flex;
+  align-items: center;
   color: var(--text-secondary);
   font-size: 13px;
+  font-weight: 700;
+  line-height: 34px;
 }
 
 .filter-item {
@@ -427,8 +436,17 @@ html:not(.dark) .suggestion-history__filters::before {
 
 .filter-actions {
   display: flex;
-  gap: 12px;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-end;
   margin-left: auto;
+}
+
+.filter-actions :deep(.el-button),
+.filter-actions .el-button {
+  min-width: 76px;
+  height: 34px;
+  margin-left: 0;
 }
 
 .filter-control {
@@ -446,10 +464,8 @@ html:not(.dark) .suggestion-history__filters::before {
   border: 1px solid rgba(56, 189, 248, 0.18);
   border-radius: var(--border-radius-base);
   background:
-    linear-gradient(rgba(56, 189, 248, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(56, 189, 248, 0.045) 1px, transparent 1px),
+    linear-gradient(135deg, rgba(15, 23, 42, 0.54), rgba(15, 23, 42, 0.34)),
     rgba(20, 22, 27, 0.48);
-  background-size: 32px 32px;
   box-shadow: 0 14px 36px rgba(2, 8, 23, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(16px) saturate(1.2);
   overflow: hidden;
@@ -469,10 +485,8 @@ html:not(.dark) .suggestion-history__filters::before {
 
 html:not(.dark) .suggestion-history__table {
   background:
-    linear-gradient(rgba(22, 119, 255, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(22, 119, 255, 0.035) 1px, transparent 1px),
-    rgba(255, 255, 255, 0.64);
-  background-size: 32px 32px;
+    linear-gradient(135deg, rgba(255, 255, 255, 0.76), rgba(245, 250, 255, 0.58)),
+    rgba(255, 255, 255, 0.72);
   box-shadow: 0 14px 34px rgba(20, 42, 76, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.86);
 }
 

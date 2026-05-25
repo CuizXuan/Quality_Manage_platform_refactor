@@ -117,6 +117,67 @@
               <p class="script-panel__hint">{{ scriptConfigHint }}</p>
             </div>
 
+            <div class="foundation-panel">
+              <el-row :gutter="12">
+                <el-col :span="8">
+                  <el-form-item label="项目">
+                    <el-select
+                      v-model="form.project_id"
+                      placeholder="请选择项目"
+                      clearable
+                      filterable
+                      @change="onProjectChange"
+                    >
+                      <el-option v-for="p in foundationProjects" :key="p.id" :label="p.name" :value="p.id" />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="8">
+                  <el-form-item label="版本">
+                    <el-select
+                      v-model="form.version_id"
+                      placeholder="请选择版本"
+                      clearable
+                      filterable
+                      :disabled="!form.project_id"
+                      @change="onVersionChange"
+                    >
+                      <el-option v-for="v in foundationVersions" :key="v.id" :label="v.name" :value="v.id" />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="8">
+                  <el-form-item label="迭代">
+                    <el-select
+                      v-model="form.iteration_id"
+                      placeholder="请选择迭代"
+                      clearable
+                      filterable
+                      :disabled="!form.version_id"
+                      @change="onIterationChange"
+                    >
+                      <el-option v-for="i in foundationIterations" :key="i.id" :label="i.name" :value="i.id" />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+              <el-row>
+                <el-col :span="12">
+                  <el-form-item label="需求">
+                    <el-select
+                      v-model="form.requirement_id"
+                      placeholder="请选择需求"
+                      clearable
+                      filterable
+                      :disabled="!form.project_id"
+                    >
+                      <el-option v-for="r in foundationRequirements" :key="r.id" :label="r.title" :value="r.id" />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </div>
+
             <el-row :gutter="12" class="advanced-meta">
               <el-col :span="15">
                 <el-form-item label="标签">
@@ -154,13 +215,14 @@
 </template>
 
 <script setup>
-import { computed, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { caseApi } from '@/api/case'
 import RichTextEditor from '@/components/common/RichTextEditor.vue'
 import feedback from '@/utils/feedback'
 import ApiCaseForm from './ApiCaseForm.vue'
 import FunctionalCaseForm from './FunctionalCaseForm.vue'
 import { normalizeCaseForEdit, priorityOptions } from './caseUtils'
+import { useQualityFoundationStore } from '@/stores/qualityFoundationStore'
 
 const props = defineProps({
   modelValue: {
@@ -186,6 +248,46 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['update:modelValue', 'saved', 'closed'])
+
+const foundationStore = useQualityFoundationStore()
+const foundationProjects = computed(() => foundationStore.projects)
+const foundationVersions = computed(() => foundationStore.versions)
+const foundationIterations = computed(() => foundationStore.iterations)
+const foundationRequirements = computed(() => foundationStore.requirements)
+
+function onProjectChange(projectId) {
+  form.value.version_id = null
+  form.value.iteration_id = null
+  form.value.requirement_id = null
+  if (projectId) {
+    foundationStore.fetchVersions(projectId)
+    foundationStore.fetchRequirements({ project_id: projectId })
+  } else {
+    foundationStore.clearVersions()
+    foundationStore.clearIterations()
+    foundationStore.clearRequirements()
+  }
+}
+
+function onVersionChange(versionId) {
+  form.value.iteration_id = null
+  if (versionId) {
+    foundationStore.fetchIterations({ version_id: versionId })
+  } else {
+    foundationStore.clearIterations()
+  }
+}
+
+function onIterationChange(iterationId) {
+  form.value.requirement_id = null
+  if (iterationId && form.value.project_id) {
+    foundationStore.fetchRequirements({
+      project_id: form.value.project_id,
+      version_id: form.value.version_id,
+      iteration_id: iterationId,
+    })
+  }
+}
 
 const form = ref(normalizeCaseForEdit(null, props.caseType))
 const caseTitle = computed(() => (props.caseType === 'api' ? '接口用例' : '功能用例'))
@@ -217,6 +319,21 @@ function resetForm() {
   form.value = normalizeCaseForEdit(props.caseData, props.caseType, props.folderId)
   if (!props.caseData?.id && !form.value.auto_case_id) {
     form.value.auto_case_id = props.suggestedCaseId
+  }
+  // 编辑时加载级联数据
+  if (form.value.project_id) {
+    foundationStore.fetchVersions(form.value.project_id)
+    foundationStore.fetchRequirements({ project_id: form.value.project_id })
+  }
+  if (form.value.version_id) {
+    foundationStore.fetchIterations({ version_id: form.value.version_id })
+  }
+  if (form.value.iteration_id && form.value.project_id) {
+    foundationStore.fetchRequirements({
+      project_id: form.value.project_id,
+      version_id: form.value.version_id,
+      iteration_id: form.value.iteration_id,
+    })
   }
 }
 
@@ -305,7 +422,10 @@ function normalizeScriptConfig() {
 }
 
 watch(() => props.modelValue, (visible) => {
-  if (visible) resetForm()
+  if (visible) {
+    foundationStore.fetchProjects()
+    resetForm()
+  }
 })
 </script>
 
@@ -462,6 +582,14 @@ watch(() => props.modelValue, (visible) => {
   color: var(--text-secondary);
   font-size: var(--font-size-sm);
   line-height: 1.6;
+}
+
+.foundation-panel {
+  margin-bottom: 12px;
+  padding: 12px;
+  border: 1px solid var(--border-color-lighter);
+  border-radius: var(--border-radius-base);
+  background: var(--bg-container-soft);
 }
 
 .case-edit-dialog__footer {

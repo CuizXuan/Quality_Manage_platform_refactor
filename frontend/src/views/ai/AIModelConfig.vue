@@ -226,25 +226,46 @@ function maskKey(key) {
 
 /* ── 标题区 ── */
 .ai-model-config__header {
+  position: relative;
+  z-index: 1;
   display: flex;
   justify-content: space-between;
   align-items: center;
   min-height: 56px;
   padding: 12px 16px;
-  border: 1px solid var(--border-color);
+  border: 1px solid rgba(56, 189, 248, 0.22);
   border-radius: var(--border-radius-base);
-  background: rgba(20, 22, 27, 0.7);
-  box-shadow: var(--box-shadow-light);
-  backdrop-filter: blur(10px);
+  background:
+    linear-gradient(135deg, rgba(15, 23, 42, 0.68), rgba(15, 23, 42, 0.42)),
+    rgba(20, 22, 27, 0.48);
+  box-shadow: 0 18px 48px rgba(2, 8, 23, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(18px) saturate(1.25);
+  overflow: hidden;
+}
+
+.ai-model-config__header::after {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(56, 189, 248, 0.22), transparent 18% 82%, rgba(34, 211, 166, 0.18)),
+    repeating-linear-gradient(90deg, transparent 0 42px, rgba(56, 189, 248, 0.06) 42px 43px);
+  opacity: 0.65;
+  content: "";
 }
 
 html:not(.dark) .ai-model-config__header {
-  background: rgba(255, 255, 255, 0.86);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.86), rgba(245, 250, 255, 0.68)),
+    rgba(255, 255, 255, 0.72);
+  box-shadow: 0 18px 46px rgba(20, 42, 76, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.82);
 }
 
 .ai-model-config__header h1,
 .ai-model-config__header p {
   margin: 0;
+  position: relative;
+  z-index: 1;
 }
 
 .ai-model-config__header h1 {

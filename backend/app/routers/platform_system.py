@@ -38,7 +38,7 @@ def list_users(
     keyword: str = Query("", description="搜索关键词：用户名/姓名/邮箱"),
     status: str = Query("", description="状态筛选"),
     page: int = Query(1, ge=1),
-    page_size: int = Query(20, ge=1, le=100),
+    page_size: int = Query(15, ge=1, le=100),
     current_user: PlatformUser = Depends(get_current_platform_user),
     db: Session = Depends(get_db),
 ):
@@ -147,7 +147,7 @@ def list_roles(
     keyword: str = Query("", description="搜索关键词：角色名称/编码"),
     status: str = Query("", description="状态筛选"),
     page: int = Query(1, ge=1),
-    page_size: int = Query(20, ge=1, le=100),
+    page_size: int = Query(15, ge=1, le=100),
     current_user: PlatformUser = Depends(get_current_platform_user),
     db: Session = Depends(get_db),
 ):
@@ -340,7 +340,7 @@ def list_menus(
     keyword: str = Query("", description="搜索关键词：菜单名称/编码"),
     status: str = Query("", description="状态筛选"),
     page: int = Query(1, ge=1),
-    page_size: int = Query(20, ge=1, le=100),
+    page_size: int = Query(15, ge=1, le=100),
     current_user: PlatformUser = Depends(get_current_platform_user),
     db: Session = Depends(get_db),
 ):

@@ -64,6 +64,16 @@ DEFAULT_PERMISSIONS = [
     ("ai", "generate"),
     ("ai", "accept"),
     ("ai", "config"),
+    # Phase07 - 文档中心
+    ("docgen", "view"),
+    ("docgen", "generate"),
+    ("docgen", "manage"),
+    # 质量基础
+    ("foundation", "view"),
+    ("foundation", "project"),
+    ("foundation", "version"),
+    ("foundation", "iteration"),
+    ("foundation", "requirement"),
 ]
 
 DEFAULT_MENUS = [
@@ -195,6 +205,44 @@ DEFAULT_MENUS = [
         "component": "AIModelConfig",
         "permission_code": "ai:view",
         "sort_order": 140,
+    },
+    # === Phase07 文档中心 ===
+    {
+        "name": "文档中心",
+        "code": "docgen",
+        "path": "/docgen",
+        "icon": "FileCode",
+        "component": "DocGenerationCenter",
+        "permission_code": "docgen:view",
+        "sort_order": 150,
+    },
+    # === 质量基础 ===
+    {
+        "name": "质量基础",
+        "code": "foundation",
+        "path": "/foundation",
+        "icon": "Boxes",
+        "component": "Dashboard",
+        "permission_code": "foundation:view",
+        "sort_order": 160,
+    },
+    {
+        "name": "项目版本",
+        "code": "foundation_projects",
+        "path": "/foundation/projects",
+        "icon": "FolderTree",
+        "component": "ProjectManagement",
+        "permission_code": "foundation:project",
+        "sort_order": 161,
+    },
+    {
+        "name": "需求管理",
+        "code": "foundation_requirements",
+        "path": "/foundation/requirements",
+        "icon": "ListTodo",
+        "component": "RequirementManagement",
+        "permission_code": "foundation:requirement",
+        "sort_order": 162,
     },
 ]
 

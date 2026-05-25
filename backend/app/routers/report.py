@@ -46,69 +46,7 @@ def _gate_svc(db: Session = Depends(get_db)) -> QualityGateService:
 
 
 # =============================================================================
-# Report Endpoints
-# =============================================================================
-
-@router.get("", response_model=dict)
-def list_reports(
-    page: int = Query(1, ge=1),
-    page_size: int = Query(20, ge=1, le=100),
-    keyword: Optional[str] = None,
-    report_type: Optional[str] = None,
-    environment: Optional[str] = None,
-    svc: ReportService = Depends(_report_svc),
-):
-    """List test reports with pagination and filtering."""
-    items, total = svc.list_reports(
-        page=page,
-        page_size=page_size,
-        keyword=keyword,
-        report_type=report_type,
-        environment=environment,
-    )
-    return {"items": items, "total": total, "page": page, "page_size": page_size}
-
-
-@router.post("", response_model=dict)
-def create_report(data: ReportCreate, svc: ReportService = Depends(_report_svc)):
-    """Create a new test report."""
-    report = svc.create_report(data.model_dump())
-    return report
-
-
-@router.get("/{report_id}", response_model=dict)
-def get_report(report_id: int, svc: ReportService = Depends(_report_svc)):
-    """Get a report by ID."""
-    report = svc.get_report(report_id)
-    if not report:
-        raise HTTPException(status_code=404, detail="Report not found")
-    return report
-
-
-@router.put("/{report_id}", response_model=dict)
-def update_report(
-    report_id: int,
-    data: ReportUpdate,
-    svc: ReportService = Depends(_report_svc),
-):
-    """Update a report."""
-    report = svc.update_report(report_id, data.model_dump(exclude_unset=True))
-    if not report:
-        raise HTTPException(status_code=404, detail="Report not found")
-    return report
-
-
-@router.delete("/{report_id}")
-def delete_report(report_id: int, svc: ReportService = Depends(_report_svc)):
-    """Delete a report."""
-    ok = svc.delete_report(report_id)
-    if not ok:
-        raise HTTPException(status_code=404, detail="Report not found")
-    return {"ok": True}
-
-
-# =============================================================================
-# Defect Endpoints
+# Defect Endpoints (MUST be before /{report_id} to avoid dynamic route capture)
 # =============================================================================
 
 @router.get("/defects", response_model=dict)
@@ -122,6 +60,9 @@ def list_defects(
     defect_type: Optional[str] = None,
     assigned_to: Optional[int] = None,
     project_id: Optional[int] = None,
+    version_id: Optional[int] = None,
+    iteration_id: Optional[int] = None,
+    requirement_id: Optional[int] = None,
     svc: DefectService = Depends(_defect_svc),
 ):
     """List defects with pagination and filtering."""
@@ -135,6 +76,9 @@ def list_defects(
         defect_type=defect_type,
         assigned_to=assigned_to,
         project_id=project_id,
+        version_id=version_id,
+        iteration_id=iteration_id,
+        requirement_id=requirement_id,
     )
     return {"items": items, "total": total, "page": page, "page_size": page_size}
 
@@ -144,6 +88,15 @@ def create_defect(data: DefectCreate, svc: DefectService = Depends(_defect_svc))
     """Create a new defect."""
     defect = svc.create_defect(data.model_dump())
     return defect
+
+
+@router.get("/defects/stats/summary", response_model=dict)
+def get_defect_statistics(
+    project_id: Optional[int] = None,
+    svc: DefectService = Depends(_defect_svc),
+):
+    """Get defect statistics by status and severity."""
+    return svc.get_statistics(project_id=project_id)
 
 
 @router.get("/defects/{defect_id}", response_model=dict)
@@ -201,17 +154,8 @@ def delete_defect(defect_id: int, svc: DefectService = Depends(_defect_svc)):
     return {"ok": True}
 
 
-@router.get("/defects/stats/summary", response_model=dict)
-def get_defect_statistics(
-    project_id: Optional[int] = None,
-    svc: DefectService = Depends(_defect_svc),
-):
-    """Get defect statistics by status and severity."""
-    return svc.get_statistics(project_id=project_id)
-
-
 # =============================================================================
-# QualityGate Endpoints
+# QualityGate Endpoints (MUST be before /{report_id} to avoid dynamic route capture)
 # =============================================================================
 
 @router.get("/quality-gates", response_model=dict)
@@ -331,3 +275,121 @@ def evaluate_all_quality_gates(
     }
     results = svc.evaluate_all_gates_for_execution(metrics, gate_type=gate_type)
     return {"evaluations": results}
+
+
+# =============================================================================
+# Report Endpoints
+# =============================================================================
+
+@router.get("", response_model=dict)
+def list_reports(
+    page: int = Query(1, ge=1),
+    page_size: int = Query(20, ge=1, le=100),
+    keyword: Optional[str] = None,
+    report_type: Optional[str] = None,
+    environment: Optional[str] = None,
+    project_id: Optional[int] = None,
+    version_id: Optional[int] = None,
+    iteration_id: Optional[int] = None,
+    svc: ReportService = Depends(_report_svc),
+):
+    """List test reports with pagination and filtering."""
+    items, total = svc.list_reports(
+        page=page,
+        page_size=page_size,
+        keyword=keyword,
+        report_type=report_type,
+        environment=environment,
+        project_id=project_id,
+        version_id=version_id,
+        iteration_id=iteration_id,
+    )
+    return {"items": items, "total": total, "page": page, "page_size": page_size}
+
+
+@router.post("", response_model=dict)
+def create_report(data: ReportCreate, svc: ReportService = Depends(_report_svc)):
+    """Create a new test report."""
+    report = svc.create_report(data.model_dump())
+    return report
+
+
+# NOTE: All /{report_id} routes MUST come after static routes above
+
+
+@router.get("/{report_id}", response_model=dict)
+def get_report(report_id: int, svc: ReportService = Depends(_report_svc)):
+    """Get a report by ID."""
+    report = svc.get_report(report_id)
+    if not report:
+        raise HTTPException(status_code=404, detail="Report not found")
+    return report
+
+
+@router.put("/{report_id}", response_model=dict)
+def update_report(
+    report_id: int,
+    data: ReportUpdate,
+    svc: ReportService = Depends(_report_svc),
+):
+    """Update a report."""
+    report = svc.update_report(report_id, data.model_dump(exclude_unset=True))
+    if not report:
+        raise HTTPException(status_code=404, detail="Report not found")
+    return report
+
+
+@router.delete("/{report_id}")
+def delete_report(report_id: int, svc: ReportService = Depends(_report_svc)):
+    """Delete a report."""
+    ok = svc.delete_report(report_id)
+    if not ok:
+        raise HTTPException(status_code=404, detail="Report not found")
+    return {"ok": True}
+
+
+@router.post("/{report_id}/quality-gates/evaluate", response_model=dict)
+def evaluate_quality_gates_from_report(
+    report_id: int,
+    gate_type: Optional[str] = "execution",
+    svc: ReportService = Depends(_report_svc),
+    gate_svc: QualityGateService = Depends(_gate_svc),
+):
+    """
+    从报告自动聚合指标并评估所有启用的质量门禁。
+
+    自动从报告的 summary 和 metrics 聚合以下指标：
+    - pass_rate
+    - test_pass_rate（等同于 pass_rate）
+    - failed（失败数）
+    - defect_count（暂为 0，需缺陷表关联）
+    - critical_defects（暂为 0，需缺陷表关联）
+    - avg_duration / duration_ms
+    """
+    report = svc.get_report(report_id)
+    if not report:
+        raise HTTPException(status_code=404, detail="Report not found")
+
+    summary = report.get("summary", {})
+    metrics = report.get("metrics", {})
+
+    # 自动聚合指标
+    aggregated = {
+        "pass_rate": summary.get("pass_rate"),
+        "test_pass_rate": summary.get("pass_rate"),
+        "failed": summary.get("failed", 0),
+        "defect_count": 0,
+        "critical_defects": 0,
+        "avg_duration": metrics.get("duration_ms"),
+        "duration_ms": metrics.get("duration_ms"),
+    }
+    # 移除 None 值
+    aggregated = {k: v for k, v in aggregated.items() if v is not None}
+
+    # 评估所有启用的门禁
+    results = gate_svc.evaluate_all_gates_for_execution(aggregated, gate_type=gate_type)
+    return {
+        "report_id": report_id,
+        "aggregated_metrics": aggregated,
+        "evaluations": results,
+    }

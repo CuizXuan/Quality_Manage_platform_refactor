@@ -62,9 +62,10 @@
           v-model:current-page="page"
           v-model:page-size="pageSize"
           :total="total"
-          :page-sizes="[15, 30, 50]"
-          layout="total, sizes, prev, pager, next"
-          background
+          :page-sizes="[15, 30, 50, 100]"
+          layout="total, sizes, prev, pager, next, jumper"
+          prev-text="上一页"
+          next-text="下一页"
         />
       </div>
     </section>

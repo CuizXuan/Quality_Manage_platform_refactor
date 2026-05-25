@@ -24,6 +24,8 @@ export const useReportStore = defineStore('report', () => {
   const gatePage = ref(1)
   const gatePageSize = ref(20)
   const currentGate = ref(null)
+  const gateEvaluating = ref(false)
+  const gateResult = ref(null)
 
   // ── Shared ────────────────────────────────────────────────────
   const loading = ref(false)
@@ -38,9 +40,12 @@ export const useReportStore = defineStore('report', () => {
       const response = await reportApi.list({
         page: params.page || reportPage.value,
         page_size: params.page_size || reportPageSize.value,
-        ...(params.keyword && { keyword: params.keyword }),
-        ...(params.report_type && { report_type: params.report_type }),
-        ...(params.environment && { environment: params.environment }),
+        keyword: params.keyword || undefined,
+        report_type: params.report_type || undefined,
+        environment: params.environment || undefined,
+        project_id: params.project_id || undefined,
+        version_id: params.version_id || undefined,
+        iteration_id: params.iteration_id || undefined,
       })
       reports.value = response.data.items
       reportTotal.value = response.data.total
@@ -108,13 +113,16 @@ export const useReportStore = defineStore('report', () => {
       const response = await reportApi.listDefects({
         page: params.page || defectPage.value,
         page_size: params.page_size || defectPageSize.value,
-        ...(params.keyword && { keyword: params.keyword }),
-        ...(params.status && { status: params.status }),
-        ...(params.severity && { severity: params.severity }),
-        ...(params.priority && { priority: params.priority }),
-        ...(params.defect_type && { defect_type: params.defect_type }),
-        ...(params.assigned_to && { assigned_to: params.assigned_to }),
-        ...(params.project_id && { project_id: params.project_id }),
+        keyword: params.keyword || undefined,
+        status: params.status || undefined,
+        severity: params.severity || undefined,
+        priority: params.priority || undefined,
+        defect_type: params.defect_type || undefined,
+        assigned_to: params.assigned_to || undefined,
+        project_id: params.project_id || undefined,
+        version_id: params.version_id || undefined,
+        iteration_id: params.iteration_id || undefined,
+        requirement_id: params.requirement_id || undefined,
       })
       defects.value = response.data.items
       defectTotal.value = response.data.total
@@ -321,6 +329,22 @@ export const useReportStore = defineStore('report', () => {
     }
   }
 
+  async function evaluateQualityGatesFromReport(reportId, gateType = 'execution') {
+    gateEvaluating.value = true
+    gateResult.value = null
+    error.value = ''
+    try {
+      const response = await reportApi.evaluateQualityGatesFromReport(reportId, gateType)
+      gateResult.value = response.data
+      return gateResult.value
+    } catch (err) {
+      error.value = err.response?.data?.detail || err.message || '从报告评估门禁失败'
+      throw err
+    } finally {
+      gateEvaluating.value = false
+    }
+  }
+
   return {
     // State
     reports,
@@ -339,6 +363,8 @@ export const useReportStore = defineStore('report', () => {
     gatePage,
     gatePageSize,
     currentGate,
+    gateEvaluating,
+    gateResult,
     loading,
     error,
     // Actions: Report
@@ -361,5 +387,6 @@ export const useReportStore = defineStore('report', () => {
     updateQualityGate,
     deleteQualityGate,
     evaluateQualityGate,
+    evaluateQualityGatesFromReport,
   }
 })

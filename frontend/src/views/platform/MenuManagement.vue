@@ -11,31 +11,33 @@
 
     <!-- 查询区 -->
     <section class="menu-management-page__filters">
-      <el-form :model="draftFilters" inline label-position="left" class="filter-form">
-        <el-form-item label="状态" class="filter-item">
-          <el-select
-            v-model="draftFilters.status"
-            placeholder="全部状态"
-            clearable
-            class="filter-control"
-          >
-            <el-option label="启用" value="active" />
-            <el-option label="停用" value="disabled" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="关键词" class="filter-item">
-          <el-input
-            v-model="draftFilters.keyword"
-            placeholder="搜索菜单名称/编码"
-            clearable
-            class="search-bar__input"
-            @keyup.enter="handleSearch"
-          />
-        </el-form-item>
-        <el-form-item class="filter-item filter-actions">
-          <el-button type="primary" :icon="Search" @click="handleSearch">查询</el-button>
-          <el-button :icon="RefreshLeft" @click="handleReset">重置</el-button>
-        </el-form-item>
+      <el-form :model="draftFilters" label-position="left" class="filter-form">
+        <div class="filter-form__row">
+          <el-form-item label="状态：" class="filter-item">
+            <el-select
+              v-model="draftFilters.status"
+              placeholder="全部状态"
+              clearable
+              class="filter-control"
+            >
+              <el-option label="启用" value="active" />
+              <el-option label="停用" value="disabled" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="关键词：" class="filter-item filter-item--keyword">
+            <el-input
+              v-model="draftFilters.keyword"
+              placeholder="搜索菜单名称/编码"
+              clearable
+              class="search-bar__input"
+              @keyup.enter="handleSearch"
+            />
+          </el-form-item>
+          <div class="filter-actions">
+            <el-button type="primary" :icon="Search" @click="handleSearch">查询</el-button>
+            <el-button :icon="RefreshLeft" @click="handleReset">重置</el-button>
+          </div>
+        </div>
       </el-form>
     </section>
 
@@ -167,8 +169,8 @@
         </el-form-item>
         <el-form-item label="状态">
           <el-radio-group v-model="form.status">
-            <el-radio value="active">启用</el-radio>
-            <el-radio value="disabled">停用</el-radio>
+            <el-radio label="active">启用</el-radio>
+            <el-radio label="disabled">停用</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="排序">
@@ -222,8 +224,7 @@ const parentOptions = computed(() => {
   return flatMenus.value.filter(item => item.id !== form.id && !blockedIds.has(item.id))
 })
 const pagedMenus = computed(() => {
-  const start = (pagination.value.page - 1) * pagination.value.pageSize
-  return flatMenus.value.slice(start, start + pagination.value.pageSize)
+  return menus.value
 })
 
 function defaultForm() {
@@ -243,8 +244,8 @@ function defaultForm() {
 
 function buildQueryParams() {
   return {
-    page: 1,
-    page_size: 1000,
+    page: pagination.value.page,
+    page_size: pagination.value.pageSize,
     ...(appliedFilters.value.keyword && { keyword: appliedFilters.value.keyword }),
     ...(appliedFilters.value.status && { status: appliedFilters.value.status }),
   }
@@ -553,20 +554,18 @@ html:not(.dark) .menu-management-page__filters::before {
     radial-gradient(circle at 88% 16%, rgba(22, 119, 255, 0.1), transparent 26%);
 }
 
-.filter-bar {
+.filter-form {
   position: relative;
   z-index: 1;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px 12px;
-  align-items: center;
+  width: 100%;
 }
 
-.filter-form {
+.filter-form__row {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px 16px;
-  align-items: center;
+  gap: 12px;
+  align-items: flex-end;
+  width: 100%;
 }
 
 .filter-form :deep(.el-form-item) {
@@ -574,33 +573,45 @@ html:not(.dark) .menu-management-page__filters::before {
 }
 
 .filter-form :deep(.el-form-item__label) {
+  display: flex;
+  align-items: center;
   color: var(--text-secondary);
   font-size: 13px;
+  font-weight: 700;
+  line-height: 34px;
 }
 
 .filter-item {
-  display: inline-flex;
-  align-items: center;
+  display: flex;
+  flex: 0 0 auto;
+  align-items: flex-end;
+}
+
+.filter-item--keyword {
+  flex: 0 0 auto;
 }
 
 .filter-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-end;
   margin-left: auto;
+}
+
+.filter-actions :deep(.el-button),
+.filter-actions .el-button {
+  min-width: 76px;
+  height: 34px;
+  margin-left: 0;
 }
 
 .filter-control {
   width: 160px;
 }
 
-.search-bar {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  gap: 12px;
-  align-items: center;
-}
-
 .search-bar__input {
-  width: 320px;
+  width: 280px;
 }
 
 /* ── 表格区 ── */

@@ -77,11 +77,20 @@ def list_scenarios(
     page_size: int = Query(20, ge=1, le=100),
     keyword: Optional[str] = None,
     status: Optional[str] = None,
+    project_id: Optional[int] = Query(None),
+    version_id: Optional[int] = Query(None),
+    iteration_id: Optional[int] = Query(None),
     svc: ScenarioService = Depends(_service),
 ):
     """List scenarios with pagination."""
     items, total = svc.list_scenarios(
-        page=page, page_size=page_size, keyword=keyword, status=status
+        page=page,
+        page_size=page_size,
+        keyword=keyword,
+        status=status,
+        project_id=project_id,
+        version_id=version_id,
+        iteration_id=iteration_id,
     )
     return {"items": items, "total": total, "page": page, "page_size": page_size}
 

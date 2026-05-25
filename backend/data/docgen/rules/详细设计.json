@@ -1,0 +1,29 @@
+{
+  "name": "详细设计说明书",
+  "description": "从需求规格说明书生成详细设计文档（比概设多一个界面设计块）",
+  
+  "template": "概要设计说明书-模板_新.docx",
+  
+  "leafBlocks": [
+    {"title": "功能描述", "source": "desc", "type": "text"},
+    {"title": "处理流程", "source": "flow", "type": "table"},
+    {"title": "接口说明", "source": "blank", "type": "text"},
+    {"title": "界面设计", "source": "blank", "type": "text"}
+  ],
+  
+  "levelRules": {
+    "defaultContentLevel": 6,
+    "overrides": {
+      "3": 4,
+      "4": 5,
+      "5": 6
+    }
+  },
+  
+  "formatting": {
+    "bodyFont": "仿宋_GB2312",
+    "bodySize": 14,
+    "bodyIndent": 28,
+    "tableStyle": "表格内容"
+  }
+}

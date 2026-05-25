@@ -10,27 +10,31 @@
 
     <!-- 输入区域 -->
     <section class="assertion-generator__input">
-      <el-form :model="{}" inline label-position="left" class="filter-form">
-        <el-form-item label="用例ID" class="filter-item">
-          <el-input
-            v-model.number="caseId"
-            type="number"
-            placeholder="输入用例ID"
-            class="input-case-id"
-          />
-        </el-form-item>
-        <el-form-item label="响应JSON" class="filter-item filter-json">
-          <el-input
-            v-model="responseJson"
-            type="textarea"
-            :rows="4"
-            placeholder="粘贴响应 JSON body"
-            class="input-json"
-          />
-        </el-form-item>
-        <el-form-item class="filter-item filter-actions">
-          <el-button type="primary" :loading="aiStore.loading" @click="handleGenerate">生成断言</el-button>
-        </el-form-item>
+      <el-form :model="{}" label-position="left" class="filter-form">
+        <div class="filter-form__row">
+          <el-form-item label="用例ID：" class="filter-item">
+            <el-input
+              v-model.number="caseId"
+              type="number"
+              placeholder="输入用例ID"
+              class="input-case-id"
+            />
+          </el-form-item>
+          <el-form-item label="响应JSON：" class="filter-item filter-json">
+            <el-input
+              v-model="responseJson"
+              type="textarea"
+              :rows="4"
+              placeholder="粘贴响应 JSON body"
+              class="input-json"
+            />
+          </el-form-item>
+        </div>
+        <div class="filter-form__row">
+          <div class="filter-actions">
+            <el-button type="primary" :loading="aiStore.loading" @click="handleGenerate">生成断言</el-button>
+          </div>
+        </div>
       </el-form>
       <div v-if="aiStore.error" class="error-tip">{{ aiStore.error }}</div>
     </section>
@@ -181,38 +185,45 @@ async function handleAccept(id) {
 /* ── 标题区 ── */
 .assertion-generator__header {
   position: relative;
+  z-index: 1;
   display: flex;
   justify-content: space-between;
   align-items: center;
   min-height: 56px;
   padding: 12px 16px;
-  border: 1px solid var(--border-color);
+  border: 1px solid rgba(56, 189, 248, 0.22);
   border-radius: var(--border-radius-base);
   background:
-    linear-gradient(rgba(56, 189, 248, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(56, 189, 248, 0.045) 1px, transparent 1px);
-  background-size: 32px 32px;
-  backdrop-filter: blur(10px);
+    linear-gradient(135deg, rgba(15, 23, 42, 0.68), rgba(15, 23, 42, 0.42)),
+    rgba(20, 22, 27, 0.48);
+  box-shadow: 0 18px 48px rgba(2, 8, 23, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(18px) saturate(1.25);
+  overflow: hidden;
 }
 
-.assertion-generator__header::before {
+.assertion-generator__header::after {
   position: absolute;
   inset: 0;
   pointer-events: none;
   background:
-    linear-gradient(110deg, transparent 0 36%, rgba(56, 189, 248, 0.12) 50%, transparent 66%);
-  opacity: 0.6;
+    linear-gradient(90deg, rgba(56, 189, 248, 0.22), transparent 18% 82%, rgba(34, 211, 166, 0.18)),
+    repeating-linear-gradient(90deg, transparent 0 42px, rgba(56, 189, 248, 0.06) 42px 43px);
+  opacity: 0.65;
   content: "";
-  animation: case-form-scan 10s linear infinite;
 }
 
 html:not(.dark) .assertion-generator__header {
-  background: rgba(255, 255, 255, 0.86);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.86), rgba(245, 250, 255, 0.68)),
+    rgba(255, 255, 255, 0.72);
+  box-shadow: 0 18px 46px rgba(20, 42, 76, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.82);
 }
 
 .assertion-generator__header h1,
 .assertion-generator__header p {
   margin: 0;
+  position: relative;
+  z-index: 1;
 }
 
 .assertion-generator__header h1 {
@@ -230,17 +241,19 @@ html:not(.dark) .assertion-generator__header {
 /* ── 输入区 ── */
 .assertion-generator__input {
   position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   gap: 12px;
   padding: 14px;
-  border: 1px solid var(--border-color);
+  border: 1px solid rgba(56, 189, 248, 0.18);
   border-radius: var(--border-radius-base);
   background:
-    linear-gradient(rgba(56, 189, 248, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(56, 189, 248, 0.045) 1px, transparent 1px);
-  background-size: 32px 32px;
-  backdrop-filter: blur(10px);
+    linear-gradient(135deg, rgba(15, 23, 42, 0.54), rgba(15, 23, 42, 0.34)),
+    rgba(20, 22, 27, 0.48);
+  box-shadow: 0 14px 36px rgba(2, 8, 23, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(16px) saturate(1.2);
+  overflow: hidden;
 }
 
 .assertion-generator__input::before {
@@ -248,28 +261,43 @@ html:not(.dark) .assertion-generator__header {
   inset: 0;
   pointer-events: none;
   background:
-    linear-gradient(110deg, transparent 0 36%, rgba(56, 189, 248, 0.12) 50%, transparent 66%);
-  opacity: 0.6;
+    linear-gradient(110deg, transparent 0 36%, rgba(56, 189, 248, 0.1) 50%, transparent 66%),
+    radial-gradient(circle at 88% 16%, rgba(34, 211, 166, 0.12), transparent 26%);
+  opacity: 0.8;
   content: "";
-  animation: case-form-scan 10s linear infinite;
+  animation: case-form-scan 12s linear infinite;
 }
 
 html:not(.dark) .assertion-generator__input {
-  background: rgba(255, 255, 255, 0.86);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.76), rgba(245, 250, 255, 0.58)),
+    rgba(255, 255, 255, 0.72);
+  box-shadow: 0 14px 34px rgba(20, 42, 76, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.86);
 }
 
-.input-row {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  flex-wrap: wrap;
+html:not(.dark) .assertion-generator__input::before {
+  background:
+    linear-gradient(110deg, transparent 0 36%, rgba(22, 119, 255, 0.08) 50%, transparent 66%),
+    radial-gradient(circle at 88% 16%, rgba(22, 119, 255, 0.1), transparent 26%);
 }
 
 .filter-form {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.filter-form__row {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-wrap: wrap;
   gap: 12px 16px;
-  align-items: center;
+  align-items: flex-start;
+  width: 100%;
 }
 
 .filter-form :deep(.el-form-item) {
@@ -277,13 +305,17 @@ html:not(.dark) .assertion-generator__input {
 }
 
 .filter-form :deep(.el-form-item__label) {
+  display: flex;
+  align-items: center;
   color: var(--text-secondary);
   font-size: 13px;
+  font-weight: 700;
+  line-height: 34px;
 }
 
 .filter-item {
   display: inline-flex;
-  align-items: center;
+  align-items: flex-start;
 }
 
 .filter-json {
@@ -292,32 +324,23 @@ html:not(.dark) .assertion-generator__input {
 }
 
 .filter-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-end;
   margin-left: auto;
 }
 
-.input-case-id {
-  width: 220px;
-  flex-shrink: 0;
-}
-
-.input-json {
-  flex: 1;
-  min-width: 300px;
-}
-
-.divider-text {
-  color: var(--text-secondary);
-  font-size: 14px;
-  line-height: 32px;
-  flex-shrink: 0;
-}
-
-.input-actions {
-  display: flex;
-  justify-content: flex-start;
+.filter-actions :deep(.el-button),
+.filter-actions .el-button {
+  min-width: 76px;
+  height: 34px;
+  margin-left: 0;
 }
 
 .error-tip {
+  position: relative;
+  z-index: 1;
   color: var(--color-danger);
   font-size: 14px;
 }
@@ -326,20 +349,87 @@ html:not(.dark) .assertion-generator__input {
 .assertion-generator__loading,
 .assertion-generator__empty {
   position: relative;
+  z-index: 1;
   padding: 40px;
-  border: 1px solid var(--border-color);
+  border: 1px solid rgba(56, 189, 248, 0.18);
   border-radius: var(--border-radius-base);
   background:
-    linear-gradient(rgba(56, 189, 248, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(56, 189, 248, 0.045) 1px, transparent 1px);
-  background-size: 32px 32px;
-  backdrop-filter: blur(10px);
+    linear-gradient(135deg, rgba(15, 23, 42, 0.54), rgba(15, 23, 42, 0.34)),
+    rgba(20, 22, 27, 0.48);
+  box-shadow: 0 14px 36px rgba(2, 8, 23, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(16px) saturate(1.2);
   text-align: center;
+}
+
+.assertion-generator__loading::before,
+.assertion-generator__empty::before {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(110deg, transparent 0 36%, rgba(56, 189, 248, 0.1) 50%, transparent 66%),
+    radial-gradient(circle at 88% 16%, rgba(34, 211, 166, 0.12), transparent 26%);
+  opacity: 0.8;
+  content: "";
+  animation: case-form-scan 12s linear infinite;
 }
 
 html:not(.dark) .assertion-generator__loading,
 html:not(.dark) .assertion-generator__empty {
-  background: rgba(255, 255, 255, 0.86);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.76), rgba(245, 250, 255, 0.58)),
+    rgba(255, 255, 255, 0.72);
+  box-shadow: 0 14px 34px rgba(20, 42, 76, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.86);
+}
+
+html:not(.dark) .assertion-generator__loading::before,
+html:not(.dark) .assertion-generator__empty::before {
+  background:
+    linear-gradient(110deg, transparent 0 36%, rgba(22, 119, 255, 0.08) 50%, transparent 66%),
+    radial-gradient(circle at 88% 16%, rgba(22, 119, 255, 0.1), transparent 26%);
+}
+
+/* ── 结果表格 ── */
+.assertion-generator__result {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(56, 189, 248, 0.18);
+  border-radius: var(--border-radius-base);
+  background:
+    linear-gradient(135deg, rgba(15, 23, 42, 0.54), rgba(15, 23, 42, 0.34)),
+    rgba(20, 22, 27, 0.48);
+  box-shadow: 0 14px 36px rgba(2, 8, 23, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(16px) saturate(1.2);
+  overflow: hidden;
+}
+
+.assertion-generator__result::before {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(110deg, transparent 0 36%, rgba(56, 189, 248, 0.1) 50%, transparent 66%),
+    radial-gradient(circle at 88% 16%, rgba(34, 211, 166, 0.12), transparent 26%);
+  opacity: 0.8;
+  content: "";
+  animation: case-form-scan 12s linear infinite;
+}
+
+html:not(.dark) .assertion-generator__result {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.76), rgba(245, 250, 255, 0.58)),
+    rgba(255, 255, 255, 0.72);
+  box-shadow: 0 14px 34px rgba(20, 42, 76, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.86);
+}
+
+html:not(.dark) .assertion-generator__result::before {
+  background:
+    linear-gradient(110deg, transparent 0 36%, rgba(22, 119, 255, 0.08) 50%, transparent 66%),
+    radial-gradient(circle at 88% 16%, rgba(22, 119, 255, 0.1), transparent 26%);
 }
 
 .loading-content {

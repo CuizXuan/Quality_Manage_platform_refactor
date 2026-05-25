@@ -38,9 +38,16 @@ class TestCase(Base):
     body = Column(Text, default="")
     expected_status = Column(Integer, default=200)
 
+    # 质量基础关联字段
+    project_id = Column(Integer, nullable=True)
+    version_id = Column(Integer, nullable=True)
+    iteration_id = Column(Integer, nullable=True)
+    requirement_id = Column(Integer, ForeignKey("requirement_items.id"), nullable=True)
+
     variants = relationship("CaseVariant", back_populates="test_case", cascade="all, delete-orphan")
     api_case = relationship("ApiTestCase", back_populates="test_case", uselist=False)
     functional_case = relationship("FunctionalTestCase", back_populates="test_case", uselist=False)
+    requirement = relationship("RequirementItem", back_populates="test_cases")
 
 
 class CaseVariant(Base):

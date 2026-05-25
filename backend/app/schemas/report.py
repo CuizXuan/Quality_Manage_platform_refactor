@@ -21,6 +21,9 @@ class ReportCreate(BaseModel):
     metrics: Dict[str, Any] = Field(default_factory=dict, description="详细指标")
     duration_ms: Optional[int] = Field(None, description="执行耗时（毫秒）")
     triggered_by: Optional[int] = Field(None, description="触发人")
+    project_id: Optional[int] = None
+    version_id: Optional[int] = None
+    iteration_id: Optional[int] = None
 
 
 class ReportUpdate(BaseModel):
@@ -30,6 +33,9 @@ class ReportUpdate(BaseModel):
     summary: Optional[Dict[str, Any]] = None
     metrics: Optional[Dict[str, Any]] = None
     duration_ms: Optional[int] = None
+    project_id: Optional[int] = None
+    version_id: Optional[int] = None
+    iteration_id: Optional[int] = None
 
 
 class ReportResponse(BaseModel):
@@ -46,6 +52,9 @@ class ReportResponse(BaseModel):
     duration_ms: Optional[int] = None
     triggered_by: Optional[int] = None
     created_at: datetime
+    project_id: Optional[int] = None
+    version_id: Optional[int] = None
+    iteration_id: Optional[int] = None
 
     class Config:
         from_attributes = True
@@ -75,6 +84,9 @@ class DefectCreate(BaseModel):
     execution_id: Optional[int] = Field(None, description="关联执行记录ID")
     assigned_to: Optional[int] = Field(None, description="指派给")
     tags: List[str] = Field(default_factory=list, description="标签")
+    version_id: Optional[int] = None
+    iteration_id: Optional[int] = None
+    requirement_id: Optional[int] = None
 
 
 class DefectUpdate(BaseModel):
@@ -90,6 +102,9 @@ class DefectUpdate(BaseModel):
     execution_id: Optional[int] = None
     assigned_to: Optional[int] = None
     tags: Optional[List[str]] = None
+    version_id: Optional[int] = None
+    iteration_id: Optional[int] = None
+    requirement_id: Optional[int] = None
 
 
 class DefectStatusTransition(BaseModel):
@@ -121,6 +136,9 @@ class DefectResponse(BaseModel):
     closed_at: Optional[datetime] = None
     tags: List[str] = []
     attachments: List[Dict[str, Any]] = []
+    version_id: Optional[int] = None
+    iteration_id: Optional[int] = None
+    requirement_id: Optional[int] = None
 
     class Config:
         from_attributes = True

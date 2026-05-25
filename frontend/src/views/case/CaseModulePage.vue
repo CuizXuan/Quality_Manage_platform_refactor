@@ -112,6 +112,10 @@ const suggestedCaseId = computed(() => nextCaseCode(props.caseType, cases.value,
 
 function createFilters() {
   return {
+    projectId: null,
+    versionId: null,
+    iterationId: null,
+    requirementId: null,
     methods: [],
     priorities: [],
     isAutomated: null,
@@ -133,6 +137,10 @@ function buildQuery() {
     is_automated: appliedFilters.value.isAutomated ?? undefined,
     created_start: range[0] || undefined,
     created_end: range[1] || undefined,
+    project_id: appliedFilters.value.projectId || undefined,
+    version_id: appliedFilters.value.versionId || undefined,
+    iteration_id: appliedFilters.value.iterationId || undefined,
+    requirement_id: appliedFilters.value.requirementId || undefined,
   }
 }
 
@@ -169,6 +177,10 @@ function resetFilters() {
 
 function cloneFilters(value) {
   return {
+    projectId: value.projectId,
+    versionId: value.versionId,
+    iterationId: value.iterationId,
+    requirementId: value.requirementId,
     methods: [...(value.methods || [])],
     priorities: [...(value.priorities || [])],
     isAutomated: value.isAutomated,
@@ -377,8 +389,8 @@ html:not(.dark) .case-module__table {
 .case-module__filters {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 12px;
-  padding: 14px;
+  gap: 8px;
+  padding: 10px 14px;
 }
 
 .case-module__table {

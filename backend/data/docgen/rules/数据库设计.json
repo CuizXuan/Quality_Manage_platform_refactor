@@ -1,0 +1,29 @@
+{
+  "name": "数据库设计说明书",
+  "description": "从需求规格说明书+数据库表结构生成数据库设计文档",
+  
+  "template": "概要设计说明书-模板_新.docx",
+  
+  "leafBlocks": [
+    {"title": "表结构", "source": "db_desc", "type": "text"},
+    {"title": "字段列表", "source": "db_columns", "type": "table"},
+    {"title": "索引与约束", "source": "db_indexes", "type": "text"},
+    {"title": "接口说明", "source": "blank", "type": "text"}
+  ],
+  
+  "levelRules": {
+    "defaultContentLevel": 6,
+    "overrides": {
+      "3": 4,
+      "4": 5,
+      "5": 6
+    }
+  },
+  
+  "formatting": {
+    "bodyFont": "仿宋_GB2312",
+    "bodySize": 14,
+    "bodyIndent": 28,
+    "tableStyle": "表格内容"
+  }
+}

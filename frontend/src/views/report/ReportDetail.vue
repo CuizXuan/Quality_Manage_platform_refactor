@@ -6,7 +6,45 @@
         <el-divider direction="vertical" />
         <span class="detail-title">{{ report?.name || '加载中…' }}</span>
       </div>
+      <div class="header-right">
+        <el-button type="primary" :loading="gateEvaluating" @click="evaluateQualityGates">
+          评估门禁
+        </el-button>
+      </div>
     </div>
+
+    <!-- 门禁评估结果 -->
+    <el-card v-if="gateResult" class="gate-result-card" shadow="never">
+      <template #header>
+        <span class="card-title">质量门禁评估结果</span>
+      </template>
+      <el-alert
+        v-if="gateResult.evaluations && gateResult.evaluations.length === 0"
+        type="info"
+        :closable="false"
+        show-icon
+        title="暂无启用的质量门禁规则"
+      />
+      <div v-else class="gate-list">
+        <div v-for="ev in gateResult.evaluations" :key="ev.gate_id" class="gate-item">
+          <div class="gate-header">
+            <span class="gate-name">{{ ev.gate_name }}</span>
+            <el-tag :type="getGateResultType(ev.overall_result)" size="small">
+              {{ getGateResultText(ev.overall_result) }}
+            </el-tag>
+          </div>
+          <div class="gate-details">
+            <div v-for="(detail, idx) in ev.details" :key="idx" class="detail-row">
+              <span class="detail-metric">{{ detail.metric }}</span>
+              <span class="detail-expr">{{ detail.actual }} {{ detail.operator }} {{ detail.threshold }}</span>
+              <el-tag :type="detail.result === 'pass' ? 'success' : detail.result === 'fail' ? 'danger' : 'info'" size="small">
+                {{ detail.result }}
+              </el-tag>
+            </div>
+          </div>
+        </div>
+      </div>
+    </el-card>
 
     <!-- 概览统计 -->
     <el-row :gutter="16" v-if="report">
@@ -86,6 +124,8 @@ const router = useRouter()
 const reportStore = useReportStore()
 
 const report = computed(() => reportStore.currentReport)
+const gateEvaluating = computed(() => reportStore.gateEvaluating)
+const gateResult = computed(() => reportStore.gateResult)
 
 onMounted(async () => {
   const id = Number(route.params.id)
@@ -95,6 +135,25 @@ onMounted(async () => {
     /* error handled in store */
   }
 })
+
+async function evaluateQualityGates() {
+  const id = Number(route.params.id)
+  try {
+    await reportStore.evaluateQualityGatesFromReport(id)
+  } catch {
+    /* error handled in store */
+  }
+}
+
+function getGateResultType(result) {
+  const map = { pass: 'success', fail: 'danger', skipped: 'info', warning: 'warning' }
+  return map[result] || 'info'
+}
+
+function getGateResultText(result) {
+  const map = { pass: '通过', fail: '未通过', skipped: '跳过', warning: '警告' }
+  return map[result] || result
+}
 
 function formatType(type) {
   const map = { execution: '执行报告', scenario: '场景报告', suite: '套件报告' }
@@ -169,5 +228,56 @@ function formatMetricValue(value) {
   font-size: 14px;
   font-weight: 600;
   color: var(--text-primary);
+}
+
+.gate-result-card {
+  border-radius: var(--border-radius-base);
+}
+
+.gate-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.gate-item {
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-base);
+  padding: var(--spacing-sm);
+}
+
+.gate-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-xs);
+}
+
+.gate-name {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.gate-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.detail-row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  font-size: 13px;
+}
+
+.detail-metric {
+  color: var(--text-secondary);
+  min-width: 120px;
+}
+
+.detail-expr {
+  color: var(--text-primary);
+  font-family: monospace;
 }
 </style>

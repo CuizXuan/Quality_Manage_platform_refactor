@@ -456,3 +456,38 @@ query = f"SELECT * FROM test_case WHERE id = {case_id}"
 - [Python PEP 8](https://pep8.org/) - Python 代码风格
 - [Vue 3 风格指南](https://vuejs.org/style-guide/) - Vue 组件最佳实践
 - [FastAPI 最佳实践](https://fastapi.tiangolo.com/zh/tutorial/) - API 设计指南
+
+---
+
+## 九、AI 协作流程
+
+本项目采用 Codex 规划与审查、Claude Code 实现与验证的协作模式。
+
+Codex 在处理新需求时，应优先读取并遵循：
+
+- `.ai/CODEX_WORKFLOW.md` - Codex 需求分发、任务包生成和审查流程
+- `.ai/tasks/TEMPLATE.md` - Claude 实现任务包模板
+- `.ai/reviews/TEMPLATE.md` - Claude 审查修复包模板
+
+当用户希望 Claude 执行编码，或需求适合交由 Claude Code 消耗 token 实现时，Codex 应先生成 `.ai/tasks/` 任务包，并告知用户在 Claude Code 中执行：
+
+```text
+/codex-task .ai/tasks/<task-file>.md
+```
+
+当 Claude 完成实现后，Codex 应审查 diff 和验证结果；如需返工，应生成 `.ai/reviews/` 审查修复包，并告知用户在 Claude Code 中执行：
+
+```text
+/codex-review-fix .ai/reviews/<review-file>.md
+```
+
+前端相关需求补充规则：
+
+- 如果是新增菜单、页面、弹窗、抽屉、列表页或样式统一，不要让 Claude 凭空设计。
+- Codex 应在任务包中明确指定一个“视觉/交互基准页”。
+- Claude 应先复用最接近的现有实现，再做最小必要改造。
+- 例如：
+  - 业务列表页优先参考 `frontend/src/views/scenario/ScenarioList.vue`
+  - 业务中心页优先参考 `frontend/src/views/case/CaseManagement.vue`
+  - 左侧菜单优先参考 `frontend/src/app/AppShell.vue`
+- 如果用户要求“和某个页面保持一致”，该页面应作为唯一基准写入任务包。

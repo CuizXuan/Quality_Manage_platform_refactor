@@ -10,57 +10,59 @@
 
     <!-- 查询区 -->
     <section class="log-management__filters">
-      <el-form :model="draftFilters" inline label-position="left" class="filter-form">
-        <el-form-item label="关键词" class="filter-item">
-          <el-input
-            v-model="draftFilters.keyword"
-            placeholder="搜索用户名/操作/模块/详情"
-            clearable
-            class="search-bar__input"
-            @keyup.enter="handleSearch"
-          />
-        </el-form-item>
-        <el-form-item label="模块" class="filter-item">
-          <el-select v-model="draftFilters.module" placeholder="全部模块" clearable class="filter-control">
-            <el-option label="用户" value="user" />
-            <el-option label="角色" value="role" />
-            <el-option label="组织" value="organization" />
-            <el-option label="菜单" value="menu" />
-            <el-option label="字典" value="dictionary" />
-            <el-option label="用例" value="case" />
-            <el-option label="场景" value="scenario" />
-            <el-option label="执行" value="execution" />
-            <el-option label="报告" value="report" />
-            <el-option label="缺陷" value="defect" />
-            <el-option label="AI" value="ai" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="操作" class="filter-item">
-          <el-select v-model="draftFilters.action" placeholder="全部操作" clearable class="filter-control">
-            <el-option label="创建" value="create" />
-            <el-option label="更新" value="update" />
-            <el-option label="删除" value="delete" />
-            <el-option label="登录" value="login" />
-            <el-option label="登出" value="logout" />
-            <el-option label="执行" value="run" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="日期范围" class="filter-item">
-          <el-date-picker
-            v-model="dateRange"
-            type="daterange"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-            value-format="YYYY-MM-DD"
-            class="filter-range"
-            @change="handleDateChange"
-          />
-        </el-form-item>
-        <el-form-item class="filter-item filter-actions">
-          <el-button type="primary" :icon="Search" @click="handleSearch">查询</el-button>
-          <el-button :icon="RefreshLeft" @click="handleReset">重置</el-button>
-        </el-form-item>
+      <el-form :model="draftFilters" label-position="left" class="filter-form">
+        <div class="filter-form__row">
+          <el-form-item label="关键词：" class="filter-item">
+            <el-input
+              v-model="draftFilters.keyword"
+              placeholder="搜索用户名/操作/模块/详情"
+              clearable
+              class="search-bar__input"
+              @keyup.enter="handleSearch"
+            />
+          </el-form-item>
+          <el-form-item label="模块：" class="filter-item">
+            <el-select v-model="draftFilters.module" placeholder="全部模块" clearable class="filter-control">
+              <el-option label="用户" value="user" />
+              <el-option label="角色" value="role" />
+              <el-option label="组织" value="organization" />
+              <el-option label="菜单" value="menu" />
+              <el-option label="字典" value="dictionary" />
+              <el-option label="用例" value="case" />
+              <el-option label="场景" value="scenario" />
+              <el-option label="执行" value="execution" />
+              <el-option label="报告" value="report" />
+              <el-option label="缺陷" value="defect" />
+              <el-option label="AI" value="ai" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="操作：" class="filter-item">
+            <el-select v-model="draftFilters.action" placeholder="全部操作" clearable class="filter-control">
+              <el-option label="创建" value="create" />
+              <el-option label="更新" value="update" />
+              <el-option label="删除" value="delete" />
+              <el-option label="登录" value="login" />
+              <el-option label="登出" value="logout" />
+              <el-option label="执行" value="run" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="日期范围：" class="filter-item filter-item--date">
+            <el-date-picker
+              v-model="dateRange"
+              type="daterange"
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              value-format="YYYY-MM-DD"
+              class="filter-range"
+              @change="handleDateChange"
+            />
+          </el-form-item>
+          <div class="filter-actions">
+            <el-button type="primary" :icon="Search" @click="handleSearch">查询</el-button>
+            <el-button :icon="RefreshLeft" @click="handleReset">重置</el-button>
+          </div>
+        </div>
       </el-form>
     </section>
 
@@ -89,7 +91,7 @@
           v-model:current-page="pagination.page"
           v-model:page-size="pagination.pageSize"
           :total="total"
-          :page-sizes="[20, 50, 100]"
+          :page-sizes="[15, 30, 50, 100]"
           layout="total, sizes, prev, pager, next, jumper"
           prev-text="上一页"
           next-text="下一页"
@@ -114,7 +116,7 @@ const dateRange = ref(null)
 
 const draftFilters = ref({ keyword: '', module: '', action: '' })
 const appliedFilters = ref({ keyword: '', module: '', action: '', start_date: null, end_date: null })
-const pagination = ref({ page: 1, pageSize: 20 })
+const pagination = ref({ page: 1, pageSize: 15 })
 
 onMounted(fetchLogs)
 
@@ -339,20 +341,18 @@ html:not(.dark) .log-management__filters::before {
     radial-gradient(circle at 88% 16%, rgba(22, 119, 255, 0.1), transparent 26%);
 }
 
-.filter-row {
+.filter-form {
   position: relative;
   z-index: 1;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
+  width: 100%;
 }
 
-.filter-form {
+.filter-form__row {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px 16px;
-  align-items: center;
+  gap: 12px;
+  align-items: flex-end;
+  width: 100%;
 }
 
 .filter-form :deep(.el-form-item) {
@@ -360,19 +360,37 @@ html:not(.dark) .log-management__filters::before {
 }
 
 .filter-form :deep(.el-form-item__label) {
+  display: flex;
+  align-items: center;
   color: var(--text-secondary);
   font-size: 13px;
+  font-weight: 700;
+  line-height: 34px;
 }
 
 .filter-item {
-  display: inline-flex;
-  align-items: center;
+  display: flex;
+  flex: 0 0 auto;
+  align-items: flex-end;
+}
+
+.filter-item--date {
+  flex: 0 0 auto;
 }
 
 .filter-actions {
   display: flex;
-  gap: 12px;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-end;
   margin-left: auto;
+}
+
+.filter-actions :deep(.el-button),
+.filter-actions .el-button {
+  min-width: 76px;
+  height: 34px;
+  margin-left: 0;
 }
 
 .search-bar__input {

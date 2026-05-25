@@ -45,6 +45,9 @@ class DefectRepository:
         defect_type: Optional[str] = None,
         assigned_to: Optional[int] = None,
         project_id: Optional[int] = None,
+        version_id: Optional[int] = None,
+        iteration_id: Optional[int] = None,
+        requirement_id: Optional[int] = None,
     ) -> Tuple[list[Defect], int]:
         """List defects with pagination and filtering."""
         query = db.query(Defect)
@@ -69,6 +72,12 @@ class DefectRepository:
 
         if project_id is not None:
             query = query.filter(Defect.project_id == project_id)
+        if version_id is not None:
+            query = query.filter(Defect.version_id == version_id)
+        if iteration_id is not None:
+            query = query.filter(Defect.iteration_id == iteration_id)
+        if requirement_id is not None:
+            query = query.filter(Defect.requirement_id == requirement_id)
 
         total = query.count()
         items = (

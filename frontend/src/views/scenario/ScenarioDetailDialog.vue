@@ -158,6 +158,30 @@
             <el-radio value="draft">草稿</el-radio>
           </el-radio-group>
         </el-form-item>
+        <el-divider content-position="left">归属信息</el-divider>
+        <el-row :gutter="12">
+          <el-col :span="8">
+            <el-form-item label="项目">
+              <el-select v-model="scenarioForm.project_id" placeholder="请选择项目" clearable filterable @change="onProjectChange">
+                <el-option v-for="p in foundationProjects" :key="p.id" :label="p.name" :value="p.id" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="版本">
+              <el-select v-model="scenarioForm.version_id" placeholder="请选择版本" clearable filterable :disabled="!scenarioForm.project_id" @change="onVersionChange">
+                <el-option v-for="v in foundationVersions" :key="v.id" :label="v.name" :value="v.id" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="迭代">
+              <el-select v-model="scenarioForm.iteration_id" placeholder="请选择迭代" clearable filterable :disabled="!scenarioForm.version_id">
+                <el-option v-for="i in foundationIterations" :key="i.id" :label="i.name" :value="i.id" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
       <template #footer>
         <el-button @click="editDialogVisible = false">取消</el-button>
@@ -173,6 +197,7 @@ import { useRouter } from 'vue-router'
 import { Plus, VideoPlay, EditPen, Clock } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useScenarioStore } from '@/stores/scenarioStore'
+import { useQualityFoundationStore } from '@/stores/qualityFoundationStore'
 import ScenarioStepDialog from './ScenarioStepDialog.vue'
 
 const props = defineProps({
@@ -184,6 +209,11 @@ const emit = defineEmits(['update:modelValue', 'closed'])
 
 const router = useRouter()
 const scenarioStore = useScenarioStore()
+const foundationStore = useQualityFoundationStore()
+
+const foundationProjects = computed(() => foundationStore.projects)
+const foundationVersions = computed(() => foundationStore.versions)
+const foundationIterations = computed(() => foundationStore.iterations)
 
 const visible = computed({
   get: () => props.modelValue,
@@ -206,12 +236,36 @@ const scenarioForm = ref({
   priority: 'P2',
   description: '',
   status: 'draft',
+  project_id: null,
+  version_id: null,
+  iteration_id: null,
 })
+
+function onProjectChange(projectId) {
+  scenarioForm.value.version_id = null
+  scenarioForm.value.iteration_id = null
+  if (projectId) {
+    foundationStore.fetchVersions(projectId)
+  } else {
+    foundationStore.clearVersions()
+    foundationStore.clearIterations()
+  }
+}
+
+function onVersionChange(versionId) {
+  scenarioForm.value.iteration_id = null
+  if (versionId) {
+    foundationStore.fetchIterations({ version_id: versionId })
+  } else {
+    foundationStore.clearIterations()
+  }
+}
 
 watch(
   () => props.modelValue,
   async (val) => {
     if (val) {
+      foundationStore.fetchProjects()
       await scenarioStore.fetchScenario(props.scenarioId)
       syncFormFromStore()
     }
@@ -228,6 +282,15 @@ function syncFormFromStore() {
     priority: s.priority || 'P2',
     description: s.description || '',
     status: s.status || 'draft',
+    project_id: s.project_id ?? null,
+    version_id: s.version_id ?? null,
+    iteration_id: s.iteration_id ?? null,
+  }
+  if (s.project_id) {
+    foundationStore.fetchVersions(s.project_id)
+  }
+  if (s.version_id) {
+    foundationStore.fetchIterations({ version_id: s.version_id })
   }
 }
 

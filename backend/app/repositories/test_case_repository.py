@@ -21,6 +21,10 @@ class CaseListFilters:
         created_start: Optional[datetime] = None,
         created_end: Optional[datetime] = None,
         is_automated: Optional[bool] = None,
+        project_id: Optional[int] = None,
+        version_id: Optional[int] = None,
+        iteration_id: Optional[int] = None,
+        requirement_id: Optional[int] = None,
     ):
         self.folder_id = folder_id
         self.folder_ids = folder_ids or []
@@ -31,6 +35,10 @@ class CaseListFilters:
         self.created_start = created_start
         self.created_end = created_end
         self.is_automated = is_automated
+        self.project_id = project_id
+        self.version_id = version_id
+        self.iteration_id = iteration_id
+        self.requirement_id = requirement_id
 
 
 class TestCaseRepository:
@@ -77,6 +85,15 @@ class TestCaseRepository:
 
         if filters.is_automated is not None:
             query = query.filter(TestCase.is_automated == filters.is_automated)
+
+        if filters.project_id is not None:
+            query = query.filter(TestCase.project_id == filters.project_id)
+        if filters.version_id is not None:
+            query = query.filter(TestCase.version_id == filters.version_id)
+        if filters.iteration_id is not None:
+            query = query.filter(TestCase.iteration_id == filters.iteration_id)
+        if filters.requirement_id is not None:
+            query = query.filter(TestCase.requirement_id == filters.requirement_id)
 
         return query
 

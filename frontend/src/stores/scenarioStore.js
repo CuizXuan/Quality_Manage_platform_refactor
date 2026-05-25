@@ -29,7 +29,11 @@ export const useScenarioStore = defineStore('scenario', () => {
       const response = await scenarioApi.list({
         page: params.page || page.value,
         page_size: params.page_size || pageSize.value,
-        ...(params.keyword && { keyword: params.keyword }),
+        keyword: params.keyword || undefined,
+        status: params.status || undefined,
+        project_id: params.project_id || undefined,
+        version_id: params.version_id || undefined,
+        iteration_id: params.iteration_id || undefined,
       })
       scenarios.value = response.data.items
       total.value = response.data.total

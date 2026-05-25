@@ -89,11 +89,10 @@
           v-model:current-page="page"
           v-model:page-size="pageSize"
           :total="total"
-          :page-sizes="[10, 20, 50]"
-          layout="total, sizes, prev, pager, next"
+          :page-sizes="[15, 30, 50, 100]"
+          layout="total, sizes, prev, pager, next, jumper"
           prev-text="上一页"
           next-text="下一页"
-          background
           @current-change="handlePageChange"
           @size-change="handleSizeChange"
         />
@@ -133,8 +132,8 @@
         </el-form-item>
         <el-form-item label="状态">
           <el-radio-group v-model="form.status">
-            <el-radio value="active">启用</el-radio>
-            <el-radio value="disabled">停用</el-radio>
+            <el-radio label="active">启用</el-radio>
+            <el-radio label="disabled">停用</el-radio>
           </el-radio-group>
         </el-form-item>
       </el-form>
@@ -171,7 +170,7 @@ const appliedFilters = ref({
   date_range: null,
 })
 const page = ref(1)
-const pageSize = ref(20)
+const pageSize = ref(15)
 const total = ref(0)
 
 const form = reactive(defaultForm())
@@ -200,8 +199,8 @@ function buildQueryParams() {
     page: page.value,
     page_size: pageSize.value,
   }
-  if (queryForm.value.keyword) params.keyword = queryForm.value.keyword
-  if (queryForm.value.status) params.status = queryForm.value.status
+  if (draftFilters.value.keyword) params.keyword = draftFilters.value.keyword
+  if (draftFilters.value.status) params.status = draftFilters.value.status
   return params
 }
 
@@ -239,8 +238,8 @@ function handleSearch() {
 }
 
 function handleReset() {
-  queryForm.value.keyword = ''
-  queryForm.value.status = ''
+  draftFilters.value.keyword = ''
+  draftFilters.value.status = ''
   page.value = 1
   fetchUsers()
 }

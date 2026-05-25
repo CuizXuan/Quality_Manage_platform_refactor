@@ -82,6 +82,7 @@ import {
   CopyDocument,
   Document,
   DocumentChecked,
+  DocumentCopy,
   Expand,
   Fold,
   Menu as MenuIcon,
@@ -99,6 +100,7 @@ import {
   Key,
   VideoPlay,
   TrendCharts,
+  DataLine,
 } from '@element-plus/icons-vue'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -123,6 +125,7 @@ const menuList = [
     children: [
       { title: '终端调试台', icon: Connection, path: '/terminal' },
       { title: '用例管理', icon: DocumentChecked, path: '/case' },
+      { title: '接口中心', icon: Connection, path: '/api-assets' },
     ],
   },
   {
@@ -156,6 +159,26 @@ const menuList = [
       { title: '失败归因', icon: Warning, path: '/ai/failure-analyzer' },
       { title: '报告总结', icon: Document, path: '/ai/report-summarizer' },
       { title: '采纳历史', icon: List, path: '/ai/suggestion-history' },
+    ],
+  },
+  {
+    title: '文档中心',
+    icon: DocumentCopy,
+    path: '/docgen',
+    children: [
+      { title: '任务中心', icon: List, path: '/docgen/tasks' },
+      { title: '规则管理', icon: Document, path: '/docgen/rules' },
+      { title: '模板管理', icon: CopyDocument, path: '/docgen/templates' },
+      { title: '生成文档', icon: CircleCheck, path: '/docgen/generate' },
+    ],
+  },
+  {
+    title: '质量基础',
+    icon: DataLine,
+    path: '/foundation',
+    children: [
+      { title: '项目版本管理', icon: List, path: '/foundation/projects' },
+      { title: '需求管理', icon: List, path: '/foundation/requirements' },
     ],
   },
   {

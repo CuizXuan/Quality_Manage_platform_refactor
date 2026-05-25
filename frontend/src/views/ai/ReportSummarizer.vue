@@ -10,19 +10,21 @@
 
     <!-- 查询区 -->
     <section class="report-summarizer__query">
-      <el-form :model="queryForm" inline label-position="left" class="filter-form">
-        <el-form-item label="报告ID" class="filter-item">
-          <el-input-number
-            v-model="queryForm.report_id"
-            :min="1"
-            placeholder="输入报告ID"
-            class="input-report-id"
-          />
-        </el-form-item>
-        <el-form-item class="filter-item filter-actions">
-          <el-button type="primary" :loading="aiStore.loading" @click="handleSummarize">生成总结</el-button>
-          <el-button @click="handleReset">重置</el-button>
-        </el-form-item>
+      <el-form :model="queryForm" label-position="left" class="filter-form">
+        <div class="filter-form__row">
+          <el-form-item label="报告ID：" class="filter-item">
+            <el-input-number
+              v-model="queryForm.report_id"
+              :min="1"
+              placeholder="输入报告ID"
+              class="input-report-id"
+            />
+          </el-form-item>
+          <div class="filter-actions">
+            <el-button type="primary" :loading="aiStore.loading" @click="handleSummarize">生成总结</el-button>
+            <el-button @click="handleReset">重置</el-button>
+          </div>
+        </div>
       </el-form>
     </section>
 
@@ -187,42 +189,60 @@ function handleReset() {
 /* ── 标题区 ── */
 .report-summarizer__header {
   position: relative;
+  z-index: 1;
   display: flex;
   justify-content: space-between;
   align-items: center;
   min-height: 56px;
   padding: 12px 16px;
-  border: 1px solid var(--border-color);
+  border: 1px solid rgba(56, 189, 248, 0.22);
   border-radius: var(--border-radius-base);
   background:
-    linear-gradient(rgba(56, 189, 248, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(56, 189, 248, 0.045) 1px, transparent 1px);
-  background-size: 32px 32px;
-  backdrop-filter: blur(10px);
+    linear-gradient(135deg, rgba(15, 23, 42, 0.68), rgba(15, 23, 42, 0.42)),
+    rgba(20, 22, 27, 0.48);
+  box-shadow: 0 18px 48px rgba(2, 8, 23, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(18px) saturate(1.25);
+  overflow: hidden;
 }
 
-.report-summarizer__header::before {
+.report-summarizer__header::after {
   position: absolute;
   inset: 0;
   pointer-events: none;
   background:
-    linear-gradient(110deg, transparent 0 36%, rgba(56, 189, 248, 0.12) 50%, transparent 66%);
-  opacity: 0.6;
+    linear-gradient(90deg, rgba(56, 189, 248, 0.22), transparent 18% 82%, rgba(34, 211, 166, 0.18)),
+    repeating-linear-gradient(90deg, transparent 0 42px, rgba(56, 189, 248, 0.06) 42px 43px);
+  opacity: 0.65;
   content: "";
-  animation: case-form-scan 10s linear infinite;
+}
+
+html:not(.dark) .report-summarizer__header {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.86), rgba(245, 250, 255, 0.68)),
+    rgba(255, 255, 255, 0.72);
+  box-shadow: 0 18px 46px rgba(20, 42, 76, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.82);
+}
+
+.report-summarizer__header h1,
+.report-summarizer__header p {
+  margin: 0;
+  position: relative;
+  z-index: 1;
 }
 
 /* ── 查询区 ── */
 .report-summarizer__query {
   position: relative;
+  z-index: 1;
   padding: 14px;
-  border: 1px solid var(--border-color);
+  border: 1px solid rgba(56, 189, 248, 0.18);
   border-radius: var(--border-radius-base);
   background:
-    linear-gradient(rgba(56, 189, 248, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(56, 189, 248, 0.045) 1px, transparent 1px);
-  background-size: 32px 32px;
-  backdrop-filter: blur(10px);
+    linear-gradient(135deg, rgba(15, 23, 42, 0.54), rgba(15, 23, 42, 0.34)),
+    rgba(20, 22, 27, 0.48);
+  box-shadow: 0 14px 36px rgba(2, 8, 23, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(16px) saturate(1.2);
+  overflow: hidden;
 }
 
 .report-summarizer__query::before {
@@ -230,10 +250,24 @@ function handleReset() {
   inset: 0;
   pointer-events: none;
   background:
-    linear-gradient(110deg, transparent 0 36%, rgba(56, 189, 248, 0.12) 50%, transparent 66%);
-  opacity: 0.6;
+    linear-gradient(110deg, transparent 0 36%, rgba(56, 189, 248, 0.1) 50%, transparent 66%),
+    radial-gradient(circle at 88% 16%, rgba(34, 211, 166, 0.12), transparent 26%);
+  opacity: 0.8;
   content: "";
-  animation: case-form-scan 10s linear infinite;
+  animation: case-form-scan 12s linear infinite;
+}
+
+html:not(.dark) .report-summarizer__query {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.76), rgba(245, 250, 255, 0.58)),
+    rgba(255, 255, 255, 0.72);
+  box-shadow: 0 14px 34px rgba(20, 42, 76, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.86);
+}
+
+html:not(.dark) .report-summarizer__query::before {
+  background:
+    linear-gradient(110deg, transparent 0 36%, rgba(22, 119, 255, 0.08) 50%, transparent 66%),
+    radial-gradient(circle at 88% 16%, rgba(22, 119, 255, 0.1), transparent 26%);
 }
 
 html:not(.dark) .report-summarizer__header {
@@ -257,17 +291,23 @@ html:not(.dark) .report-summarizer__header {
   font-size: 13px;
 }
 
-.query-row {
+.filter-form {
+  position: relative;
+  z-index: 1;
+  width: 100%;
   display: flex;
-  align-items: center;
-  gap: 16px;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.filter-form {
+.filter-form__row {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-wrap: wrap;
   gap: 12px 16px;
   align-items: center;
+  width: 100%;
 }
 
 .filter-form :deep(.el-form-item) {
@@ -275,8 +315,12 @@ html:not(.dark) .report-summarizer__header {
 }
 
 .filter-form :deep(.el-form-item__label) {
+  display: flex;
+  align-items: center;
   color: var(--text-secondary);
   font-size: 13px;
+  font-weight: 700;
+  line-height: 34px;
 }
 
 .filter-item {
@@ -285,7 +329,18 @@ html:not(.dark) .report-summarizer__header {
 }
 
 .filter-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-end;
   margin-left: auto;
+}
+
+.filter-actions :deep(.el-button),
+.filter-actions .el-button {
+  min-width: 76px;
+  height: 34px;
+  margin-left: 0;
 }
 
 .input-report-id {
@@ -307,15 +362,44 @@ html:not(.dark) .report-summarizer__header {
 .report-summarizer__loading,
 .report-summarizer__empty {
   position: relative;
+  z-index: 1;
   padding: 40px;
-  border: 1px solid var(--border-color);
+  border: 1px solid rgba(56, 189, 248, 0.18);
   border-radius: var(--border-radius-base);
   background:
-    linear-gradient(rgba(56, 189, 248, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(56, 189, 248, 0.045) 1px, transparent 1px);
-  background-size: 32px 32px;
-  backdrop-filter: blur(10px);
+    linear-gradient(135deg, rgba(15, 23, 42, 0.54), rgba(15, 23, 42, 0.34)),
+    rgba(20, 22, 27, 0.48);
+  box-shadow: 0 14px 36px rgba(2, 8, 23, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(16px) saturate(1.2);
   text-align: center;
+}
+
+.report-summarizer__loading::before,
+.report-summarizer__empty::before {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(110deg, transparent 0 36%, rgba(56, 189, 248, 0.1) 50%, transparent 66%),
+    radial-gradient(circle at 88% 16%, rgba(34, 211, 166, 0.12), transparent 26%);
+  opacity: 0.8;
+  content: "";
+  animation: case-form-scan 12s linear infinite;
+}
+
+html:not(.dark) .report-summarizer__loading,
+html:not(.dark) .report-summarizer__empty {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.76), rgba(245, 250, 255, 0.58)),
+    rgba(255, 255, 255, 0.72);
+  box-shadow: 0 14px 34px rgba(20, 42, 76, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.86);
+}
+
+html:not(.dark) .report-summarizer__loading::before,
+html:not(.dark) .report-summarizer__empty::before {
+  background:
+    linear-gradient(110deg, transparent 0 36%, rgba(22, 119, 255, 0.08) 50%, transparent 66%),
+    radial-gradient(circle at 88% 16%, rgba(22, 119, 255, 0.1), transparent 26%);
 }
 
 /* ── 结果区 ── */
@@ -323,13 +407,14 @@ html:not(.dark) .report-summarizer__header {
 .report-summarizer__factors,
 .report-summarizer__summary {
   position: relative;
-  border: 1px solid var(--border-color);
+  z-index: 1;
+  border: 1px solid rgba(56, 189, 248, 0.18);
   border-radius: var(--border-radius-base);
   background:
-    linear-gradient(rgba(56, 189, 248, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(56, 189, 248, 0.045) 1px, transparent 1px);
-  background-size: 32px 32px;
-  backdrop-filter: blur(10px);
+    linear-gradient(135deg, rgba(15, 23, 42, 0.54), rgba(15, 23, 42, 0.34)),
+    rgba(20, 22, 27, 0.48);
+  box-shadow: 0 14px 36px rgba(2, 8, 23, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(16px) saturate(1.2);
   overflow: hidden;
 }
 
@@ -340,10 +425,28 @@ html:not(.dark) .report-summarizer__header {
   inset: 0;
   pointer-events: none;
   background:
-    linear-gradient(110deg, transparent 0 36%, rgba(56, 189, 248, 0.12) 50%, transparent 66%);
-  opacity: 0.6;
+    linear-gradient(110deg, transparent 0 36%, rgba(56, 189, 248, 0.1) 50%, transparent 66%),
+    radial-gradient(circle at 88% 16%, rgba(34, 211, 166, 0.12), transparent 26%);
+  opacity: 0.8;
   content: "";
-  animation: case-form-scan 10s linear infinite;
+  animation: case-form-scan 12s linear infinite;
+}
+
+html:not(.dark) .report-summarizer__risk,
+html:not(.dark) .report-summarizer__factors,
+html:not(.dark) .report-summarizer__summary {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.76), rgba(245, 250, 255, 0.58)),
+    rgba(255, 255, 255, 0.72);
+  box-shadow: 0 14px 34px rgba(20, 42, 76, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.86);
+}
+
+html:not(.dark) .report-summarizer__risk::before,
+html:not(.dark) .report-summarizer__factors::before,
+html:not(.dark) .report-summarizer__summary::before {
+  background:
+    linear-gradient(110deg, transparent 0 36%, rgba(22, 119, 255, 0.08) 50%, transparent 66%),
+    radial-gradient(circle at 88% 16%, rgba(22, 119, 255, 0.1), transparent 26%);
 }
 
 .result-header {

@@ -13,8 +13,11 @@ from typing import Any, Dict, Optional, Tuple
 from sqlalchemy.orm import Session
 
 from app.models.scenario import Scenario, ScenarioStep, ExecutionRun
+from app.models.report import Report
 from app.repositories.scenario_repository import ScenarioRepository
 from app.repositories.execution_repository import ExecutionRepository
+from app.repositories.report_repository import ReportRepository
+from app.services.report_service import ReportService
 
 
 class ScenarioService:
@@ -61,6 +64,10 @@ class ScenarioService:
             "updated_at": scenario.updated_at.isoformat() if scenario.updated_at else "",
             "step_count": len(scenario.steps) if scenario.steps else 0,
             "steps": [ScenarioService._serialize_step(s) for s in scenario.steps],
+            # 质量基础关联字段
+            "project_id": getattr(scenario, "project_id", None),
+            "version_id": getattr(scenario, "version_id", None),
+            "iteration_id": getattr(scenario, "iteration_id", None),
         }
 
     def _serialize_run(self, run: ExecutionRun) -> Dict[str, Any]:
@@ -111,6 +118,9 @@ class ScenarioService:
             "version": data.get("version", 1),
             "status": data.get("status", "draft"),
             "created_by": data.get("created_by"),
+            "project_id": data.get("project_id"),
+            "version_id": data.get("version_id"),
+            "iteration_id": data.get("iteration_id"),
         }
         scenario = self.repo.create(self.db, scenario_data)
         self.db.flush()
@@ -145,10 +155,20 @@ class ScenarioService:
         page_size: int = 20,
         keyword: Optional[str] = None,
         status: Optional[str] = None,
+        project_id: Optional[int] = None,
+        version_id: Optional[int] = None,
+        iteration_id: Optional[int] = None,
     ) -> Tuple[list[Dict[str, Any]], int]:
         """List scenarios with pagination."""
         scenarios, total = self.repo.list(
-            self.db, page=page, page_size=page_size, keyword=keyword, status=status
+            self.db,
+            page=page,
+            page_size=page_size,
+            keyword=keyword,
+            status=status,
+            project_id=project_id,
+            version_id=version_id,
+            iteration_id=iteration_id,
         )
         return [self._serialize_scenario(s) for s in scenarios], total
 
@@ -331,7 +351,13 @@ def _run_scenario_background(run_id: int, scenario_id: int) -> None:
             return
 
         steps = sorted(scenario.steps, key=lambda s: s.sort_order)
-        summary = {"total_steps": len(steps), "executed": 0, "passed": 0, "failed": 0}
+        summary = {
+            "total_steps": len(steps),
+            "executed": 0,
+            "passed": 0,
+            "failed": 0,
+            "steps": [],
+        }
         failed = False
 
         for step in steps:
@@ -384,6 +410,9 @@ def _run_scenario_background(run_id: int, scenario_id: int) -> None:
             if step_result["status"] == "passed":
                 summary["passed"] += 1
 
+            # 保留每个步骤的执行结果
+            summary["steps"].append(step_result)
+
             # Apply failure strategy
             if step_result["status"] == "failed":
                 if step.failure_strategy == "stop":
@@ -396,15 +425,70 @@ def _run_scenario_background(run_id: int, scenario_id: int) -> None:
         if run.started_at:
             duration_ms = int((datetime.utcnow() - run.started_at).total_seconds() * 1000)
 
+        # 更新执行记录状态
+        final_status = "passed" if not failed and summary["failed"] == 0 else "failed"
         _update_run_status(
             db, run_id,
-            status="passed" if not failed and summary["failed"] == 0 else "failed",
+            status=final_status,
             finished_at=datetime.utcnow(),
             duration_ms=duration_ms,
             summary=summary,
         )
+
+        # 重新查询获取最终状态
+        run = db.query(ExecutionRun).filter(ExecutionRun.id == run_id).first()
+
+        # 自动生成执行报告
+        _create_report_from_run(db, run, scenario, summary, duration_ms)
     finally:
         db.close()
+
+
+def _create_report_from_run(db: Session, run: ExecutionRun, scenario: Scenario, summary: dict, duration_ms: int) -> None:
+    """从执行记录自动创建报告"""
+    # 幂等检查：避免重复创建
+    existing = db.query(Report).filter(Report.target_id == run.id, Report.report_type == "execution").first()
+    if existing:
+        return
+
+    total_steps = summary.get("total_steps", 0)
+    executed = summary.get("executed", 0)
+    passed = summary.get("passed", 0)
+    failed = summary.get("failed", 0)
+    skipped = max(total_steps - executed, 0)
+
+    execution_data = {
+        "total": total_steps,
+        "passed": passed,
+        "failed": failed,
+        "skipped": skipped,
+        "duration_ms": duration_ms,
+    }
+    report_summary = ReportService.build_summary(execution_data)
+
+    report_data = {
+        "name": f"{scenario.name} - 执行报告",
+        "report_type": "execution",
+        "target_id": run.id,
+        "target_name": scenario.name,
+        "summary": report_summary,
+        "metrics": {
+            "run_id": run.id,
+            "scenario_id": scenario.id,
+            "status": run.status,
+            "duration_ms": duration_ms,
+            "step_results": summary.get("steps", []),
+        },
+        "executed_at": run.finished_at or datetime.utcnow(),
+        "duration_ms": duration_ms,
+        "triggered_by": None,
+        # 继承场景的项目/版本/迭代归属
+        "project_id": getattr(scenario, "project_id", None),
+        "version_id": getattr(scenario, "version_id", None),
+        "iteration_id": getattr(scenario, "iteration_id", None),
+    }
+
+    ReportRepository.create(db, report_data)
 
 
 def _update_run_status(

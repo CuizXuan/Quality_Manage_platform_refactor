@@ -71,6 +71,9 @@ class ScenarioCreate(BaseModel):
     priority: str = Field(default="P2", description="优先级")
     version: int = Field(default=1, ge=1, description="版本号")
     status: str = Field(default="draft", description="状态")
+    project_id: Optional[int] = None
+    version_id: Optional[int] = None
+    iteration_id: Optional[int] = None
 
 
 class ScenarioUpdate(BaseModel):
@@ -81,6 +84,9 @@ class ScenarioUpdate(BaseModel):
     priority: Optional[str] = Field(None, description="优先级")
     version: Optional[int] = Field(None, ge=1, description="版本号")
     status: Optional[str] = None
+    project_id: Optional[int] = None
+    version_id: Optional[int] = None
+    iteration_id: Optional[int] = None
 
 
 class ScenarioResponse(BaseModel):
@@ -97,6 +103,9 @@ class ScenarioResponse(BaseModel):
     updated_at: Optional[str] = None
     step_count: int = 0
     steps: List[ScenarioStepResponse] = []
+    project_id: Optional[int] = None
+    version_id: Optional[int] = None
+    iteration_id: Optional[int] = None
 
     class Config:
         from_attributes = True

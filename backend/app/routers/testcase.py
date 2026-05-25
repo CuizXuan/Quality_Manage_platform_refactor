@@ -51,6 +51,10 @@ def list_testcases(
     created_start: Optional[str] = Query(None),
     created_end: Optional[str] = Query(None),
     is_automated: Optional[bool] = Query(None),
+    project_id: Optional[int] = Query(None),
+    version_id: Optional[int] = Query(None),
+    iteration_id: Optional[int] = Query(None),
+    requirement_id: Optional[int] = Query(None),
     current_user: PlatformUser = Depends(get_current_platform_user),
     db: Session = Depends(get_db),
 ):
@@ -68,6 +72,10 @@ def list_testcases(
         created_start=created_start,
         created_end=created_end,
         is_automated=is_automated,
+        project_id=project_id,
+        version_id=version_id,
+        iteration_id=iteration_id,
+        requirement_id=requirement_id,
     )
     return TestCaseListResponse(items=items, total=total, page=page, page_size=page_size, stats=stats)
 

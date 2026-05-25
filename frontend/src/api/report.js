@@ -69,4 +69,7 @@ export const reportApi = {
   evaluateAllQualityGates(params, data) {
     return client.post('/api/reports/quality-gates/evaluate-all', data, { params })
   },
+  evaluateQualityGatesFromReport(reportId, gateType) {
+    return client.post(`/api/reports/${reportId}/quality-gates/evaluate`, null, { params: { gate_type: gateType } })
+  },
 }

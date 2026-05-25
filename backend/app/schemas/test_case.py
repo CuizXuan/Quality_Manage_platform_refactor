@@ -17,6 +17,10 @@ class TestCaseCreate(BaseModel):
     auto_case_id: str = Field(default="", max_length=100)
     api_case: Optional[Dict[str, Any]] = Field(default=None)
     functional_case: Optional[Dict[str, Any]] = Field(default=None)
+    project_id: Optional[int] = None
+    version_id: Optional[int] = None
+    iteration_id: Optional[int] = None
+    requirement_id: Optional[int] = None
 
 
 class TestCaseUpdate(BaseModel):
@@ -32,6 +36,10 @@ class TestCaseUpdate(BaseModel):
     auto_case_id: Optional[str] = Field(default=None, max_length=100)
     api_case: Optional[Dict[str, Any]] = Field(default=None)
     functional_case: Optional[Dict[str, Any]] = Field(default=None)
+    project_id: Optional[int] = None
+    version_id: Optional[int] = None
+    iteration_id: Optional[int] = None
+    requirement_id: Optional[int] = None
 
 
 class TestCaseResponse(BaseModel):
@@ -54,6 +62,10 @@ class TestCaseResponse(BaseModel):
     updated_at: Optional[str] = None
     api_case: Optional[Dict[str, Any]] = None
     functional_case: Optional[Dict[str, Any]] = None
+    project_id: Optional[int] = None
+    version_id: Optional[int] = None
+    iteration_id: Optional[int] = None
+    requirement_id: Optional[int] = None
 
     class Config:
         from_attributes = True

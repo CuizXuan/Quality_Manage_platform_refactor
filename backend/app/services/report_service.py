@@ -33,6 +33,10 @@ class ReportService:
             "duration_ms": report.duration_ms,
             "triggered_by": report.triggered_by,
             "created_at": report.created_at.isoformat() if report.created_at else None,
+            # 质量基础关联字段
+            "project_id": getattr(report, "project_id", None),
+            "version_id": getattr(report, "version_id", None),
+            "iteration_id": getattr(report, "iteration_id", None),
         }
 
     @staticmethod
@@ -79,6 +83,9 @@ class ReportService:
         keyword: Optional[str] = None,
         report_type: Optional[str] = None,
         environment: Optional[str] = None,
+        project_id: Optional[int] = None,
+        version_id: Optional[int] = None,
+        iteration_id: Optional[int] = None,
     ) -> Tuple[List[Dict[str, Any]], int]:
         """List reports with pagination."""
         items, total = self.repo.list(
@@ -88,6 +95,9 @@ class ReportService:
             keyword=keyword,
             report_type=report_type,
             environment=environment,
+            project_id=project_id,
+            version_id=version_id,
+            iteration_id=iteration_id,
         )
         return [self._serialize_report(r) for r in items], total
 

@@ -57,9 +57,10 @@
             v-model:current-page="typePage"
             v-model:page-size="typePageSize"
             :total="typeTotal"
-            :page-sizes="[10, 20, 50]"
-            layout="total, sizes, prev, pager, next"
-            background
+            :page-sizes="[15, 30, 50, 100]"
+            layout="total, sizes, prev, pager, next, jumper"
+            prev-text="上一页"
+            next-text="下一页"
           />
         </div>
       </div>
@@ -137,9 +138,10 @@
               v-model:current-page="itemPage"
               v-model:page-size="itemPageSize"
               :total="itemTotal"
-              :page-sizes="[15, 30, 50]"
-              layout="total, sizes, prev, pager, next"
-              background
+              :page-sizes="[15, 30, 50, 100]"
+              layout="total, sizes, prev, pager, next, jumper"
+              prev-text="上一页"
+              next-text="下一页"
             />
           </div>
         </template>

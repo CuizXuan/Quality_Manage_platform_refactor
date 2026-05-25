@@ -82,7 +82,7 @@
   --el-font-size-medium: var(--font-size-md);
   --el-font-size-large: var(--font-size-lg);
   --el-bg-color: var(--bg-container);
-  --el-bg-color-overlay: var(--bg-container);
+  --el-bg-color-overlay: rgba(0, 0, 0, 0.6);
   --el-bg-color-page: var(--bg-page);
   --el-text-color-primary: var(--text-strong);
   --el-text-color-regular: var(--text-primary);

@@ -132,6 +132,33 @@ const routes = [
         name: 'SuggestionHistory',
         component: () => import('../views/ai/SuggestionHistory.vue'),
       },
+      {
+        path: '/docgen',
+        name: 'DocGenerationCenter',
+        component: () => import('../views/docgen/DocGenerationCenter.vue'),
+        redirect: '/docgen/tasks',
+        children: [
+          { path: '/docgen/tasks', name: 'DocGenTasks', component: () => import('../views/docgen/DocGenTasks.vue') },
+          { path: '/docgen/rules', name: 'DocGenRules', component: () => import('../views/docgen/DocGenRules.vue') },
+          { path: '/docgen/templates', name: 'DocGenTemplates', component: () => import('../views/docgen/DocGenTemplates.vue') },
+          { path: '/docgen/generate', name: 'DocGenGenerate', component: () => import('../views/docgen/DocGenGenerate.vue') },
+        ],
+      },
+      {
+        path: '/foundation/projects',
+        name: 'ProjectManagement',
+        component: () => import('../views/foundation/ProjectManagement.vue'),
+      },
+      {
+        path: '/foundation/requirements',
+        name: 'RequirementManagement',
+        component: () => import('../views/foundation/RequirementManagement.vue'),
+      },
+      {
+        path: '/api-assets',
+        name: 'ApiAssetCenter',
+        component: () => import('../views/apiAsset/ApiAssetCenter.vue'),
+      },
     ],
   },
   {

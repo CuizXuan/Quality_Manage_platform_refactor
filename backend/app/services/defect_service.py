@@ -46,6 +46,10 @@ class DefectService:
             "closed_at": defect.closed_at.isoformat() if defect.closed_at else None,
             "tags": defect.tags or [],
             "attachments": defect.attachments or [],
+            # 质量基础关联字段
+            "version_id": getattr(defect, "version_id", None),
+            "iteration_id": getattr(defect, "iteration_id", None),
+            "requirement_id": getattr(defect, "requirement_id", None),
         }
 
     def create_defect(self, data: Dict[str, Any]) -> Dict[str, Any]:
@@ -64,6 +68,9 @@ class DefectService:
         defect_type: Optional[str] = None,
         assigned_to: Optional[int] = None,
         project_id: Optional[int] = None,
+        version_id: Optional[int] = None,
+        iteration_id: Optional[int] = None,
+        requirement_id: Optional[int] = None,
     ) -> Tuple[List[Dict[str, Any]], int]:
         """List defects with pagination and filtering."""
         items, total = self.repo.list(
@@ -77,6 +84,9 @@ class DefectService:
             defect_type=defect_type,
             assigned_to=assigned_to,
             project_id=project_id,
+            version_id=version_id,
+            iteration_id=iteration_id,
+            requirement_id=requirement_id,
         )
         return [self._serialize_defect(d) for d in items], total
 

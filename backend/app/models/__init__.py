@@ -13,6 +13,14 @@ from app.models.case_folder import CaseFolder
 from app.models.api_test_case import ApiTestCase
 from app.models.functional_test_case import FunctionalTestCase
 from app.models.dictionary import DictType, DictItem
+from app.models.docgen import DocGenerationTask, DocGenerationRule, DocGenerationTemplate
+from app.models.quality_foundation import (
+    QualityProject,
+    QualityVersion,
+    QualityIteration,
+    RequirementItem,
+)
+from app.models.api_asset import ApiGroup, ApiDefinition, ApiImportRecord
 
 __all__ = [
     "Base",
@@ -31,4 +39,14 @@ __all__ = [
     "FunctionalTestCase",
     "DictType",
     "DictItem",
+    "DocGenerationTask",
+    "DocGenerationRule",
+    "DocGenerationTemplate",
+    "QualityProject",
+    "QualityVersion",
+    "QualityIteration",
+    "RequirementItem",
+    "ApiGroup",
+    "ApiDefinition",
+    "ApiImportRecord",
 ]

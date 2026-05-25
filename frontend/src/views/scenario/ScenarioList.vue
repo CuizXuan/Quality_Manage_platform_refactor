@@ -15,6 +15,40 @@
     <section class="scenario-list-page__filters">
       <el-form :model="draftFilters" label-position="left" class="filter-form">
         <div class="filter-form__row">
+          <el-form-item label="项目：" class="filter-item filter-item--project">
+            <el-select
+              v-model="draftFilters.projectId"
+              placeholder="选择项目"
+              clearable
+              class="filter-control"
+              @change="onProjectChange"
+            >
+              <el-option v-for="p in foundationStore.projects" :key="p.id" :label="p.name" :value="p.id" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="版本：" class="filter-item filter-item--version">
+            <el-select
+              v-model="draftFilters.versionId"
+              placeholder="选择版本"
+              clearable
+              class="filter-control"
+              :disabled="!draftFilters.projectId"
+              @change="onVersionChange"
+            >
+              <el-option v-for="v in foundationStore.versions" :key="v.id" :label="v.name" :value="v.id" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="迭代：" class="filter-item filter-item--iteration">
+            <el-select
+              v-model="draftFilters.iterationId"
+              placeholder="选择迭代"
+              clearable
+              class="filter-control"
+              :disabled="!draftFilters.versionId"
+            >
+              <el-option v-for="i in foundationStore.iterations" :key="i.id" :label="i.name" :value="i.id" />
+            </el-select>
+          </el-form-item>
           <el-form-item label="状态：" class="filter-item filter-item--status">
             <el-select
               v-model="draftFilters.status"
@@ -26,17 +60,6 @@
               <el-option label="草稿" value="draft" />
               <el-option label="归档" value="archived" />
             </el-select>
-          </el-form-item>
-          <el-form-item label="创建日期：" class="filter-item filter-item--date">
-            <el-date-picker
-              v-model="draftFilters.date_range"
-              type="daterange"
-              range-separator="至"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-              value-format="YYYY-MM-DD"
-              class="filter-bar__date-range"
-            />
           </el-form-item>
           <el-form-item label="关键词：" class="filter-item filter-item--keyword">
             <el-input
@@ -177,6 +200,30 @@
             <el-radio value="draft">草稿</el-radio>
           </el-radio-group>
         </el-form-item>
+        <el-divider content-position="left">归属信息</el-divider>
+        <el-row :gutter="12">
+          <el-col :span="8">
+            <el-form-item label="项目">
+              <el-select v-model="createForm.project_id" placeholder="请选择项目" clearable filterable @change="onCreateProjectChange">
+                <el-option v-for="p in foundationProjects" :key="p.id" :label="p.name" :value="p.id" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="版本">
+              <el-select v-model="createForm.version_id" placeholder="请选择版本" clearable filterable :disabled="!createForm.project_id" @change="onCreateVersionChange">
+                <el-option v-for="v in foundationVersions" :key="v.id" :label="v.name" :value="v.id" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="迭代">
+              <el-select v-model="createForm.iteration_id" placeholder="请选择迭代" clearable filterable :disabled="!createForm.version_id">
+                <el-option v-for="i in foundationIterations" :key="i.id" :label="i.name" :value="i.id" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
       <template #footer>
         <el-button @click="createDialogVisible = false">取消</el-button>
@@ -194,16 +241,21 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { Plus, Search, RefreshLeft } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useScenarioStore } from '@/stores/scenarioStore'
+import { useQualityFoundationStore } from '@/stores/qualityFoundationStore'
 
 import ScenarioDetailDialog from './ScenarioDetailDialog.vue'
 
 const router = useRouter()
 const scenarioStore = useScenarioStore()
+const foundationStore = useQualityFoundationStore()
+const foundationProjects = computed(() => foundationStore.projects)
+const foundationVersions = computed(() => foundationStore.versions)
+const foundationIterations = computed(() => foundationStore.iterations)
 
 const createDialogVisible = ref(false)
 const detailDialogVisible = ref(false)
@@ -217,18 +269,25 @@ const createForm = ref({
   priority: 'P2',
   description: '',
   status: 'draft',
+  project_id: null,
+  version_id: null,
+  iteration_id: null,
 })
 
 const draftFilters = ref({
+  projectId: null,
+  versionId: null,
+  iterationId: null,
   keyword: '',
   status: '',
-  date_range: null,
 })
 
 const appliedFilters = ref({
+  projectId: null,
+  versionId: null,
+  iterationId: null,
   keyword: '',
   status: '',
-  date_range: null,
 })
 
 const pagination = ref({
@@ -237,8 +296,44 @@ const pagination = ref({
 })
 
 onMounted(() => {
+  foundationStore.fetchProjects({ page: 1, page_size: 100 })
   scenarioStore.fetchScenarios({ page: 1, page_size: pagination.value.pageSize })
 })
+
+function onProjectChange(projectId) {
+  draftFilters.value.versionId = null
+  draftFilters.value.iterationId = null
+  if (projectId) {
+    foundationStore.fetchVersions({ project_id: projectId })
+  }
+}
+
+function onVersionChange(versionId) {
+  draftFilters.value.iterationId = null
+  if (versionId) {
+    foundationStore.fetchIterations({ project_id: draftFilters.value.projectId, version_id: versionId })
+  }
+}
+
+function onCreateProjectChange(projectId) {
+  createForm.value.version_id = null
+  createForm.value.iteration_id = null
+  if (projectId) {
+    foundationStore.fetchVersions(projectId)
+  } else {
+    foundationStore.clearVersions()
+    foundationStore.clearIterations()
+  }
+}
+
+function onCreateVersionChange(versionId) {
+  createForm.value.iteration_id = null
+  if (versionId) {
+    foundationStore.fetchIterations({ version_id: versionId })
+  } else {
+    foundationStore.clearIterations()
+  }
+}
 
 function buildQueryParams() {
   const params = {
@@ -247,22 +342,21 @@ function buildQueryParams() {
   }
   if (appliedFilters.value.keyword) params.keyword = appliedFilters.value.keyword
   if (appliedFilters.value.status) params.status = appliedFilters.value.status
-  if (appliedFilters.value.date_range && appliedFilters.value.date_range.length === 2) {
-    params.start_date = appliedFilters.value.date_range[0]
-    params.end_date = appliedFilters.value.date_range[1]
-  }
+  if (appliedFilters.value.projectId) params.project_id = appliedFilters.value.projectId
+  if (appliedFilters.value.versionId) params.version_id = appliedFilters.value.versionId
+  if (appliedFilters.value.iterationId) params.iteration_id = appliedFilters.value.iterationId
   return params
 }
 
 function handleSearch() {
-  appliedFilters.value = { ...draftFilters.value, date_range: draftFilters.value.date_range ? [...draftFilters.value.date_range] : null }
+  appliedFilters.value = { ...draftFilters.value }
   pagination.value.page = 1
   scenarioStore.fetchScenarios(buildQueryParams())
 }
 
 function handleReset() {
-  draftFilters.value = { keyword: '', status: '', date_range: null }
-  appliedFilters.value = { keyword: '', status: '', date_range: null }
+  draftFilters.value = { projectId: null, versionId: null, iterationId: null, keyword: '', status: '' }
+  appliedFilters.value = { projectId: null, versionId: null, iterationId: null, keyword: '', status: '' }
   pagination.value.page = 1
   scenarioStore.fetchScenarios({ page: 1, page_size: pagination.value.pageSize })
 }

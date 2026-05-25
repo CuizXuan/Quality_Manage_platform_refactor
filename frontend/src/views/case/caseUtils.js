@@ -107,6 +107,10 @@ export function createBaseCase(caseType, folderId = null) {
     case_type: caseType,
     api_case: createDefaultApiCase(),
     functional_case: createDefaultFunctionalCase(),
+    project_id: null,
+    version_id: null,
+    iteration_id: null,
+    requirement_id: null,
   }
 }
 
@@ -119,6 +123,10 @@ export function normalizeCaseForEdit(row, caseType, folderId = null) {
     ...base,
     ...row,
     tags: row.tags || [],
+    project_id: row.project_id ?? null,
+    version_id: row.version_id ?? null,
+    iteration_id: row.iteration_id ?? null,
+    requirement_id: row.requirement_id ?? null,
     auto_script_config: {
       ...base.auto_script_config,
       ...scriptConfig,
