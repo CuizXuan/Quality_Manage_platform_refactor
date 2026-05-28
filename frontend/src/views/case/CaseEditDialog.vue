@@ -1,5 +1,6 @@
 <template>
   <el-dialog
+    ref="dialogRef"
     :model-value="modelValue"
     :title="dialogTitle"
     width="min(1280px, 95vw)"
@@ -215,7 +216,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { caseApi } from '@/api/case'
 import RichTextEditor from '@/components/common/RichTextEditor.vue'
 import feedback from '@/utils/feedback'
@@ -248,6 +249,7 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['update:modelValue', 'saved', 'closed'])
+const dialogRef = ref(null)
 
 const foundationStore = useQualityFoundationStore()
 const foundationProjects = computed(() => foundationStore.projects)
@@ -404,7 +406,14 @@ async function saveCase() {
       feedback.success(`${caseTitle.value}创建成功`)
     }
     emit('saved')
+    // 关闭弹窗 - 先通过 emit 关闭
     emit('update:modelValue', false)
+    // 确保弹窗关闭
+    await nextTick()
+    if (dialogRef.value?.visible !== false) {
+      // 如果弹窗仍未关闭，尝试直接关闭
+      dialogRef.value?.handleClose?.()
+    }
   } catch {
     feedback.error(`${caseTitle.value}保存失败`)
   }

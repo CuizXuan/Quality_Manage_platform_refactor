@@ -57,7 +57,7 @@
       <div class="result-header">
         <span class="card-title">生成的断言 ({{ assertions.length }})</span>
       </div>
-      <el-table :data="assertions" stripe>
+      <el-table :data="assertions" height="100%" highlight-current-row>
         <el-table-column label="断言类型" width="150">
           <template #default="{ row }">
             <el-tag :type="assertionTypeTag(row.assertion_type)" size="small">{{ row.assertion_type }}</el-tag>

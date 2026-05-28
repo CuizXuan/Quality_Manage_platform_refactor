@@ -45,6 +45,20 @@
         </el-tab-pane>
         <el-tab-pane label="Assert" name="assert">
           <div class="api-case-form__asserts">
+            <div v-if="assertionLoading" class="ai-loading">
+              <el-icon class="is-loading"><Loading /></el-icon>
+              <span>AI 生成断言中...</span>
+            </div>
+            <div v-else-if="assertionSuggestions.length" class="ai-suggestions">
+              <div class="suggestions-header">
+                <span>AI 建议 {{ assertionSuggestions.length }} 条断言</span>
+                <el-button type="primary" size="small" @click="acceptAssertions">采纳全部</el-button>
+              </div>
+              <div v-for="(suggestion, idx) in assertionSuggestions" :key="idx" class="suggestion-item">
+                <span class="suggestion-text">{{ suggestion.field }} {{ suggestion.assertion_type || suggestion.operator }} {{ suggestion.expected_value }}</span>
+                <el-button text size="small" @click="acceptSingleAssertion(idx)">采纳</el-button>
+              </div>
+            </div>
             <el-row
               v-for="(assertion, index) in modelValue.assertions"
               :key="index"
@@ -72,7 +86,10 @@
                 <el-button :icon="Delete" circle type="danger" @click="removeAssert(index)" />
               </el-col>
             </el-row>
-            <el-button :icon="Plus" @click="addAssert">添加断言</el-button>
+            <div class="assert-actions">
+              <el-button :icon="Plus" @click="addAssert">添加断言</el-button>
+              <el-button :icon="MagicStick" type="primary" plain @click="generateAssertions">AI 生成断言</el-button>
+            </div>
           </div>
         </el-tab-pane>
       </el-tabs>
@@ -93,13 +110,14 @@
 
 <script setup>
 import { computed, ref } from 'vue'
-import { Delete, MagicStick, Plus } from '@element-plus/icons-vue'
+import { Delete, MagicStick, Plus, Loading } from '@element-plus/icons-vue'
 import AuthEditor from '@/components/terminal/AuthEditor.vue'
 import BodyEditor from '@/components/terminal/BodyEditor.vue'
 import KeyValueEditor from '@/components/terminal/KeyValueEditor.vue'
 import { parseRequest } from '@/utils/requestParser'
 import feedback from '@/utils/feedback'
 import { methodOptions } from './caseUtils'
+import { useAiStore } from '@/stores/aiStore'
 
 const props = defineProps({
   modelValue: {
@@ -178,6 +196,64 @@ function createAuthConfig(parsed) {
   }
   return props.modelValue.auth_config || {}
 }
+
+// ── AI 断言生成 ────────────────────────────────────────────
+
+const aiStore = useAiStore()
+const assertionLoading = ref(false)
+const assertionSuggestions = ref([])
+
+async function generateAssertions() {
+  if (!props.modelValue.url) {
+    feedback.warning('请先填写请求 URL')
+    return
+  }
+  assertionLoading.value = true
+  assertionSuggestions.value = []
+  try {
+    const caseData = {
+      name: '',
+      method: props.modelValue.method || 'GET',
+      url: props.modelValue.url,
+      headers: props.modelValue.headers || [],
+      params: props.modelValue.params || [],
+      body: props.modelValue.body || '',
+      body_type: props.modelValue.body_type || 'none',
+    }
+    const result = await aiStore.generateAssertions({ case_data: caseData })
+    if (result?.assertions?.length) {
+      assertionSuggestions.value = result.assertions
+      feedback.success(`生成 ${result.assertions.length} 条断言建议`)
+    } else {
+      feedback.warning('未生成断言建议，请检查 AI 配置')
+    }
+  } catch (e) {
+    feedback.error('生成断言失败: ' + (e.response?.data?.detail || e.message || '请检查 AI 配置'))
+  } finally {
+    assertionLoading.value = false
+  }
+}
+
+function acceptAssertions() {
+  for (const sugg of assertionSuggestions.value) {
+    props.modelValue.assertions.push({
+      field: sugg.field || 'status',
+      operator: sugg.operator || 'equals',
+      expected: sugg.expected_value || sugg.expected || '',
+    })
+  }
+  assertionSuggestions.value = []
+  feedback.success('已采纳全部断言')
+}
+
+function acceptSingleAssertion(idx) {
+  const sugg = assertionSuggestions.value.splice(idx, 1)[0]
+  props.modelValue.assertions.push({
+    field: sugg.field || 'status',
+    operator: sugg.operator || 'equals',
+    expected: sugg.expected_value || sugg.expected || '',
+  })
+}
 </script>
 
 <style scoped>
@@ -244,5 +320,50 @@ function createAuthConfig(parsed) {
 
 .api-case-form__assert-row {
   align-items: center;
+}
+
+.api-case-form__asserts .ai-loading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  color: var(--text-secondary);
+}
+
+.api-case-form__asserts .ai-suggestions {
+  padding: 8px 12px;
+  margin-bottom: 8px;
+  border: 1px solid var(--el-color-primary-light-5);
+  border-radius: var(--border-radius-base);
+  background: var(--el-color-primary-light-9);
+}
+
+.ai-suggestions .suggestions-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--el-color-primary);
+}
+
+.ai-suggestions .suggestion-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+  font-size: 13px;
+}
+
+.ai-suggestions .suggestion-text {
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+}
+
+.assert-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
 }
 </style>

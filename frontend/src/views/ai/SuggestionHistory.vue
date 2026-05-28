@@ -165,10 +165,8 @@ function buildQueryParams() {
 
 async function fetchSuggestions() {
   try {
-    const response = await aiStore.fetchAnalysis(buildQueryParams())
-    if (Array.isArray(response)) {
-      suggestionList.value = response
-    } else if (response?.items) {
+    const response = await aiStore.fetchSuggestions(buildQueryParams())
+    if (response?.items) {
       suggestionList.value = response.items
       total.value = response.total || 0
     } else if (response?.data?.items) {
@@ -242,7 +240,7 @@ function formatContent(content) {
   if (typeof content === 'string') {
     try { return JSON.stringify(JSON.parse(content), null, 2) } catch { return content }
   }
-  return JSON.stringify(content, null, 2)
+  try { return JSON.stringify(content, null, 2) } catch { return String(content) }
 }
 
 function truncateContent(content, maxLen = 100) {
@@ -537,6 +535,11 @@ html:not(.dark) .suggestion-history__table :deep(.el-table__row:hover > td) {
 
 .suggestion-history__table :deep(.el-table__cell) {
   vertical-align: middle;
+}
+
+.suggestion-history__table :deep(.el-table__body tr:nth-child(even) td.el-table__cell) {
+  background: rgba(245, 250, 255, 0.5) !important;
+  background-color: rgba(245, 250, 255, 0.5) !important;
 }
 
 /* ── 分页 ── */

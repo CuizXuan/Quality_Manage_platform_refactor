@@ -76,6 +76,7 @@
         :data="steps"
         row-key="id"
         class="steps-table"
+        height="100%"
         highlight-current-row
       >
         <el-table-column type="index" label="#" width="60" align="center" />
@@ -523,5 +524,10 @@ html:not(.dark) .detail-steps {
 .text-muted {
   color: var(--text-secondary);
   font-size: 13px;
+}
+
+.steps-table :deep(.el-table__body tr:nth-child(even) td.el-table__cell) {
+  background: rgba(245, 250, 255, 0.5) !important;
+  background-color: rgba(245, 250, 255, 0.5) !important;
 }
 </style>

@@ -23,107 +23,125 @@
 
     <!-- 查询区 -->
     <section class="defect-list-page__filters">
-      <el-form :model="draftFilters" label-position="left" class="filter-form">
-        <div class="filter-form__row">
-          <el-form-item label="项目：" class="filter-item">
-            <el-select
-              v-model="draftFilters.projectId"
-              placeholder="选择项目"
-              clearable
-              class="filter-control"
-              @change="onProjectChange"
-            >
-              <el-option v-for="p in foundationStore.projects" :key="p.id" :label="p.name" :value="p.id" />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="版本：" class="filter-item">
-            <el-select
-              v-model="draftFilters.versionId"
-              placeholder="选择版本"
-              clearable
-              class="filter-control"
-              :disabled="!draftFilters.projectId"
-              @change="onVersionChange"
-            >
-              <el-option v-for="v in foundationStore.versions" :key="v.id" :label="v.name" :value="v.id" />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="迭代：" class="filter-item">
-            <el-select
-              v-model="draftFilters.iterationId"
-              placeholder="选择迭代"
-              clearable
-              class="filter-control"
-              :disabled="!draftFilters.versionId"
-            >
-              <el-option v-for="i in foundationStore.iterations" :key="i.id" :label="i.name" :value="i.id" />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="需求：" class="filter-item">
-            <el-select
-              v-model="draftFilters.requirementId"
-              placeholder="选择需求"
-              clearable
-              class="filter-control"
-              :disabled="!draftFilters.projectId"
-            >
-              <el-option v-for="r in foundationStore.requirements" :key="r.id" :label="r.title" :value="r.id" />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="严重程度：" class="filter-item">
-            <el-select
-              v-model="draftFilters.severity"
-              placeholder="严重程度"
-              clearable
-              class="filter-control"
-            >
-              <el-option label="Critical" value="critical" />
-              <el-option label="High" value="high" />
-              <el-option label="Medium" value="medium" />
-              <el-option label="Low" value="low" />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="优先级：" class="filter-item">
-            <el-select
-              v-model="draftFilters.priority"
-              placeholder="优先级"
-              clearable
-              class="filter-control"
-            >
-              <el-option label="P0" value="P0" />
-              <el-option label="P1" value="P1" />
-              <el-option label="P2" value="P2" />
-              <el-option label="P3" value="P3" />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="状态：" class="filter-item">
-            <el-select
-              v-model="draftFilters.status"
-              placeholder="全部状态"
-              clearable
-              class="filter-control"
-            >
-              <el-option label="打开" value="open" />
-              <el-option label="已确认" value="confirmed" />
-              <el-option label="已修复" value="fixed" />
-              <el-option label="已验证" value="verified" />
-              <el-option label="已关闭" value="closed" />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="关键词：" class="filter-item filter-item--keyword">
-            <el-input
-              v-model="draftFilters.keyword"
-              placeholder="搜索标题"
-              clearable
-              class="search-bar__input"
-              @keyup.enter="handleSearch"
-            />
-          </el-form-item>
-          <div class="filter-actions">
-            <el-button type="primary" :icon="Search" @click="handleSearch">查询</el-button>
-            <el-button :icon="RefreshLeft" @click="handleReset">重置</el-button>
-          </div>
-        </div>
+      <el-form :inline="false" :model="draftFilters" label-position="left" class="filter-form">
+        <el-row :gutter="12">
+          <el-col :xs="24" :sm="12" :md="6">
+            <el-form-item label="项目：" class="filter-item">
+              <el-select
+                v-model="draftFilters.projectId"
+                placeholder="选择项目"
+                clearable
+                class="filter-control"
+                @change="onProjectChange"
+              >
+                <el-option v-for="p in foundationStore.projects" :key="p.id" :label="p.name" :value="p.id" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :xs="24" :sm="12" :md="6">
+            <el-form-item label="版本：" class="filter-item">
+              <el-select
+                v-model="draftFilters.versionId"
+                placeholder="选择版本"
+                clearable
+                class="filter-control"
+                :disabled="!draftFilters.projectId"
+                @change="onVersionChange"
+              >
+                <el-option v-for="v in foundationStore.versions" :key="v.id" :label="v.name" :value="v.id" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :xs="24" :sm="12" :md="6">
+            <el-form-item label="迭代：" class="filter-item">
+              <el-select
+                v-model="draftFilters.iterationId"
+                placeholder="选择迭代"
+                clearable
+                class="filter-control"
+                :disabled="!draftFilters.versionId"
+              >
+                <el-option v-for="i in foundationStore.iterations" :key="i.id" :label="i.name" :value="i.id" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :xs="24" :sm="12" :md="6">
+            <el-form-item label="需求：" class="filter-item">
+              <el-select
+                v-model="draftFilters.requirementId"
+                placeholder="选择需求"
+                clearable
+                class="filter-control"
+                :disabled="!draftFilters.projectId"
+              >
+                <el-option v-for="r in foundationStore.requirements" :key="r.id" :label="r.title" :value="r.id" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :xs="24" :sm="12" :md="6">
+            <el-form-item label="严重程度：" class="filter-item">
+              <el-select
+                v-model="draftFilters.severity"
+                placeholder="严重程度"
+                clearable
+                class="filter-control"
+              >
+                <el-option label="Critical" value="critical" />
+                <el-option label="High" value="high" />
+                <el-option label="Medium" value="medium" />
+                <el-option label="Low" value="low" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :xs="24" :sm="12" :md="6">
+            <el-form-item label="优先级：" class="filter-item">
+              <el-select
+                v-model="draftFilters.priority"
+                placeholder="优先级"
+                clearable
+                class="filter-control"
+              >
+                <el-option label="P0" value="P0" />
+                <el-option label="P1" value="P1" />
+                <el-option label="P2" value="P2" />
+                <el-option label="P3" value="P3" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :xs="24" :sm="12" :md="6">
+            <el-form-item label="状态：" class="filter-item">
+              <el-select
+                v-model="draftFilters.status"
+                placeholder="全部状态"
+                clearable
+                class="filter-control"
+              >
+                <el-option label="打开" value="open" />
+                <el-option label="已确认" value="confirmed" />
+                <el-option label="已修复" value="fixed" />
+                <el-option label="已验证" value="verified" />
+                <el-option label="已关闭" value="closed" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :xs="24" :sm="12" :md="6">
+            <el-form-item label="关键词：" class="filter-item">
+              <el-input
+                v-model="draftFilters.keyword"
+                placeholder="搜索标题"
+                clearable
+                class="search-bar__input"
+                @keyup.enter="handleSearch"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :xs="24" :sm="12" :md="6">
+            <div class="filter-actions">
+              <el-button type="primary" :icon="Search" @click="handleSearch">查询</el-button>
+              <el-button :icon="RefreshLeft" @click="handleReset">重置</el-button>
+            </div>
+          </el-col>
+        </el-row>
       </el-form>
     </section>
 
@@ -202,6 +220,7 @@
     <DefectForm
       v-model="formVisible"
       :defect="currentDefect"
+      :initialData="initialDefectData"
       @saved="handleSaved"
     />
   </div>
@@ -209,12 +228,14 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 import { Plus, Search, RefreshLeft } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useReportStore } from '@/stores/reportStore'
 import { useQualityFoundationStore } from '@/stores/qualityFoundationStore'
 import DefectForm from './DefectForm.vue'
 
+const route = useRoute()
 const reportStore = useReportStore()
 const foundationStore = useQualityFoundationStore()
 
@@ -247,11 +268,60 @@ const pagination = ref({
 
 const formVisible = ref(false)
 const currentDefect = ref(null)
+const initialDefectData = ref(null)
 
 onMounted(() => {
   foundationStore.fetchProjects({ page: 1, page_size: 100 })
   reportStore.fetchDefects({ page: 1, page_size: pagination.value.pageSize })
   reportStore.fetchDefectStats()
+
+  // 处理 query params 跳转自动打开新建缺陷表单
+  const { open, action, title, description, severity, priority, defect_type, tags, project_id, version_id, iteration_id, requirement_id } = route.query
+
+  const shouldOpenCreate = open === 'create' || action === 'create'
+  if (shouldOpenCreate) {
+    const initialDefect = {}
+
+    if (title) initialDefect.title = String(title)
+    if (description) initialDefect.description = String(description)
+    if (severity && ['critical', 'high', 'medium', 'low'].includes(String(severity).toLowerCase())) {
+      initialDefect.severity = String(severity).toLowerCase()
+    }
+    if (priority && /^P[0-3]$/.test(String(priority))) {
+      initialDefect.priority = String(priority)
+    }
+    if (defect_type && ['functional', 'api', 'performance', 'security'].includes(String(defect_type))) {
+      initialDefect.defect_type = String(defect_type)
+    }
+
+    // 处理 tags：支持逗号分隔字符串或 JSON 数组字符串
+    if (tags) {
+      const rawTags = String(tags)
+      try {
+        initialDefect.tags = JSON.parse(rawTags)
+      } catch {
+        initialDefect.tags = rawTags.split(',').map(t => t.trim()).filter(Boolean)
+      }
+    }
+
+    // 数字字段
+    if (project_id) initialDefect.project_id = Number(project_id) || null
+    if (version_id) initialDefect.version_id = Number(version_id) || null
+    if (iteration_id) initialDefect.iteration_id = Number(iteration_id) || null
+    if (requirement_id) initialDefect.requirement_id = Number(requirement_id) || null
+
+    // 加载级联数据
+    if (initialDefect.project_id) {
+      foundationStore.fetchVersions({ project_id: initialDefect.project_id })
+    }
+    if (initialDefect.project_id && initialDefect.version_id) {
+      foundationStore.fetchIterations({ project_id: initialDefect.project_id, version_id: initialDefect.version_id })
+    }
+
+    currentDefect.value = null
+    initialDefectData.value = Object.keys(initialDefect).length > 0 ? initialDefect : null
+    formVisible.value = true
+  }
 })
 
 function onProjectChange(projectId) {
@@ -573,12 +643,9 @@ html:not(.dark) .defect-list-page__filters {
   width: 100%;
 }
 
-.filter-form__row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
+.filter-form :deep(.el-row) {
   align-items: flex-end;
-  width: 100%;
+  row-gap: 8px;
 }
 
 .filter-form :deep(.el-form-item) {
@@ -596,12 +663,9 @@ html:not(.dark) .defect-list-page__filters {
 
 .filter-item {
   display: flex;
-  flex: 0 0 auto;
   align-items: flex-end;
-}
-
-.filter-item--keyword {
-  flex: 0 0 auto;
+  margin-bottom: 0;
+  width: 100%;
 }
 
 .filter-actions {
@@ -620,10 +684,10 @@ html:not(.dark) .defect-list-page__filters {
 }
 
 .filter-control {
-  width: 140px;
+  width: 100%;
 }
 
-.search-bar__input {
+.search-bar__input :deep(.el-input) {
   width: 280px;
 }
 
@@ -650,6 +714,55 @@ html:not(.dark) .defect-list-page__table {
   flex: 1;
 }
 
+html:not(.dark) .defect-list-page__table {
+  background:
+    linear-gradient(rgba(22, 119, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(22, 119, 255, 0.04) 1px, transparent 1px),
+    rgba(255, 255, 255, 0.64);
+  background-size: 32px 32px;
+  box-shadow: 0 14px 34px rgba(20, 42, 76, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.86);
+  border-color: rgba(22, 119, 255, 0.14);
+}
+
+html:not(.dark) .defect-list-page__table :deep(.el-table) {
+  --el-table-tr-bg-color: rgba(255, 255, 255, 0.54);
+  --el-table-header-bg-color: rgba(240, 247, 255, 0.68);
+  --el-table-expanded-cell-bg-color: rgba(255, 255, 255, 0.64);
+  --el-table-row-hover-bg-color: var(--color-primary-soft);
+  background:
+    linear-gradient(rgba(22, 119, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(22, 119, 255, 0.03) 1px, transparent 1px),
+    rgba(255, 255, 255, 0.44);
+  background-size: 28px 28px, 28px 28px, auto;
+}
+
+html:not(.dark) .defect-list-page__table :deep(.el-table__header th) {
+  background: var(--el-table-header-bg-color) !important;
+  background-color: var(--el-table-header-bg-color) !important;
+  color: var(--text-secondary);
+  font-weight: 700;
+  font-size: 12px;
+}
+
+html:not(.dark) .defect-list-page__table :deep(.el-table__body td) {
+  background: var(--el-table-tr-bg-color) !important;
+  background-color: var(--el-table-tr-bg-color) !important;
+}
+
+html:not(.dark) .defect-list-page__table :deep(.el-table__body tr:nth-child(even) td.el-table__cell) {
+  background: rgba(245, 250, 255, 0.5) !important;
+  background-color: rgba(245, 250, 255, 0.5) !important;
+}
+
+html:not(.dark) .defect-list-page__table :deep(.el-table__row:hover > td) {
+  background: var(--el-table-row-hover-bg-color) !important;
+  background-color: var(--el-table-row-hover-bg-color) !important;
+}
+
+html:not(.dark) .defect-list-page__pagination {
+  border-top-color: rgba(22, 119, 255, 0.12);
+}
+
 .defect-list-page__table :deep(.el-table__header th) {
   background: var(--bg-container-soft) !important;
   color: var(--text-secondary);
@@ -668,6 +781,11 @@ html:not(.dark) .defect-list-page__table {
 
 .defect-list-page__table :deep(.el-table__cell) {
   vertical-align: middle;
+}
+
+.defect-list-page__table :deep(.el-table__body tr:nth-child(even) td.el-table__cell) {
+  background: rgba(245, 250, 255, 0.5) !important;
+  background-color: rgba(245, 250, 255, 0.5) !important;
 }
 
 .defect-title {
@@ -719,6 +837,6 @@ html:not(.dark) .defect-list-page__table {
   display: flex;
   justify-content: flex-end;
   padding: 10px 16px;
-  border-top: 1px solid var(--border-color);
+  border-top: 1px solid var(--border-color-lighter);
 }
 </style>

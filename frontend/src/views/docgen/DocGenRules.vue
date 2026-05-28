@@ -9,38 +9,46 @@
       <el-button type="primary" :icon="Plus" class="btn-primary-add" @click="showRuleDialog('create')">新增规则</el-button>
     </header>
 
-    <!-- 查询区 -->
+<!-- 查询区 -->
     <section class="docgen-rules-page__filters">
-      <el-form :model="draftFilters" label-position="left" class="filter-form">
-        <div class="filter-form__row">
-          <el-form-item label="文档类型：" class="filter-item">
-            <el-select v-model="draftFilters.doc_type" placeholder="文档类型" clearable class="filter-control">
-              <el-option label="需求大纲" value="requirement_outline" />
-              <el-option label="需求详情" value="requirement_detail" />
-              <el-option label="数据库设计" value="database_design" />
-              <el-option label="接口设计" value="api_design" />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="启用状态：" class="filter-item">
-            <el-select v-model="draftFilters.enabled" placeholder="启用状态" clearable class="filter-control">
-              <el-option label="已启用" :value="true" />
-              <el-option label="已禁用" :value="false" />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="关键词：" class="filter-item filter-item--keyword">
-            <el-input v-model="draftFilters.keyword" placeholder="搜索名称/文件名" clearable class="keyword-input" @keyup.enter="handleSearch" />
-          </el-form-item>
-          <div class="filter-actions">
-            <el-button type="primary" :icon="Search" @click="handleSearch">查询</el-button>
-            <el-button :icon="RefreshLeft" @click="handleReset">重置</el-button>
-          </div>
-        </div>
+      <el-form :inline="false" :model="draftFilters" label-position="left" class="filter-form">
+        <el-row :gutter="12">
+          <el-col :xs="24" :sm="12" :md="6" :lg="5">
+            <el-form-item label="文档类型：" class="filter-item">
+              <el-select v-model="draftFilters.doc_type" placeholder="文档类型" clearable class="filter-control">
+                <el-option label="需求大纲" value="requirement_outline" />
+                <el-option label="需求详情" value="requirement_detail" />
+                <el-option label="数据库设计" value="database_design" />
+                <el-option label="接口设计" value="api_design" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :xs="24" :sm="12" :md="6" :lg="5">
+            <el-form-item label="启用状态：" class="filter-item">
+              <el-select v-model="draftFilters.enabled" placeholder="启用状态" clearable class="filter-control">
+                <el-option label="已启用" :value="true" />
+                <el-option label="已禁用" :value="false" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :xs="24" :sm="12" :md="6" :lg="5">
+            <el-form-item label="关键词：" class="filter-item filter-item--keyword">
+              <el-input v-model="draftFilters.keyword" placeholder="搜索名称/文件名" clearable class="search-bar__input" @keyup.enter="handleSearch" />
+            </el-form-item>
+          </el-col>
+          <el-col :xs="24" :sm="12" :md="6" :lg="5">
+            <div class="filter-actions">
+              <el-button type="primary" :icon="Search" @click="handleSearch">查询</el-button>
+              <el-button :icon="RefreshLeft" @click="handleReset">重置</el-button>
+            </div>
+          </el-col>
+        </el-row>
       </el-form>
     </section>
 
     <!-- 数据列表 -->
     <section class="docgen-rules-page__table">
-      <el-table v-loading="docgenStore.loading" :data="docgenStore.rules" height="100%" highlight-current-row stripe>
+      <el-table v-loading="docgenStore.loading" :data="docgenStore.rules" height="100%" highlight-current-row>
         <el-table-column prop="id" label="ID" width="70" />
         <el-table-column prop="name" label="规则名称" min-width="180" show-overflow-tooltip />
         <el-table-column prop="doc_type" label="文档类型" width="130" align="center">
@@ -317,15 +325,14 @@ async function handleDeleteRule(id) {
   width: 100%;
 }
 
-.filter-form__row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
+.filter-form :deep(.el-row) {
   align-items: flex-end;
+  row-gap: 8px;
 }
 
 .filter-item {
   margin-bottom: 0;
+  width: 100%;
 }
 
 .filter-item :deep(.el-form-item__label) {
@@ -342,11 +349,11 @@ async function handleDeleteRule(id) {
 }
 
 .filter-control {
-  width: 160px;
+  width: 100%;
 }
 
-.keyword-input {
-  width: 200px;
+.search-bar__input {
+  width: 280px;
 }
 
 .filter-actions {
@@ -402,5 +409,69 @@ async function handleDeleteRule(id) {
   font-size: 13px;
   font-weight: 700;
   line-height: 34px;
+}
+
+.btn-primary-add {
+  position: relative;
+  z-index: 1;
+  border: 0;
+  background: var(--brand-gradient);
+  font-weight: 700;
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.btn-primary-add:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+/* ── Light Theme ── */
+html:not(.dark) .docgen-rules-page__header {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.86), rgba(245, 250, 255, 0.68)),
+    rgba(255, 255, 255, 0.72);
+  box-shadow: 0 18px 46px rgba(20, 42, 76, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.82);
+  border-color: rgba(22, 119, 255, 0.18);
+}
+
+html:not(.dark) .docgen-rules-page__filters {
+  background:
+    linear-gradient(rgba(22, 119, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(22, 119, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.76), rgba(245, 250, 255, 0.58)),
+    rgba(255, 255, 255, 0.62);
+  background-size: 26px 26px, 26px 26px, auto, auto;
+  border-color: rgba(22, 119, 255, 0.14);
+}
+
+html:not(.dark) .docgen-rules-page__table {
+  background:
+    linear-gradient(rgba(22, 119, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(22, 119, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.76), rgba(245, 250, 255, 0.58)),
+    rgba(255, 255, 255, 0.62);
+  background-size: 32px 32px, 32px 32px, auto, auto;
+  border-color: rgba(22, 119, 255, 0.14);
+}
+
+html:not(.dark) .docgen-rules-page__table :deep(.el-table) {
+  --el-table-tr-bg-color: rgba(255, 255, 255, 0.54);
+  --el-table-header-bg-color: rgba(240, 247, 255, 0.68);
+  --el-table-expanded-cell-bg-color: rgba(255, 255, 255, 0.64);
+  --el-table-row-hover-bg-color: var(--color-primary-soft);
+  background:
+    linear-gradient(rgba(22, 119, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(22, 119, 255, 0.03) 1px, transparent 1px),
+    rgba(255, 255, 255, 0.44);
+  background-size: 28px 28px, 28px 28px, auto;
+}
+
+html:not(.dark) .docgen-rules-page__table :deep(.el-table__body tr:nth-child(even) td.el-table__cell) {
+  background: rgba(245, 250, 255, 0.5) !important;
+  background-color: rgba(245, 250, 255, 0.5) !important;
+}
+
+html:not(.dark) .docgen-rules-page__pagination {
+  border-top-color: rgba(22, 119, 255, 0.12);
 }
 </style>

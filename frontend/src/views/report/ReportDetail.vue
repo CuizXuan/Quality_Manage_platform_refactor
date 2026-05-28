@@ -10,8 +10,36 @@
         <el-button type="primary" :loading="gateEvaluating" @click="evaluateQualityGates">
           评估门禁
         </el-button>
+        <el-button type="primary" :icon="MagicStick" :loading="aiSummarizing" @click="handleAiSummarize">
+          AI 总结报告
+        </el-button>
       </div>
     </div>
+
+    <!-- AI 总结结果 -->
+    <el-dialog v-model="aiSummaryVisible" title="AI 报告总结" width="600px" destroy-on-close>
+      <div v-if="aiSummaryResult" class="ai-summary-result">
+        <el-alert v-if="aiSummaryResult?.summary_md" type="info" :title="aiSummaryResult.summary_md" :closable="false" show-icon />
+        <div v-if="aiSummaryResult?.risk_score != null" class="summary-section">
+          <h4>风险评分</h4>
+          <p>
+            <el-tag :type="aiSummaryResult.risk_score >= 80 ? 'danger' : aiSummaryResult.risk_score >= 60 ? 'warning' : 'success'" size="small">
+              {{ aiSummaryResult.risk_score }}/100
+            </el-tag>
+          </p>
+        </div>
+        <div v-if="aiSummaryResult?.risk_factors?.length" class="summary-section">
+          <h4>风险因素</h4>
+          <ul>
+            <li v-for="(f, i) in aiSummaryResult.risk_factors" :key="i">{{ f }}</li>
+          </ul>
+        </div>
+        <div v-if="aiSummaryResult?.analysis_id" class="summary-section">
+          <p class="saved-hint">分析记录已保存 (ID: {{ aiSummaryResult.analysis_id }})</p>
+        </div>
+      </div>
+      <el-empty v-else description="暂无总结结果" />
+    </el-dialog>
 
     <!-- 门禁评估结果 -->
     <el-card v-if="gateResult" class="gate-result-card" shadow="never">
@@ -114,10 +142,12 @@
 </template>
 
 <script setup>
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { ArrowLeft } from '@element-plus/icons-vue'
+import { ArrowLeft, MagicStick } from '@element-plus/icons-vue'
+import { ElMessage } from 'element-plus'
 import { useReportStore } from '@/stores/reportStore'
+import { useAiStore } from '@/stores/aiStore'
 
 const route = useRoute()
 const router = useRouter()
@@ -171,6 +201,31 @@ function formatMetricValue(value) {
   if (value === null || value === undefined) return '—'
   if (typeof value === 'object') return JSON.stringify(value)
   return String(value)
+}
+
+// ── AI 报告总结 ────────────────────────────────────────────
+
+const aiStore = useAiStore()
+const aiSummarizing = ref(false)
+const aiSummaryResult = ref(null)
+const aiSummaryVisible = ref(false)
+
+async function handleAiSummarize() {
+  if (!report.value?.id) return
+  aiSummarizing.value = true
+  aiSummaryResult.value = null
+  try {
+    const result = await aiStore.summarizeReport({ report_id: report.value.id })
+    aiSummaryResult.value = result
+    aiSummaryVisible.value = true
+    if (result?.summary_md) {
+      ElMessage.success('总结完成')
+    }
+  } catch (e) {
+    ElMessage.error('AI 总结失败: ' + (e.response?.data?.detail || e.message || '请检查 AI 配置'))
+  } finally {
+    aiSummarizing.value = false
+  }
 }
 </script>
 
@@ -279,5 +334,23 @@ function formatMetricValue(value) {
 .detail-expr {
   color: var(--text-primary);
   font-family: monospace;
+}
+
+.ai-summary-result {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.ai-summary-result .summary-section h4 {
+  margin: 0 0 8px;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.ai-summary-result .summary-section ul {
+  margin: 0;
+  padding-left: 20px;
+  color: var(--text-primary);
 }
 </style>

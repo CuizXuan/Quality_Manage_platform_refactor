@@ -244,11 +244,11 @@ const gateRules = computed(() => [
 
 const quickEntries = [
   { label: '终端调试', hint: '导入 curl/fetch', path: '/terminal', icon: VideoPlay },
-  { label: '用例中心', hint: '沉淀测试资产', path: '/cases', icon: Document },
-  { label: '场景编排', hint: '业务链路', path: '/scenarios', icon: Connection },
-  { label: '报告中心', hint: '质量报告', path: '/reports', icon: DataBoard },
-  { label: '缺陷中心', hint: '闭环跟踪', path: '/defects', icon: WarnTriangleFilled },
-  { label: '质量门禁', hint: '发布准入', path: '/quality-gates', icon: TrendCharts },
+  { label: '用例中心', hint: '沉淀测试资产', path: '/case', icon: Document },
+  { label: '场景编排', hint: '业务链路', path: '/scenario', icon: Connection },
+  { label: '报告中心', hint: '质量报告', path: '/report', icon: DataBoard },
+  { label: '缺陷中心', hint: '闭环跟踪', path: '/defect', icon: WarnTriangleFilled },
+  { label: '质量门禁', hint: '发布准入', path: '/quality-gate', icon: TrendCharts },
 ]
 
 const riskItems = computed(() => {

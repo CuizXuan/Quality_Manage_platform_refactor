@@ -696,6 +696,11 @@ html:not(.dark) .menu-management-page__table :deep(.el-table) {
   background: rgba(56, 189, 248, 0.1) !important;
 }
 
+html:not(.dark) .menu-management-page__table :deep(.el-table__body tr:nth-child(even) td.el-table__cell) {
+  background: rgba(245, 250, 255, 0.5) !important;
+  background-color: rgba(245, 250, 255, 0.5) !important;
+}
+
 html:not(.dark) .menu-management-page__table :deep(.el-table__row:hover > td) {
   background: rgba(22, 119, 255, 0.08) !important;
 }

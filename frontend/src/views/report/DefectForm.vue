@@ -10,10 +10,12 @@
     <el-form :model="defectForm" label-width="100px" class="defect-form">
       <el-form-item label="缺陷标题" required>
         <el-input v-model="defectForm.title" placeholder="请输入缺陷标题" />
+        <el-button type="primary" plain size="small" :icon="MagicStick" :loading="aiGeneratingTitle" @click="handleAiGenerateTitle" style="margin-top: 4px">AI 生成标题</el-button>
       </el-form-item>
 
       <el-form-item label="描述">
         <el-input v-model="defectForm.description" type="textarea" :rows="3" placeholder="请输入描述" />
+        <el-button type="primary" plain size="small" :icon="MagicStick" :loading="aiGeneratingDesc" @click="handleAiGenerateDesc" style="margin-top: 4px">AI 生成描述</el-button>
       </el-form-item>
 
       <el-form-item label="严重程度">
@@ -32,6 +34,7 @@
           <el-option label="P2" value="P2" />
           <el-option label="P3" value="P3" />
         </el-select>
+        <el-button type="primary" plain size="small" :icon="MagicStick" :loading="aiRecommendingPriority" @click="handleAiRecommendPriority" style="margin-top: 4px">AI 推荐严重程度/优先级</el-button>
       </el-form-item>
 
       <el-form-item label="缺陷类型">
@@ -95,8 +98,10 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 import { ElMessage } from 'element-plus'
+import { MagicStick } from '@element-plus/icons-vue'
 import { useReportStore } from '@/stores/reportStore'
 import { useQualityFoundationStore } from '@/stores/qualityFoundationStore'
+import { useAiStore } from '@/stores/aiStore'
 
 const props = defineProps({
   modelValue: {
@@ -104,6 +109,10 @@ const props = defineProps({
     default: false,
   },
   defect: {
+    type: Object,
+    default: null,
+  },
+  initialData: {
     type: Object,
     default: null,
   },
@@ -133,7 +142,7 @@ function onProjectChange(projectId) {
   defectForm.value.iteration_id = null
   defectForm.value.requirement_id = null
   if (projectId) {
-    foundationStore.fetchVersions(projectId)
+    foundationStore.fetchVersions({ project_id: projectId })
     foundationStore.fetchRequirements({ project_id: projectId })
   } else {
     foundationStore.clearVersions()
@@ -197,7 +206,7 @@ watch(
         }
         // 加载级联数据
         if (props.defect.project_id) {
-          foundationStore.fetchVersions(props.defect.project_id)
+          foundationStore.fetchVersions({ project_id: props.defect.project_id })
           foundationStore.fetchRequirements({ project_id: props.defect.project_id })
         }
         if (props.defect.version_id) {
@@ -208,6 +217,30 @@ watch(
             project_id: props.defect.project_id,
             version_id: props.defect.version_id,
             iteration_id: props.defect.iteration_id,
+          })
+        }
+      } else if (props.initialData) {
+        // 新建模式：从 query params 预填
+        defectForm.value = {
+          title: props.initialData.title || '',
+          description: props.initialData.description || '',
+          severity: props.initialData.severity || 'medium',
+          priority: props.initialData.priority || 'P2',
+          defect_type: props.initialData.defect_type || 'functional',
+          tags: Array.isArray(props.initialData.tags) ? props.initialData.tags : [],
+          project_id: props.initialData.project_id ?? null,
+          version_id: props.initialData.version_id ?? null,
+          iteration_id: props.initialData.iteration_id ?? null,
+          requirement_id: props.initialData.requirement_id ?? null,
+        }
+        if (props.initialData.project_id) {
+          foundationStore.fetchVersions({ project_id: props.initialData.project_id })
+          foundationStore.fetchRequirements({ project_id: props.initialData.project_id })
+        }
+        if (props.initialData.project_id && props.initialData.version_id) {
+          foundationStore.fetchIterations({
+            project_id: props.initialData.project_id,
+            version_id: props.initialData.version_id,
           })
         }
       } else {
@@ -241,6 +274,98 @@ async function handleSubmit() {
     ElMessage.error('保存失败')
   } finally {
     saving.value = false
+  }
+}
+
+// ── AI 辅助 ────────────────────────────────────────────
+
+const aiStore = useAiStore()
+const aiGeneratingTitle = ref(false)
+const aiGeneratingDesc = ref(false)
+const aiRecommendingPriority = ref(false)
+
+async function handleAiGenerateTitle() {
+  if (!defectForm.value.description && !defectForm.value.title) {
+    ElMessage.warning('请先填写描述再生成标题')
+    return
+  }
+  aiGeneratingTitle.value = true
+  try {
+    const result = await aiStore.analyzeFailure({
+      case_data: { scenario_name: defectForm.value.title || '', step_results: [] },
+    })
+    if (result?.root_cause) {
+      defectForm.value.title = result.root_cause
+      ElMessage.success('已生成标题')
+    } else {
+      ElMessage.warning('未生成标题建议')
+    }
+  } catch (e) {
+    ElMessage.error('AI 生成失败: ' + (e.response?.data?.detail || e.message || '请检查 AI 配置'))
+  } finally {
+    aiGeneratingTitle.value = false
+  }
+}
+
+async function handleAiGenerateDesc() {
+  if (!defectForm.value.title) {
+    ElMessage.warning('请先填写标题再生成描述')
+    return
+  }
+  aiGeneratingDesc.value = true
+  try {
+    const result = await aiStore.analyzeFailure({
+      case_data: { scenario_name: defectForm.value.title, description: defectForm.value.description, step_results: [] },
+    })
+    if (result?.suggestions?.length) {
+      const descList = result.suggestions.map(s => typeof s === 'string' ? s : (s.description || ''))
+      defectForm.value.description = descList.join('\n')
+      ElMessage.success('已生成描述')
+    } else {
+      ElMessage.warning('未生成描述建议')
+    }
+  } catch (e) {
+    ElMessage.error('AI 生成失败: ' + (e.response?.data?.detail || e.message || '请检查 AI 配置'))
+  } finally {
+    aiGeneratingDesc.value = false
+  }
+}
+
+async function handleAiRecommendPriority() {
+  if (!defectForm.value.title && !defectForm.value.description) {
+    ElMessage.warning('请先填写标题或描述')
+    return
+  }
+  aiRecommendingPriority.value = true
+  try {
+    const result = await aiStore.analyzeFailure({
+      case_data: { scenario_name: defectForm.value.title || '', description: defectForm.value.description, step_results: [] },
+    })
+    if (result?.severity) {
+      const severityMap = { critical: 'critical', high: 'high', medium: 'medium', low: 'low' }
+      const sev = typeof result.severity === 'string' ? result.severity.toLowerCase() : ''
+      if (sev && severityMap[sev]) {
+        defectForm.value.severity = severityMap[sev]
+      }
+    }
+    if (result?.suggestions?.length) {
+      const priorityMatch = result.suggestions.find(s => {
+        const desc = typeof s === 'string' ? s : (s.description || '')
+        return /^P[0-3]/.test(desc.trim())
+      })
+      if (priorityMatch) {
+        const desc = typeof priorityMatch === 'string' ? priorityMatch : (priorityMatch.description || '')
+        const match = desc.trim().match(/^P[0-3]/)
+        if (match) {
+          defectForm.value.priority = match[0]
+        }
+      }
+    }
+    ElMessage.success('已推荐严重程度/优先级')
+  } catch (e) {
+    ElMessage.error('AI 推荐失败: ' + (e.response?.data?.detail || e.message || '请检查 AI 配置'))
+  } finally {
+    aiRecommendingPriority.value = false
   }
 }
 </script>

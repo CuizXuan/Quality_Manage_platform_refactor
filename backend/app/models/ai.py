@@ -21,7 +21,7 @@ class AIConfig(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(100), nullable=False, default="MiniMax")
     api_key = Column(String(500), nullable=False)
-    base_url = Column(String(300), nullable=False, default="https://api.minimaxi.com")
+    base_url = Column(String(300), nullable=False, default="https://api.minimaxi.com/v1")
     model = Column(String(100), nullable=False, default="MiniMax-M2.7")
     enabled = Column(Boolean, nullable=False, default=False)
     created_at = Column(DateTime, default=datetime.utcnow)

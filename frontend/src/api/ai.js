@@ -56,6 +56,10 @@ export const aiApi = {
 
   // ── Suggestions & Analysis ─────────────────────────────────────
 
+  listSuggestions(params) {
+    return client.get('/api/ai/suggestions', { params })
+  },
+
   acceptSuggestion(id, data = {}) {
     return client.post(`/api/ai/suggestions/${id}/accept`, data)
   },

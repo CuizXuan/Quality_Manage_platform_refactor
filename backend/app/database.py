@@ -192,6 +192,10 @@ def _run_migrations():
             db.execute(text("ALTER TABLE test_cases ADD COLUMN iteration_id INTEGER"))
             db.execute(text("UPDATE test_cases SET iteration_id = NULL WHERE iteration_id IS NULL"))
 
+        if 'source_api_id' not in columns:
+            db.execute(text("ALTER TABLE test_cases ADD COLUMN source_api_id INTEGER"))
+            db.execute(text("UPDATE test_cases SET source_api_id = NULL WHERE source_api_id IS NULL"))
+
         # Add quality foundation columns to scenarios
         result = db.execute(text("PRAGMA table_info(scenarios)"))
         columns = [row[1] for row in result.fetchall()]
@@ -290,6 +294,68 @@ def _run_migrations():
                 message TEXT DEFAULT '',
                 created_at TIMESTAMP,
                 updated_at TIMESTAMP
+            )"""))
+
+        # test_plans table
+        result = db.execute(text("PRAGMA table_info(test_plans)"))
+        columns = [row[1] for row in result.fetchall()]
+        if not columns:
+            db.execute(text("""CREATE TABLE IF NOT EXISTS test_plans (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                project_id INTEGER,
+                version_id INTEGER,
+                iteration_id INTEGER,
+                name VARCHAR(200) NOT NULL,
+                description TEXT DEFAULT '',
+                status VARCHAR(20) DEFAULT 'draft',
+                owner_id INTEGER,
+                created_at TIMESTAMP,
+                updated_at TIMESTAMP
+            )"""))
+
+        # test_suites table
+        result = db.execute(text("PRAGMA table_info(test_suites)"))
+        columns = [row[1] for row in result.fetchall()]
+        if not columns:
+            db.execute(text("""CREATE TABLE IF NOT EXISTS test_suites (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                plan_id INTEGER NOT NULL,
+                name VARCHAR(200) NOT NULL,
+                description TEXT DEFAULT '',
+                sort_order INTEGER DEFAULT 0,
+                FOREIGN KEY (plan_id) REFERENCES test_plans(id)
+            )"""))
+
+        # test_suite_items table
+        result = db.execute(text("PRAGMA table_info(test_suite_items)"))
+        columns = [row[1] for row in result.fetchall()]
+        if not columns:
+            db.execute(text("""CREATE TABLE IF NOT EXISTS test_suite_items (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                suite_id INTEGER NOT NULL,
+                item_type VARCHAR(20) NOT NULL,
+                item_id INTEGER NOT NULL,
+                sort_order INTEGER DEFAULT 0,
+                FOREIGN KEY (suite_id) REFERENCES test_suites(id)
+            )"""))
+
+        # test_plan_runs table
+        result = db.execute(text("PRAGMA table_info(test_plan_runs)"))
+        columns = [row[1] for row in result.fetchall()]
+        if not columns:
+            db.execute(text("""CREATE TABLE IF NOT EXISTS test_plan_runs (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                plan_id INTEGER NOT NULL,
+                status VARCHAR(20) DEFAULT 'pending',
+                total INTEGER DEFAULT 0,
+                passed INTEGER DEFAULT 0,
+                failed INTEGER DEFAULT 0,
+                skipped INTEGER DEFAULT 0,
+                started_at TIMESTAMP,
+                finished_at TIMESTAMP,
+                duration_ms INTEGER,
+                summary TEXT DEFAULT '{}',
+                FOREIGN KEY (plan_id) REFERENCES test_plans(id)
             )"""))
 
         db.commit()

@@ -21,7 +21,7 @@
           <el-input v-model="configForm.name" placeholder="如：MiniMax API" class="form-control" />
         </el-form-item>
         <el-form-item label="API Base URL" prop="base_url">
-          <el-input v-model="configForm.base_url" placeholder="https://api.minimaxi.com" class="form-control-wide" />
+          <el-input v-model="configForm.base_url" placeholder="https://api.minimaxi.com/v1" class="form-control-wide" />
         </el-form-item>
         <el-form-item label="API Key" prop="api_key">
           <el-input
@@ -93,7 +93,7 @@ const testResult = ref(null)
 const configForm = ref({
   name: 'MiniMax',
   api_key: '',
-  base_url: 'https://api.minimaxi.com',
+  base_url: 'https://api.minimaxi.com/v1',
   model: 'MiniMax-M2.7',
   enabled: false,
 })
@@ -111,7 +111,7 @@ onMounted(async () => {
       configForm.value = {
         name: aiStore.aiConfig.name || 'MiniMax',
         api_key: aiStore.aiConfig.api_key || '',
-        base_url: aiStore.aiConfig.base_url || 'https://api.minimaxi.com',
+        base_url: aiStore.aiConfig.base_url || 'https://api.minimaxi.com/v1',
         model: aiStore.aiConfig.model || 'MiniMax-M2.7',
         enabled: aiStore.aiConfig.enabled || false,
       }

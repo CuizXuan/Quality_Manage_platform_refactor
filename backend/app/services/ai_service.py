@@ -114,7 +114,7 @@ class AIService:
             f"返回 JSON 数组，每个元素包含：\n"
             f'  assertion_type: status_code|response_time|json_exists|json_equals|json_contains\n'
             f"  field: 字段路径（JSONPath格式）\n"
-            f"  expected: 期望值\n"
+            f"  expected_value: 期望值\n"
             f"  description: 断言描述\n"
             f"直接返回 JSON，不要解释。"
         )

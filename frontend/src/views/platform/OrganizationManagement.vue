@@ -43,7 +43,7 @@
 
     <!-- 数据列表 -->
     <section class="organization-management__table">
-      <el-table v-loading="loading" :data="pagedOrgs" border height="100%">
+      <el-table v-loading="loading" :data="pagedOrgs" height="100%" highlight-current-row>
         <el-table-column prop="name" label="组织名称" min-width="160" show-overflow-tooltip />
         <el-table-column prop="code" label="组织编码" min-width="140" show-overflow-tooltip />
         <el-table-column label="描述" min-width="200" show-overflow-tooltip>

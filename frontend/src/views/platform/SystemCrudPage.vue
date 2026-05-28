@@ -18,7 +18,7 @@
         <slot name="search" />
       </div>
 
-      <el-table :data="pagedItems" border class="data-table" v-loading="loading">
+      <el-table :data="pagedItems" height="100%" highlight-current-row class="data-table" v-loading="loading">
         <el-table-column
           v-for="field in visibleFields"
           :key="field.key"

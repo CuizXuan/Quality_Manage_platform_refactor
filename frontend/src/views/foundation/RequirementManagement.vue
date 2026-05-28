@@ -513,7 +513,8 @@ onMounted(async () => {
 .requirement-management-page__pagination {
   display: flex;
   justify-content: flex-end;
-  padding: 12px 0 0;
+  padding: 10px 16px;
+  border-top: 1px solid var(--border-color-lighter);
 }
 
 .dialog-form :deep(.el-form-item__label) {
@@ -541,7 +542,18 @@ onMounted(async () => {
 }
 
 .btn-primary-add {
+  position: relative;
+  z-index: 1;
+  border: 0;
+  background: var(--brand-gradient);
   color: var(--text-inverse);
+  font-weight: 700;
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.btn-primary-add:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
 }
 
 .priority-cell {

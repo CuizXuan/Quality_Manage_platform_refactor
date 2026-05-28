@@ -26,7 +26,7 @@
         <el-table
           ref="typeTableRef"
           :data="typeList"
-          border
+          height="100%"
           highlight-current-row
           v-loading="typeLoading"
           class="data-table"
@@ -98,7 +98,8 @@
 
           <el-table
             :data="itemList"
-            border
+            height="100%"
+            highlight-current-row
             v-loading="itemLoading"
             class="data-table"
             row-key="id"

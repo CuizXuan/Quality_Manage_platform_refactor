@@ -10,42 +10,48 @@
 
     <!-- 输入区 -->
     <section class="variant-generator__input">
-      <el-form :model="{}" label-position="left" class="filter-form">
-        <div class="filter-form__row">
-          <el-form-item label="原始用例：" class="filter-item">
-            <el-select
-              v-model="sourceCaseId"
-              placeholder="选择或搜索用例"
-              filterable
-              remote
-              :remote-method="searchCases"
-              class="case-select"
-            >
-              <el-option
-                v-for="c in caseOptions"
-                :key="c.id"
-                :label="c.name"
-                :value="c.id"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="变体数量：" class="filter-item">
-            <el-input-number v-model="variantCount" :min="1" :max="20" />
-          </el-form-item>
-        </div>
-        <div class="filter-form__row">
-          <el-form-item label="变异策略：" class="filter-item filter-item--strategy">
-            <el-checkbox-group v-model="strategies" class="strategy-group">
-              <el-checkbox value="boundary">边界值</el-checkbox>
-              <el-checkbox value="equivalence">等价类</el-checkbox>
-              <el-checkbox value="negative">逆向思维</el-checkbox>
-              <el-checkbox value="noise">噪声注入</el-checkbox>
-            </el-checkbox-group>
-          </el-form-item>
-          <div class="filter-actions">
-            <el-button type="primary" :loading="aiStore.loading" @click="handleGenerate">生成变体</el-button>
-          </div>
-        </div>
+      <el-form :inline="false" :model="{}" label-position="left" class="filter-form">
+        <el-row :gutter="12">
+          <el-col :xs="24" :sm="12" :md="8">
+            <el-form-item label="原始用例：" class="filter-item">
+              <el-select
+                v-model="sourceCaseId"
+                placeholder="选择或搜索用例"
+                filterable
+                remote
+                :remote-method="searchCases"
+                class="filter-control"
+              >
+                <el-option
+                  v-for="c in caseOptions"
+                  :key="c.id"
+                  :label="c.name"
+                  :value="c.id"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :xs="24" :sm="12" :md="5">
+            <el-form-item label="变体数量：" class="filter-item">
+              <el-input-number v-model="variantCount" :min="1" :max="20" />
+            </el-form-item>
+          </el-col>
+          <el-col :xs="24" :sm="12" :md="6">
+            <el-form-item label="变异策略：" class="filter-item">
+              <el-checkbox-group v-model="strategies" class="strategy-group">
+                <el-checkbox value="boundary">边界值</el-checkbox>
+                <el-checkbox value="equivalence">等价类</el-checkbox>
+                <el-checkbox value="negative">逆向思维</el-checkbox>
+                <el-checkbox value="noise">噪声注入</el-checkbox>
+              </el-checkbox-group>
+            </el-form-item>
+          </el-col>
+          <el-col :xs="24" :sm="12" :md="5">
+            <div class="filter-actions">
+              <el-button type="primary" :loading="aiStore.loading" @click="handleGenerate">生成变体</el-button>
+            </div>
+          </el-col>
+        </el-row>
       </el-form>
     </section>
 
@@ -67,7 +73,7 @@
       <div class="result-header">
         <span class="card-title">生成的变体 ({{ variants.length }})</span>
       </div>
-      <el-table :data="variants" stripe>
+      <el-table :data="variants" height="100%" highlight-current-row>
         <el-table-column type="index" label="#" width="60" align="center" />
         <el-table-column label="变体类型" width="120" align="center">
           <template #default="{ row }">
@@ -334,14 +340,9 @@ html:not(.dark) .variant-generator__input::before {
   gap: 12px;
 }
 
-.filter-form__row {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px 16px;
-  align-items: center;
-  width: 100%;
+.filter-form :deep(.el-row) {
+  align-items: flex-end;
+  row-gap: 8px;
 }
 
 .filter-form :deep(.el-form-item) {
@@ -360,11 +361,16 @@ html:not(.dark) .variant-generator__input::before {
 .filter-item {
   display: inline-flex;
   align-items: center;
+  margin-bottom: 0;
+  width: 100%;
 }
 
-.filter-item--strategy {
-  flex: 1;
-  min-width: 280px;
+.filter-control {
+  width: 100%;
+}
+
+.search-bar__input :deep(.el-input) {
+  width: 280px;
 }
 
 .filter-actions {
@@ -380,10 +386,6 @@ html:not(.dark) .variant-generator__input::before {
   min-width: 76px;
   height: 34px;
   margin-left: 0;
-}
-
-.case-select {
-  width: 360px;
 }
 
 .strategy-group {
@@ -506,6 +508,11 @@ html:not(.dark) .variant-generator__result::before {
 
 .variant-generator__result :deep(.el-table) {
   flex: 1;
+}
+
+.variant-generator__result :deep(.el-table__body tr:nth-child(even) td.el-table__cell) {
+  background: rgba(245, 250, 255, 0.5) !important;
+  background-color: rgba(245, 250, 255, 0.5) !important;
 }
 
 .text-secondary {

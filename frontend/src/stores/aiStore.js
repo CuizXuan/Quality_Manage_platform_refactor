@@ -216,6 +216,22 @@ export const useAiStore = defineStore('ai', () => {
     }
   }
 
+  async function fetchSuggestions(params = {}) {
+    loading.value = true
+    error.value = ''
+    try {
+      const response = await aiApi.listSuggestions(params)
+      suggestions.value = response.data?.items || []
+      suggestionTotal.value = response.data?.total || 0
+      return response.data
+    } catch (err) {
+      error.value = err.response?.data?.detail || err.message || '获取建议列表失败'
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
   async function acceptSuggestion(id, comment) {
     try {
       await aiApi.acceptSuggestion(id, { accepted_comment: comment })
@@ -259,6 +275,7 @@ export const useAiStore = defineStore('ai', () => {
     summarizeReport,
     // Actions: Analysis
     fetchAnalysis,
+    fetchSuggestions,
     acceptSuggestion,
   }
 })

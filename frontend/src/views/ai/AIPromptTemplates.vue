@@ -586,6 +586,16 @@ html:not(.dark) .ai-prompt-templates-page__table {
   vertical-align: middle;
 }
 
+.ai-prompt-templates-page__table :deep(.el-table__body tr:nth-child(even) td.el-table__cell) {
+  background: rgba(245, 250, 255, 0.5) !important;
+  background-color: rgba(245, 250, 255, 0.5) !important;
+}
+
+html:not(.dark) .ai-prompt-templates-page__table :deep(.el-table__body tr:nth-child(even) td.el-table__cell) {
+  background: rgba(245, 250, 255, 0.5) !important;
+  background-color: rgba(245, 250, 255, 0.5) !important;
+}
+
 /* ── 分页 ── */
 .ai-prompt-templates-page__pagination {
   display: flex;

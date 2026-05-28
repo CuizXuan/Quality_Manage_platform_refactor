@@ -6,7 +6,7 @@
         <h1>用户管理</h1>
         <p>管理系统用户，分配角色与权限。</p>
       </div>
-      <el-button type="primary" :icon="Plus" @click="openCreate">新建用户</el-button>
+      <el-button type="primary" :icon="Plus" class="btn-primary-add" @click="openCreate">新建用户</el-button>
     </header>
 
     <!-- 查询区 -->
@@ -54,7 +54,7 @@
 
     <!-- 数据列表 -->
     <section class="user-management__table">
-      <el-table v-loading="loading" :data="pagedUsers" border>
+      <el-table v-loading="loading" :data="pagedUsers" height="100%" highlight-current-row>
         <el-table-column prop="username" label="用户名" min-width="130" show-overflow-tooltip />
         <el-table-column prop="display_name" label="姓名" min-width="120" show-overflow-tooltip>
           <template #default="{ row }">{{ row.display_name || '-' }}</template>
@@ -715,5 +715,19 @@ html:not(.dark) .pagination-area {
   align-items: center;
   justify-content: center;
   gap: 4px;
+}
+
+.btn-primary-add {
+  position: relative;
+  z-index: 1;
+  border: 0;
+  background: var(--brand-gradient);
+  font-weight: 700;
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.btn-primary-add:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
 }
 </style>

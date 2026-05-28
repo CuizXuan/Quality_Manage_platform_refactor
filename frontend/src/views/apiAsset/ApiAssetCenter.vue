@@ -8,7 +8,7 @@
       </div>
       <div class="header-actions">
         <el-button type="primary" :icon="Upload" @click="showImportDialog = true">导入 OpenAPI</el-button>
-        <el-button type="primary" :icon="Plus" @click="openCreateDialog">新建 API</el-button>
+        <el-button type="primary" :icon="Plus" class="btn-primary-add" @click="openCreateDialog">新建 API</el-button>
       </div>
     </header>
 
@@ -45,27 +45,42 @@
       <section class="api-asset-page__content">
         <!-- 查询栏 -->
         <div class="api-asset-page__filters">
-          <el-form :model="filters" label-position="left" class="filter-form">
-            <div class="filter-form__row">
-              <el-form-item label="关键词：" class="filter-item filter-item--keyword">
-                <el-input v-model="filters.keyword" placeholder="搜索 API 名称或路径" clearable class="filter-control" @keyup.enter="fetchApis" />
-              </el-form-item>
-              <el-form-item label="方法：" class="filter-item filter-item--method">
-                <el-select v-model="filters.method" placeholder="全部" clearable class="filter-control">
-                  <el-option v-for="m in methodOptions" :key="m" :label="m" :value="m" />
-                </el-select>
-              </el-form-item>
-              <el-form-item label="状态：" class="filter-item filter-item--status">
-                <el-select v-model="filters.status" placeholder="全部" clearable class="filter-control">
-                  <el-option label="激活" value="active" />
-                  <el-option label="归档" value="archived" />
-                </el-select>
-              </el-form-item>
-              <div class="filter-actions">
-                <el-button type="primary" :icon="Search" @click="fetchApis">查询</el-button>
-                <el-button :icon="RefreshLeft" @click="resetFilters">重置</el-button>
-              </div>
-            </div>
+          <el-form :inline="false" :model="filters" label-position="left" class="filter-form">
+            <el-row :gutter="12">
+              <el-col :xs="24" :sm="12" :md="8">
+                <el-form-item label="关键词：" class="filter-item">
+                  <el-input v-model="filters.keyword" placeholder="搜索 API 名称或路径" clearable class="search-bar__input" @keyup.enter="fetchApis" />
+                </el-form-item>
+              </el-col>
+              <el-col :xs="24" :sm="12" :md="5">
+                <el-form-item label="方法：" class="filter-item">
+                  <el-select v-model="filters.method" placeholder="全部" clearable class="filter-control">
+                    <el-option v-for="m in methodOptions" :key="m" :label="m" :value="m" />
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :xs="24" :sm="12" :md="5">
+                <el-form-item label="状态：" class="filter-item">
+                  <el-select v-model="filters.status" placeholder="全部" clearable class="filter-control">
+                    <el-option label="激活" value="active" />
+                    <el-option label="归档" value="archived" />
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :xs="24" :sm="12" :md="5">
+                <el-form-item label="项目：" class="filter-item">
+                  <el-select v-model="filters.project_id" placeholder="全部项目" clearable filterable class="filter-control" @change="onProjectFilterChange">
+                    <el-option v-for="p in foundationStore.projects" :key="p.id" :label="p.name" :value="p.id" />
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :xs="24" :sm="12" :md="6">
+                <div class="filter-actions">
+                  <el-button type="primary" :icon="Search" @click="fetchApis">查询</el-button>
+                  <el-button :icon="RefreshLeft" @click="resetFilters">重置</el-button>
+                </div>
+              </el-col>
+            </el-row>
           </el-form>
         </div>
 
@@ -96,6 +111,7 @@
               <template #default="{ row }">
                 <div class="actions-cell">
                   <el-button type="primary" text size="small" @click="debugApi(row)">调试</el-button>
+                  <el-button type="primary" text size="small" @click="openEditDialog(row)">编辑</el-button>
                   <el-button type="primary" text size="small" @click="openDetailDialog(row)">详情</el-button>
                   <el-button type="primary" text size="small" @click="handleGenerateCase(row)">生成用例</el-button>
                   <el-button type="danger" text size="small" @click="deleteApi(row)">删除</el-button>
@@ -196,6 +212,11 @@
             <el-option v-for="g in flatGroups" :key="g.id" :label="g.name" :value="g.id" />
           </el-select>
         </el-form-item>
+        <el-form-item label="项目">
+          <el-select v-model="apiForm.project_id" placeholder="选择项目" clearable filterable class="filter-control">
+            <el-option v-for="p in foundationStore.projects" :key="p.id" :label="p.name" :value="p.id" />
+          </el-select>
+        </el-form-item>
         <el-form-item label="方法" required>
           <el-select v-model="apiForm.method" placeholder="请选择方法" class="filter-control">
             <el-option v-for="m in methodOptions" :key="m" :label="m" :value="m" />
@@ -237,13 +258,15 @@ import { Plus, Search, RefreshLeft, Upload, Delete } from '@element-plus/icons-v
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRouter } from 'vue-router'
 import { useApiAssetStore } from '@/stores/apiAssetStore'
+import { useQualityFoundationStore } from '@/stores/qualityFoundationStore'
 
 const router = useRouter()
 const store = useApiAssetStore()
+const foundationStore = useQualityFoundationStore()
 
 const methodOptions = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS']
 
-const filters = reactive({ keyword: '', method: '', status: '' })
+const filters = reactive({ keyword: '', method: '', status: '', project_id: null })
 const pagination = reactive({ page: 1, pageSize: 15 })
 
 const showImportDialog = ref(false)
@@ -259,6 +282,7 @@ const importForm = reactive({ source_type: 'url', source_url: '', raw_content: '
 const apiForm = reactive({
   name: '', method: 'GET', path: '', base_url: '', group_id: null,
   summary: '', description: '', version: '1.0.0', status: 'active',
+  project_id: null,
 })
 
 const selectedGroupId = computed({
@@ -298,6 +322,7 @@ async function fetchApis(extraParams = {}) {
     keyword: filters.keyword || undefined,
     method: filters.method || undefined,
     status: filters.status || undefined,
+    project_id: filters.project_id || undefined,
     ...extraParams,
   })
 }
@@ -306,8 +331,14 @@ function resetFilters() {
   filters.keyword = ''
   filters.method = ''
   filters.status = ''
+  filters.project_id = null
   selectedGroupId.value = null
   fetchApis({})
+}
+
+function onProjectFilterChange() {
+  pagination.page = 1
+  fetchApis()
 }
 
 function handleSizeChange(size) {
@@ -326,12 +357,13 @@ async function handleImport() {
       source_type: importForm.source_type,
       source_url: importForm.source_url || undefined,
       raw_content: importForm.raw_content || undefined,
+      project_id: filters.project_id || undefined,
     })
     ElMessage.success(result.message || `导入成功: ${result.imported} 个 API`)
     showImportDialog.value = false
     importForm.source_url = ''
     importForm.raw_content = ''
-    await store.fetchGroups()
+    await store.fetchGroups({ project_id: filters.project_id || undefined })
     await fetchApis()
   } catch (e) {
     ElMessage.error(e.message || '导入失败')
@@ -347,14 +379,31 @@ function openDetailDialog(api) {
 
 function openCreateDialog() {
   editingApi.value = null
-  Object.assign(apiForm, { name: '', method: 'GET', path: '', base_url: '', group_id: null, summary: '', description: '', version: '1.0.0', status: 'active' })
+  Object.assign(apiForm, { name: '', method: 'GET', path: '', base_url: '', group_id: null, summary: '', description: '', version: '1.0.0', status: 'active', project_id: filters.project_id })
+  showCreateDialog.value = true
+}
+
+function openEditDialog(api) {
+  editingApi.value = api
+  Object.assign(apiForm, {
+    name: api.name,
+    method: api.method,
+    path: api.path,
+    base_url: api.base_url || '',
+    group_id: api.group_id,
+    summary: api.summary || '',
+    description: api.description || '',
+    version: api.version || '1.0.0',
+    status: api.status || 'active',
+    project_id: api.project_id,
+  })
   showCreateDialog.value = true
 }
 
 function openGroupDialog() {
   ElMessageBox.prompt('请输入分组名称', '新建分组').then(({ value }) => {
     if (!value?.trim()) return
-    store.createGroup({ name: value.trim() }).then(() => store.fetchGroups())
+    store.createGroup({ name: value.trim(), project_id: filters.project_id || undefined }).then(() => store.fetchGroups({ project_id: filters.project_id || undefined }))
   }).catch(() => {})
 }
 
@@ -399,6 +448,7 @@ async function debugApi(api) {
         method: payload.method,
         url: payload.url,
         headers: JSON.stringify(payload.headers || {}),
+        query_params: JSON.stringify(payload.query_params || {}),
         body_type: payload.body_type || 'none',
         body: payload.body || '',
       },
@@ -424,13 +474,14 @@ async function deleteApi(api) {
     await store.deleteApi(api.id)
     ElMessage.success('删除成功')
     fetchApis()
-  } catch {
+  } catch (e) {
     if (e !== 'cancel') ElMessage.error('删除失败')
   }
 }
 
 onMounted(async () => {
-  await store.fetchGroups()
+  foundationStore.fetchProjects()
+  await store.fetchGroups({ project_id: filters.project_id || undefined })
   fetchApis()
 })
 </script>
@@ -503,6 +554,20 @@ onMounted(async () => {
 .header-actions {
   display: flex;
   gap: 8px;
+}
+
+.btn-primary-add {
+  position: relative;
+  z-index: 1;
+  border: 0;
+  background: var(--brand-gradient);
+  font-weight: 700;
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.btn-primary-add:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
 }
 
 /* Body */
@@ -578,11 +643,9 @@ onMounted(async () => {
   width: 100%;
 }
 
-.filter-form__row {
-  display: flex;
-  gap: 12px;
+.filter-form :deep(.el-row) {
   align-items: flex-end;
-  width: 100%;
+  row-gap: 8px;
 }
 
 .filter-form :deep(.el-form-item) {
@@ -600,18 +663,17 @@ onMounted(async () => {
 
 .filter-item {
   display: flex;
-  flex: 0 0 auto;
   align-items: flex-end;
-}
-
-.filter-item--keyword,
-.filter-item--method,
-.filter-item--status {
-  flex: 0 0 auto;
+  margin-bottom: 0;
+  width: 100%;
 }
 
 .filter-control {
-  width: 180px;
+  width: 100%;
+}
+
+.search-bar__input :deep(.el-input) {
+  width: 280px;
 }
 
 .filter-actions {

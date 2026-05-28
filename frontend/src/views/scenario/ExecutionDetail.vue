@@ -11,6 +11,7 @@
         </el-tag>
       </div>
       <div class="header-right">
+        <el-button v-if="execution?.status === 'failed'" type="warning" :icon="MagicStick" :loading="aiAnalyzing" @click="handleAiAnalyze">AI 分析失败</el-button>
         <el-button v-if="execution?.status === 'failed'" type="warning" @click="handleRetry">重试</el-button>
         <el-button type="primary" @click="handleRerun">重新执行</el-button>
       </div>
@@ -138,19 +139,44 @@
         </el-descriptions-item>
       </el-descriptions>
     </el-dialog>
+
+    <!-- AI 失败分析结果弹窗 -->
+    <el-dialog v-model="aiAnalysisVisible" title="AI 失败分析" width="600px" destroy-on-close>
+      <div v-if="aiAnalysisResult" class="ai-analysis-result">
+        <el-alert v-if="aiAnalysisResult.root_cause" type="warning" :title="aiAnalysisResult.root_cause" :closable="false" show-icon />
+        <div v-if="aiAnalysisResult.suggestions?.length" class="analysis-section">
+          <h4>修复建议</h4>
+          <ul>
+            <li v-for="(s, i) in aiAnalysisResult.suggestions" :key="i">{{ typeof s === 'string' ? s : (s.description || JSON.stringify(s)) }}</li>
+          </ul>
+        </div>
+        <div v-if="aiAnalysisResult.impact_scope" class="analysis-section">
+          <h4>影响范围</h4>
+          <p>{{ aiAnalysisResult.impact_scope }}</p>
+        </div>
+      </div>
+      <el-empty v-else description="暂无分析结果" />
+      <template #footer>
+        <el-button @click="aiAnalysisVisible = false">关闭</el-button>
+        <el-button type="primary" @click="handleCreateDefectFromAnalysis" :disabled="!aiAnalysisResult?.root_cause">创建缺陷草稿</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { ArrowLeft } from '@element-plus/icons-vue'
+import { ArrowLeft, MagicStick } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useScenarioStore } from '@/stores/scenarioStore'
+import { useAiStore } from '@/stores/aiStore'
+import { useReportStore } from '@/stores/reportStore'
 
 const route = useRoute()
 const router = useRouter()
 const scenarioStore = useScenarioStore()
+const reportStore = useReportStore()
 
 const runId = computed(() => Number(route.params.id))
 const execution = computed(() => scenarioStore.currentExecution)
@@ -192,6 +218,59 @@ async function handleRerun() {
 function handleViewStepDetail(row) {
   currentStepResult.value = row
   stepDetailVisible.value = true
+}
+
+// ── AI 失败分析 ────────────────────────────────────────────
+
+const aiStore = useAiStore()
+const aiAnalyzing = ref(false)
+const aiAnalysisResult = ref(null)
+const aiAnalysisVisible = ref(false)
+
+async function handleAiAnalyze() {
+  aiAnalyzing.value = true
+  aiAnalysisResult.value = null
+  try {
+    const result = await aiStore.analyzeFailure({
+      execution_step_id: runId.value,
+      case_data: {
+        scenario_name: execution.value?.scenario_name,
+        step_results: execution.value?.step_results,
+      },
+    })
+    aiAnalysisResult.value = result
+    aiAnalysisVisible.value = true
+    if (result?.root_cause) {
+      ElMessage.success('分析完成')
+    }
+  } catch (e) {
+    ElMessage.error('AI 分析失败: ' + (e.response?.data?.detail || e.message || '请检查 AI 配置'))
+  } finally {
+    aiAnalyzing.value = false
+  }
+}
+
+function handleCreateDefectFromAnalysis() {
+  if (!aiAnalysisResult.value?.root_cause) return
+  const rootCause = aiAnalysisResult.value.root_cause
+  const suggestions = (aiAnalysisResult.value.suggestions || [])
+    .map(s => typeof s === 'string' ? s : s.description)
+    .filter(Boolean)
+    .join('; ')
+  const defectData = {
+    title: `[缺陷草稿] ${rootCause}`,
+    description: `场景：${execution.value?.scenario_name || ''}\n根因：${rootCause}\n修复建议：${suggestions}`,
+    severity: 'medium',
+    priority: 'P2',
+    defect_type: 'functional',
+    tags: ['AI分析'],
+  }
+  reportStore.createDefect(defectData).then(() => {
+    ElMessage.success('缺陷草稿已创建')
+  }).catch(() => {
+    ElMessage.error('创建缺陷失败')
+  })
+  aiAnalysisVisible.value = false
 }
 
 function getStatusType(status) {
@@ -363,5 +442,23 @@ html:not(.dark) .execution-detail__steps {
   max-height: 200px;
   overflow-y: auto;
   margin: 0;
+}
+
+.ai-analysis-result {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.ai-analysis-result .analysis-section h4 {
+  margin: 0 0 8px;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.ai-analysis-result .analysis-section ul {
+  margin: 0;
+  padding-left: 20px;
+  color: var(--text-primary);
 }
 </style>

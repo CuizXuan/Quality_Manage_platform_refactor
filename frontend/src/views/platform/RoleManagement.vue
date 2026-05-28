@@ -149,7 +149,7 @@
         <span>共 {{ permissionResources.length }} 个菜单</span>
       </div>
 
-      <el-table :data="pagedPermissionResources" border class="permission-table">
+      <el-table :data="pagedPermissionResources" height="100%" highlight-current-row class="permission-table">
         <el-table-column prop="label" label="菜单" min-width="160" />
         <el-table-column
           v-for="action in permissionActions"
@@ -684,6 +684,11 @@ html:not(.dark) .role-management-page__table :deep(.el-table) {
 
 .role-management-page__table :deep(.el-table__row:hover > td) {
   background: rgba(56, 189, 248, 0.1) !important;
+}
+
+html:not(.dark) .role-management-page__table :deep(.el-table__body tr:nth-child(even) td.el-table__cell) {
+  background: rgba(245, 250, 255, 0.5) !important;
+  background-color: rgba(245, 250, 255, 0.5) !important;
 }
 
 html:not(.dark) .role-management-page__table :deep(.el-table__row:hover > td) {

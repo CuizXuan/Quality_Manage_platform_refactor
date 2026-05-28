@@ -2,13 +2,39 @@
   <div class="variant-list-container">
     <div class="header">
       <h4>用例变体</h4>
-      <el-button type="primary" size="small" @click="showCreateDialog = true">新建变体</el-button>
+      <div class="header-actions">
+        <el-button type="primary" size="small" :icon="MagicStick" :loading="aiGenerating" @click="handleAiGenerateVariants">AI 生成变体</el-button>
+        <el-button type="primary" size="small" @click="showCreateDialog = true">新建变体</el-button>
+      </div>
     </div>
+
+    <!-- AI 变体建议弹窗 -->
+    <el-dialog v-model="aiVariantsVisible" title="AI 变体建议" width="600px" destroy-on-close>
+      <div v-if="aiVariantSuggestions.length" class="variant-suggestions">
+        <div v-for="(v, i) in aiVariantSuggestions" :key="i" class="variant-suggestion-item">
+          <div class="variant-info">
+            <el-tag size="small" type="primary">{{ v.variant_type }}</el-tag>
+            <span class="variant-desc">{{ v.description }}</span>
+          </div>
+          <el-button type="primary" size="small" @click="acceptVariant(v)">采纳</el-button>
+        </div>
+      </div>
+      <el-empty v-else-if="!aiGenerating" description="暂无变体建议" />
+      <div v-else class="ai-loading">
+        <el-icon class="is-loading"><Loading /></el-icon>
+        <span>AI 正在生成变体...</span>
+      </div>
+      <template #footer>
+        <el-button @click="aiVariantsVisible = false">关闭</el-button>
+        <el-button type="primary" @click="acceptAllVariants" :disabled="!aiVariantSuggestions.length">采纳全部</el-button>
+      </template>
+    </el-dialog>
 
     <el-table
       v-loading="loading"
       :data="variants"
-      style="width: 100%"
+      height="100%"
+      highlight-current-row
       empty-text="暂无变体"
     >
       <el-table-column prop="name" label="变体名称" min-width="150">
@@ -116,7 +142,9 @@
 <script setup>
 import { ref, watch, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
+import { MagicStick, Loading } from '@element-plus/icons-vue'
 import { useCaseStore } from '@/stores/caseStore'
+import { useAiStore } from '@/stores/aiStore'
 
 const props = defineProps({
   caseId: {
@@ -230,6 +258,81 @@ async function handleCreate() {
   }
 }
 
+// ── AI 变体生成 ────────────────────────────────────────────
+
+const aiStore = useAiStore()
+const aiGenerating = ref(false)
+const aiVariantsVisible = ref(false)
+const aiVariantSuggestions = ref([])
+
+async function handleAiGenerateVariants() {
+  if (!props.caseId) {
+    ElMessage.warning('用例 ID 无效')
+    return
+  }
+  aiGenerating.value = true
+  aiVariantSuggestions.value = []
+  aiVariantsVisible.value = true
+  try {
+    const result = await aiStore.generateVariants({ case_id: props.caseId })
+    if (result?.variants?.length) {
+      aiVariantSuggestions.value = result.variants
+      ElMessage.success(`生成 ${result.variants.length} 条变体建议`)
+    } else {
+      ElMessage.warning('未生成变体建议')
+    }
+  } catch (e) {
+    ElMessage.error('AI 生成失败: ' + (e.response?.data?.detail || e.message || '请检查 AI 配置'))
+  } finally {
+    aiGenerating.value = false
+  }
+}
+
+function acceptVariant(v) {
+  const vtype = typeof v.variant_type === 'string' ? v.variant_type : 'normal'
+  const overrideConfig = typeof v.override_config === 'object' && v.override_config !== null ? v.override_config : {}
+
+  creating.value = true
+  caseStore.createVariant(props.caseId, {
+    name: 'AI 变体 - ' + vtype,
+    variant_type: vtype,
+    override_params: overrideConfig.params || overrideConfig.override || {},
+    override_headers: overrideConfig.headers || {},
+    override_body: typeof overrideConfig.body === 'string' ? overrideConfig.body : JSON.stringify(overrideConfig.body || {}),
+    expected_status: overrideConfig.expected_status || null,
+    assertions: [],
+  }).then(() => {
+    ElMessage.success('已创建变体')
+    aiVariantSuggestions.value = aiVariantSuggestions.value.filter(x => x !== v)
+    if (aiVariantSuggestions.value.length === 0) {
+      aiVariantsVisible.value = false
+    }
+    loadVariants()
+  }).catch(e => {
+    ElMessage.error('创建失败: ' + (e.response?.data?.detail || e.message))
+  }).finally(() => {
+    creating.value = false
+  })
+}
+
+async function acceptAllVariants() {
+  for (const v of [...aiVariantSuggestions.value]) {
+    await caseStore.createVariant(props.caseId, {
+      name: 'AI 变体 - ' + (typeof v.variant_type === 'string' ? v.variant_type : 'normal'),
+      variant_type: typeof v.variant_type === 'string' ? v.variant_type : 'normal',
+      override_params: (typeof v.override_config === 'object' && v.override_config !== null ? v.override_config.params : {}) || {},
+      override_headers: (typeof v.override_config === 'object' && v.override_config !== null ? v.override_config.headers : {}) || {},
+      override_body: '',
+      expected_status: null,
+      assertions: [],
+    })
+  }
+  aiVariantSuggestions.value = []
+  aiVariantsVisible.value = false
+  ElMessage.success('已批量创建变体')
+  loadVariants()
+}
+
 defineExpose({
   reload: loadVariants,
 })
@@ -247,7 +350,52 @@ defineExpose({
   margin-bottom: 12px;
 }
 
+.header-actions {
+  display: flex;
+  gap: 8px;
+}
+
 .header h4 {
   margin: 0;
+}
+
+.variant-suggestions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.variant-suggestion-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  border: 1px solid var(--border-color-lighter);
+  border-radius: var(--border-radius-base);
+}
+
+.variant-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.variant-desc {
+  font-size: 13px;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ai-loading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 20px;
+  color: var(--text-secondary);
+  justify-content: center;
 }
 </style>

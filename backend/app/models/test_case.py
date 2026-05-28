@@ -43,6 +43,7 @@ class TestCase(Base):
     version_id = Column(Integer, nullable=True)
     iteration_id = Column(Integer, nullable=True)
     requirement_id = Column(Integer, ForeignKey("requirement_items.id"), nullable=True)
+    source_api_id = Column(Integer, nullable=True)
 
     variants = relationship("CaseVariant", back_populates="test_case", cascade="all, delete-orphan")
     api_case = relationship("ApiTestCase", back_populates="test_case", uselist=False)

@@ -11,7 +11,7 @@ class AIConfigCreate(BaseModel):
     """创建 AI 配置"""
     name: str = Field(default="MiniMax", max_length=100)
     api_key: str = Field(..., max_length=500)
-    base_url: str = Field(default="https://api.minimaxi.com", max_length=300)
+    base_url: str = Field(default="https://api.minimaxi.com/v1", max_length=300)
     model: str = Field(default="MiniMax-M2.7", max_length=100)
     enabled: bool = Field(default=False)
 
@@ -164,11 +164,13 @@ class GenerateAssertionsRequest(BaseModel):
     case_id: Optional[int] = None
     response_body: Optional[Dict[str, Any]] = None
     execution_step_id: Optional[int] = None
+    case_data: Optional[Dict[str, Any]] = None  # 支持从用例数据生成断言
 
 
 class AnalyzeFailureRequest(BaseModel):
     """失败归因分析请求"""
-    execution_step_id: int
+    execution_step_id: Optional[int] = None
+    case_data: Optional[Dict[str, Any]] = None
 
 
 class SummarizeReportRequest(BaseModel):
@@ -214,6 +216,7 @@ class AnalyzeFailureResponse(BaseModel):
     """失败归因响应"""
     analysis_id: int
     root_cause: str
+    severity: Optional[str] = None  # critical | high | medium | low
     suggestions: List[Dict[str, Any]]  # [{type, description, effort}]
 
 

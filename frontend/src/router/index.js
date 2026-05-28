@@ -98,6 +98,11 @@ const routes = [
         component: () => import('../views/report/QualityGate.vue'),
       },
       {
+        path: '/quality-analytics',
+        name: 'QualityAnalytics',
+        component: () => import('../views/qualityAnalytics/QualityAnalytics.vue'),
+      },
+      {
         path: '/ai/config',
         name: 'AIModelConfig',
         component: () => import('../views/ai/AIModelConfig.vue'),
@@ -158,6 +163,21 @@ const routes = [
         path: '/api-assets',
         name: 'ApiAssetCenter',
         component: () => import('../views/apiAsset/ApiAssetCenter.vue'),
+      },
+      {
+        path: '/test-plans',
+        name: 'TestPlanList',
+        component: () => import('../views/testPlan/TestPlanList.vue'),
+      },
+      {
+        path: '/test-plans/:id',
+        name: 'TestPlanDetail',
+        component: () => import('../views/testPlan/TestPlanDetail.vue'),
+      },
+      {
+        path: '/test-plan-runs',
+        name: 'TestPlanRuns',
+        component: () => import('../views/testPlan/TestPlanRuns.vue'),
       },
     ],
   },

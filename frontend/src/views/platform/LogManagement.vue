@@ -68,7 +68,7 @@
 
     <!-- 数据列表 -->
     <section class="log-management__table">
-      <el-table v-loading="loading" :data="logList" border height="100%">
+      <el-table v-loading="loading" :data="logList" height="100%" highlight-current-row>
         <el-table-column prop="username" label="用户名" width="120" show-overflow-tooltip />
         <el-table-column prop="action" label="操作" width="90" align="center">
           <template #default="{ row }">
@@ -485,6 +485,11 @@ html:not(.dark) .log-management__table :deep(.el-table) {
 
 .log-management__table :deep(.el-table__row:hover > td) {
   background: rgba(56, 189, 248, 0.1) !important;
+}
+
+html:not(.dark) .log-management__table :deep(.el-table__body tr:nth-child(even) td.el-table__cell) {
+  background: rgba(245, 250, 255, 0.5) !important;
+  background-color: rgba(245, 250, 255, 0.5) !important;
 }
 
 html:not(.dark) .log-management__table :deep(.el-table__row:hover > td) {

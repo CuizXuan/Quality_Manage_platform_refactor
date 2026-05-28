@@ -168,10 +168,15 @@ def get_debug_payload(db: Session, api_id: int) -> Optional[Dict[str, Any]]:
     if raw_body and isinstance(raw_body, dict):
         if raw_body.get("content"):
             content = raw_body["content"]
-            if "application/json" in content and "schema" in content["application/json"]:
-                body_type = "json"
-                example = content["application/json"].get("example") or content["application/json"].get("schema", {}).get("example", "{}")
-                body = json.dumps(example, ensure_ascii=False) if isinstance(example, dict) else str(example)
+            if "application/json" in content:
+                json_content = content["application/json"]
+                # Prefer top-level example, then schema.example
+                example = json_content.get("example")
+                if example is None and "schema" in json_content:
+                    example = json_content["schema"].get("example")
+                if example is not None:
+                    body_type = "json"
+                    body = json.dumps(example, ensure_ascii=False) if isinstance(example, dict) else str(example)
 
     full_url = f"{api.base_url or ''}{api.path}"
 
@@ -336,40 +341,42 @@ def generate_case_from_api(db: Session, api_id: int) -> Optional[TestCase]:
     import uuid
     auto_case_id = f"APICASE-{uuid.uuid4().hex[:8].upper()}"
 
+    # Extract headers/query/body BEFORE creating TestCase so we can use them
+    debug = get_debug_payload(db, api.id) or {}
+    headers_for_case = debug.get("headers", {})
+    query_params_for_case = debug.get("query_params", {})
+    body_type_for_case = debug.get("body_type", "none")
+    body_for_case = debug.get("body", "")
+
     case = TestCase(
         name=api.summary or api.name,
         description=api.description or "",
         case_type="api",
         method=api.method,
         url=f"{api.base_url or ''}{api.path}",
-        headers=json.dumps({}),
-        query_params=json.dumps({}),
+        headers=json.dumps(headers_for_case, ensure_ascii=False),
+        query_params=json.dumps(query_params_for_case, ensure_ascii=False),
         cookies=json.dumps({}),
         auth_config=json.dumps({}),
-        body_type="none",
-        body="",
-        project_id=api.project_id,
-        status="active",
+        body_type=body_type_for_case,
+        body=body_for_case,
         auto_case_id=auto_case_id,
+        project_id=api.project_id,
+        source_api_id=api.id,
     )
     db.add(case)
     db.commit()
     db.refresh(case)
 
-    # Create ApiTestCase record
-    params = _loads(api.parameters, [])
-    api_case_data = {
-        "url": f"{api.base_url or ''}{api.path}",
-        "method": api.method,
-        "headers": [],
-        "params": [p for p in params if p.get("in") == "query"],
-        "body_type": "none",
-        "body": "",
-        "assertions": [],
-    }
     api_case = ApiTestCase(
-        case_id=case.id,
-        **api_case_data,
+        testcase_id=case.id,
+        url=f"{api.base_url or ''}{api.path}",
+        method=api.method,
+        headers=json.dumps(headers_for_case),
+        params=json.dumps(query_params_for_case),
+        body_type=body_type_for_case,
+        body=body_for_case,
+        assertions="[]",
     )
     db.add(api_case)
     db.commit()

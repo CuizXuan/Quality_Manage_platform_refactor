@@ -135,6 +135,8 @@ const menuList = [
     children: [
       { title: '场景管理', icon: Folder, path: '/scenario' },
       { title: '执行历史', icon: List, path: '/scenario/executions' },
+      { title: '测试计划', icon: Document, path: '/test-plans' },
+      { title: '计划执行', icon: List, path: '/test-plan-runs' },
     ],
   },
   {
@@ -145,6 +147,7 @@ const menuList = [
       { title: '报告中心', icon: Document, path: '/report' },
       { title: '缺陷中心', icon: Warning, path: '/defect' },
       { title: '门禁管理', icon: Key, path: '/quality-gate' },
+      { title: '质量看板', icon: DataLine, path: '/quality-analytics' },
     ],
   },
   {

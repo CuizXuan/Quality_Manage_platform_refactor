@@ -14,22 +14,28 @@
 
     <!-- 查询区 -->
     <section class="foundation-projects-page__filters">
-      <el-form :model="filters" label-position="left" class="filter-form">
-        <div class="filter-form__row">
-          <el-form-item label="项目名称：" class="filter-item filter-item--keyword">
-            <el-input v-model="filters.name" placeholder="项目名称" clearable class="filter-control" @keyup.enter="fetchProjects" />
-          </el-form-item>
-          <el-form-item label="状态：" class="filter-item filter-item--status">
-            <el-select v-model="filters.status" placeholder="状态" clearable class="filter-control">
-              <el-option label="激活" value="active" />
-              <el-option label="归档" value="archived" />
-            </el-select>
-          </el-form-item>
-          <div class="filter-actions">
-            <el-button type="primary" :icon="Search" @click="fetchProjects">查询</el-button>
-            <el-button :icon="RefreshLeft" @click="resetFilters">重置</el-button>
-          </div>
-        </div>
+      <el-form :inline="false" :model="filters" label-position="left" class="filter-form">
+        <el-row :gutter="12">
+          <el-col :xs="24" :sm="12" :md="8">
+            <el-form-item label="项目名称：" class="filter-item">
+              <el-input v-model="filters.name" placeholder="项目名称" clearable class="search-bar__input" @keyup.enter="fetchProjects" />
+            </el-form-item>
+          </el-col>
+          <el-col :xs="24" :sm="12" :md="6">
+            <el-form-item label="状态：" class="filter-item">
+              <el-select v-model="filters.status" placeholder="状态" clearable class="filter-control">
+                <el-option label="激活" value="active" />
+                <el-option label="归档" value="archived" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :xs="24" :sm="12" :md="10">
+            <div class="filter-actions">
+              <el-button type="primary" :icon="Search" @click="fetchProjects">查询</el-button>
+              <el-button :icon="RefreshLeft" @click="resetFilters">重置</el-button>
+            </div>
+          </el-col>
+        </el-row>
       </el-form>
     </section>
 
@@ -457,11 +463,9 @@ fetchProjects()
   width: 100%;
 }
 
-.filter-form__row {
-  display: flex;
-  gap: 12px;
+.filter-form :deep(.el-row) {
   align-items: flex-end;
-  width: 100%;
+  row-gap: 8px;
 }
 
 .filter-form :deep(.el-form-item) {
@@ -479,20 +483,17 @@ fetchProjects()
 
 .filter-item {
   display: flex;
-  flex: 0 0 auto;
   align-items: flex-end;
-}
-
-.filter-item--keyword {
-  flex: 0 0 auto;
-}
-
-.filter-item--status {
-  flex: 0 0 auto;
+  margin-bottom: 0;
+  width: 100%;
 }
 
 .filter-control {
-  width: 180px;
+  width: 100%;
+}
+
+.search-bar__input :deep(.el-input) {
+  width: 280px;
 }
 
 .filter-actions {
@@ -531,7 +532,21 @@ fetchProjects()
 .foundation-projects-page__pagination {
   display: flex;
   justify-content: flex-end;
-  padding: 12px 0 0;
+  padding: 10px 16px;
+  border-top: 1px solid var(--border-color-lighter);
+}
+
+.foundation-projects-page__header h1 {
+  margin: 0;
+  color: var(--text-strong);
+  font-size: 24px;
+  line-height: 1.25;
+}
+
+.foundation-projects-page__header p {
+  margin: 4px 0 0;
+  color: var(--text-secondary);
+  font-size: 13px;
 }
 
 .dialog-form :deep(.el-form-item__label) { min-width: 90px; }
@@ -565,7 +580,18 @@ fetchProjects()
 }
 
 .btn-primary-add {
+  position: relative;
+  z-index: 1;
+  border: 0;
+  background: var(--brand-gradient);
   color: var(--text-inverse);
+  font-weight: 700;
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.btn-primary-add:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
 }
 
 /* ── 浅色主题 ── */

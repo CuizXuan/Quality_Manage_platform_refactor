@@ -12,6 +12,7 @@
       </div>
       <div class="header-right">
         <el-button :icon="History" @click="handleExecutionHistory">执行历史</el-button>
+        <el-button type="primary" :icon="MagicStick" :loading="aiLoading" @click="handleAiGenerateSteps">AI 生成步骤</el-button>
         <el-button type="primary" :icon="VideoPlay" :loading="running" @click="handleRun">执行场景</el-button>
         <el-button type="primary" :icon="EditPen" @click="openEditDialog">编辑场景</el-button>
         <el-button type="primary" :icon="Plus" @click="handleAddStep">添加步骤</el-button>
@@ -72,6 +73,7 @@
         :data="scenarioStore.currentSteps"
         row-key="id"
         class="steps-table"
+        height="100%"
         highlight-current-row
         @row-click="handleRowClick"
       >
@@ -113,6 +115,23 @@
       :scenario-id="scenarioId"
       @saved="handleStepSaved"
     />
+
+    <!-- AI 步骤建议弹窗 -->
+    <el-dialog v-model="aiStepsDialogVisible" title="AI 步骤建议" width="600px" destroy-on-close>
+      <div v-if="aiSuggestedSteps.length" class="ai-steps-suggestions">
+        <p class="ai-steps-hint">以下是 AI 建议的步骤，采纳后将填入步骤草稿，请选择用例后保存：</p>
+        <ul>
+          <li v-for="(step, i) in aiSuggestedSteps" :key="i">
+            <strong>{{ typeof step === 'string' ? step : (step.description || step.name || JSON.stringify(step)) }}</strong>
+          </li>
+        </ul>
+      </div>
+      <el-empty v-else description="暂无步骤建议" />
+      <template #footer>
+        <el-button @click="aiStepsDialogVisible = false">关闭</el-button>
+        <el-button type="primary" @click="handleAcceptAiSteps" :disabled="!aiSuggestedSteps.length">填入草稿</el-button>
+      </template>
+    </el-dialog>
 
     <!-- 场景基本信息编辑弹窗 -->
     <el-dialog
@@ -166,9 +185,10 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { ArrowLeft, Plus, VideoPlay, EditPen, History } from '@element-plus/icons-vue'
+import { ArrowLeft, Plus, VideoPlay, EditPen, History, MagicStick } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useScenarioStore } from '@/stores/scenarioStore'
+import { useAiStore } from '@/stores/aiStore'
 import ScenarioStepDialog from './ScenarioStepDialog.vue'
 
 const route = useRoute()
@@ -177,10 +197,14 @@ const scenarioStore = useScenarioStore()
 
 const scenarioId = computed(() => Number(route.params.id))
 const running = ref(false)
+const aiLoading = ref(false)
 const saving = ref(false)
 const stepDialogVisible = ref(false)
 const editDialogVisible = ref(false)
 const currentStep = ref(null)
+const aiSuggestedSteps = ref([])
+
+const aiStepsDialogVisible = ref(false)
 
 const scenarioForm = ref({
   name: '',
@@ -272,6 +296,17 @@ function handleStepSaved() {
   currentStep.value = null
 }
 
+async function handleAcceptAiSteps() {
+  if (!aiSuggestedSteps.value.length) return
+
+  // 方案 B：提示用户手动添加步骤并选择用例后保存（避免草稿弹窗 422）
+  const first = aiSuggestedSteps.value[0]
+  const desc = typeof first === 'string' ? first : (first.description || first.name || '')
+  aiSuggestedSteps.value = []
+  aiStepsDialogVisible.value = false
+  ElMessage.info('AI 已生成步骤建议，请点击「添加步骤」手动录入信息并选择用例后保存')
+}
+
 async function handleSave() {
   if (!scenarioForm.value.name.trim()) {
     ElMessage.warning('请输入场景名称')
@@ -309,6 +344,36 @@ async function handleRun() {
 
 function handleExecutionHistory() {
   router.push({ name: 'ExecutionHistory', query: { scenario_id: scenarioId.value } })
+}
+
+// ── AI 生成步骤 ────────────────────────────────────────────
+
+const aiStore = useAiStore()
+
+async function handleAiGenerateSteps() {
+  aiLoading.value = true
+  aiSuggestedSteps.value = []
+  try {
+    const scenario = scenarioStore.currentScenario
+    const caseData = {
+      name: scenario?.name || '',
+      description: scenario?.description || '',
+      scenario_id: scenarioId.value,
+      steps: scenarioStore.currentSteps.map(s => ({ name: s.name, case_id: s.case_id })),
+    }
+    const result = await aiStore.analyzeFailure({ case_data: caseData })
+    if (result?.suggestions?.length) {
+      aiSuggestedSteps.value = result.suggestions
+      aiStepsDialogVisible.value = true
+      ElMessage.success(`生成 ${result.suggestions.length} 条步骤建议`)
+    } else {
+      ElMessage.warning('暂未生成步骤建议')
+    }
+  } catch (e) {
+    ElMessage.error('AI 生成失败: ' + (e.response?.data?.detail || e.message || '请检查 AI 配置'))
+  } finally {
+    aiLoading.value = false
+  }
 }
 </script>
 
@@ -491,6 +556,34 @@ html:not(.dark) .scenario-detail-page__steps {
 
 .steps-table :deep(.el-table__cell) {
   vertical-align: middle;
+}
+
+.steps-table :deep(.el-table__body tr:nth-child(even) td.el-table__cell) {
+  background: rgba(15, 31, 52, 0.28) !important;
+  background-color: rgba(15, 31, 52, 0.28) !important;
+}
+
+html:not(.dark) .steps-table :deep(.el-table__body tr:nth-child(even) td.el-table__cell) {
+  background: rgba(245, 250, 255, 0.5) !important;
+  background-color: rgba(245, 250, 255, 0.5) !important;
+}
+
+html:not(.dark) .scenario-detail-page__info {
+  background: rgba(255, 255, 255, 0.86);
+  border-color: rgba(22, 119, 255, 0.14);
+}
+
+html:not(.dark) .scenario-detail-page__header {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.86), rgba(245, 250, 255, 0.68)),
+    rgba(255, 255, 255, 0.72);
+  box-shadow: 0 18px 46px rgba(20, 42, 76, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.82);
+  border-color: rgba(22, 119, 255, 0.18);
+}
+
+html:not(.dark) .scenario-form {
+  background: rgba(255, 255, 255, 0.6);
+  border-color: rgba(22, 119, 255, 0.14);
 }
 
 .text-muted {
