@@ -93,10 +93,17 @@
           </template>
         </el-table-column>
         <el-table-column prop="created_at" label="创建时间" width="170" align="center" />
-        <el-table-column label="操作" width="180" fixed="right" align="center">
+        <el-table-column label="操作" width="220" fixed="right" align="center">
           <template #default="{ row }">
             <div class="actions-cell">
               <el-button type="primary" text size="small" @click="editRequirement(row)">编辑</el-button>
+              <el-button
+                type="success"
+                text
+                size="small"
+                :loading="aiLaunchingId === row.id"
+                @click="launchAiWorkflow(row)"
+              >AI 设计</el-button>
               <el-button type="danger" text size="small" @click="deleteRequirement(row)">删除</el-button>
             </div>
           </template>
@@ -124,12 +131,12 @@
     <el-dialog v-model="showDialog" :title="editingRequirement ? '编辑需求' : '新建需求'" width="550px">
       <el-form :model="form" label-position="left" class="dialog-form">
         <el-form-item label="所属项目：" required>
-          <el-select v-model="form.project_id" placeholder="选择项目" class="filter-control">
+          <el-select v-model="form.project_id" placeholder="选择项目" class="filter-control" @change="onFormProjectChange">
             <el-option v-for="p in store.projects" :key="p.id" :label="p.name" :value="p.id" />
           </el-select>
         </el-form-item>
         <el-form-item label="版本：">
-          <el-select v-model="form.version_id" placeholder="选择版本" clearable class="filter-control">
+          <el-select v-model="form.version_id" placeholder="选择版本" clearable class="filter-control" @change="onFormVersionChange">
             <el-option v-for="v in store.versions" :key="v.id" :label="v.name" :value="v.id" />
           </el-select>
         </el-form-item>
@@ -172,6 +179,17 @@
           </el-select>
         </el-form-item>
       </el-form>
+
+      <div v-if="editingRequirement" class="requirement-edit-trace">
+        <AiTracePanel
+          origin-module="requirement"
+          origin-type="requirement_item"
+          :origin-id="editingRequirement.id"
+          :title="`关联 AI 工作流（需求 #${editingRequirement.id}）`"
+          compact
+        />
+      </div>
+
       <template #footer>
         <el-button @click="closeDialog">取消</el-button>
         <el-button type="primary" @click="saveRequirement">保存</el-button>
@@ -182,11 +200,17 @@
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { Plus, Search, RefreshLeft } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useQualityFoundationStore } from '@/stores/qualityFoundationStore'
+import { useAiStore } from '@/stores/aiStore'
+import AiTracePanel from '@/components/ai/AiTracePanel.vue'
 
 const store = useQualityFoundationStore()
+const aiStore = useAiStore()
+const router = useRouter()
+const aiLaunchingId = ref(null)
 
 const filters = reactive({ project_id: null, version_id: null, iteration_id: null, status: '' })
 const pagination = reactive({ page: 1, pageSize: 20 })
@@ -233,10 +257,12 @@ function resetFilters() {
 function openCreateDialog() {
   editingRequirement.value = null
   Object.assign(form, { project_id: null, version_id: null, iteration_id: null, title: '', description: '', source_type: '', source_key: '', priority: 'P2', status: 'open' })
+  store.versions = []
+  store.iterations = []
   showDialog.value = true
 }
 
-function editRequirement(row) {
+async function editRequirement(row) {
   editingRequirement.value = row
   Object.assign(form, {
     project_id: row.project_id,
@@ -249,7 +275,51 @@ function editRequirement(row) {
     priority: row.priority,
     status: row.status,
   })
+  // 修复七期 A：编辑需求时若带 project_id/version_id,需要把对应版本/迭代预加载到下拉
+  store.versions = []
+  store.iterations = []
+  if (row.project_id) {
+    try {
+      await store.fetchVersions({ project_id: row.project_id })
+    } catch (e) {
+      // 静默失败:下拉空可让用户重新选
+    }
+  }
+  if (row.version_id) {
+    try {
+      await store.fetchIterations({ version_id: row.version_id })
+    } catch (e) {
+      // 静默失败
+    }
+  }
   showDialog.value = true
+}
+
+// 弹窗内三级联动：选项目 -> 清空版本/迭代 -> 拉版本；选版本 -> 清空迭代 -> 拉迭代
+async function onFormProjectChange(projectId) {
+  form.version_id = null
+  form.iteration_id = null
+  store.versions = []
+  store.iterations = []
+  if (projectId) {
+    try {
+      await store.fetchVersions({ project_id: projectId })
+    } catch (e) {
+      // 静默失败
+    }
+  }
+}
+
+async function onFormVersionChange(versionId) {
+  form.iteration_id = null
+  store.iterations = []
+  if (versionId) {
+    try {
+      await store.fetchIterations({ version_id: versionId })
+    } catch (e) {
+      // 静默失败
+    }
+  }
 }
 
 async function saveRequirement() {
@@ -281,6 +351,41 @@ async function deleteRequirement(row) {
     fetchRequirements()
   } catch (e) {
     if (e !== 'cancel') throw e
+  }
+}
+
+async function launchAiWorkflow(row) {
+  if (!row || !row.id) return
+  try {
+    await ElMessageBox.confirm(
+      '将基于当前需求启动 AI 需求到测试设计工作流。\n不会自动创建用例/场景。\n后续需要在 AI 工作台查看并人工采纳。',
+      '启动 AI 设计',
+      { type: 'info', confirmButtonText: '启动', cancelButtonText: '取消' },
+    )
+  } catch (e) {
+    if (e === 'cancel' || e === 'close') return
+    throw e
+  }
+  aiLaunchingId.value = row.id
+  try {
+    const run = await aiStore.startWorkflowFromRequirements({ requirement_ids: [row.id] })
+    ElMessage.success(
+      `AI workflow 已启动（run #${run?.id || '?'}），后台约需 1-3 分钟。可在 AI 工作台查看实时进度。`,
+    )
+    try {
+      await ElMessageBox.confirm(
+        `run #${run?.id || '?'} 已加入后台执行，是否立即跳转到 AI 工作台查看进度？`,
+        '跳转确认',
+        { type: 'success', confirmButtonText: '跳转', cancelButtonText: '留在此页' },
+      )
+      router.push({ path: '/ai/workbench', query: { run_id: run?.id } })
+    } catch (e) {
+      // 用户选择不跳转；不抛错
+    }
+  } catch (err) {
+    ElMessage.error(err?.response?.data?.detail || err?.message || 'AI 启动失败')
+  } finally {
+    aiLaunchingId.value = null
   }
 }
 
@@ -525,6 +630,10 @@ onMounted(async () => {
   display: flex;
   justify-content: center;
   gap: 4px;
+}
+
+.requirement-edit-trace {
+  margin-top: 12px;
 }
 
 .empty-text {

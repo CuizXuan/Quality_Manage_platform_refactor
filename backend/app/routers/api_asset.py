@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import List, Optional
+from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
@@ -8,26 +8,24 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models.platform import PlatformUser
 from app.routers.platform_auth import get_current_platform_user
-from app.services import api_asset_service as service
 from app.schemas.api_asset import (
-    ApiGroupCreate,
-    ApiGroupUpdate,
-    ApiGroupResponse,
-    ApiGroupListResponse,
     ApiDefinitionCreate,
-    ApiDefinitionUpdate,
-    ApiDefinitionResponse,
     ApiDefinitionListResponse,
+    ApiDefinitionResponse,
+    ApiDefinitionUpdate,
+    ApiGroupCreate,
+    ApiGroupListResponse,
+    ApiGroupResponse,
+    ApiGroupUpdate,
     ApiImportRequest,
     DebugPayloadResponse,
     OpenApiImportResult,
 )
+from app.services import api_asset_service as service
 from app.services.log_service import LogService
 
-router = APIRouter(prefix="/api/assets", tags=["API资产"])
+router = APIRouter(prefix="/api/assets", tags=["api-assets"])
 
-
-# ── ApiGroup ──────────────────────────────────────────────────────────────────
 
 @router.get("/groups", response_model=ApiGroupListResponse)
 def list_groups(
@@ -38,15 +36,18 @@ def list_groups(
 ):
     groups = service.list_groups(db, project_id, keyword)
     return ApiGroupListResponse(
-        items=[ApiGroupResponse(
-            id=g.id,
-            project_id=g.project_id,
-            name=g.name,
-            parent_id=g.parent_id,
-            sort_order=g.sort_order or 0,
-            created_at=g.created_at.isoformat() if g.created_at else "",
-            updated_at=g.updated_at.isoformat() if g.updated_at else "",
-        ) for g in groups],
+        items=[
+            ApiGroupResponse(
+                id=item.id,
+                project_id=item.project_id,
+                name=item.name,
+                parent_id=item.parent_id,
+                sort_order=item.sort_order or 0,
+                created_at=item.created_at.isoformat() if item.created_at else "",
+                updated_at=item.updated_at.isoformat() if item.updated_at else "",
+            )
+            for item in groups
+        ],
         total=len(groups),
         page=1,
         page_size=len(groups),
@@ -60,7 +61,7 @@ def create_group(
     current_user: PlatformUser = Depends(get_current_platform_user),
 ):
     result = service.create_group(db, data)
-    LogService(db, current_user.id, current_user.username).log_crud("创建", "API分组", result.name, result.id)
+    LogService(db, current_user.id, current_user.username).log_crud("create", "api-group", result.name, result.id)
     return ApiGroupResponse(
         id=result.id,
         project_id=result.project_id,
@@ -81,8 +82,8 @@ def update_group(
 ):
     result = service.update_group(db, group_id, data)
     if not result:
-        raise HTTPException(status_code=404, detail="分组不存在")
-    LogService(db, current_user.id, current_user.username).log_crud("更新", "API分组", result.name, result.id)
+        raise HTTPException(status_code=404, detail="API group not found")
+    LogService(db, current_user.id, current_user.username).log_crud("update", "api-group", result.name, result.id)
     return ApiGroupResponse(
         id=result.id,
         project_id=result.project_id,
@@ -101,12 +102,19 @@ def delete_group(
     current_user: PlatformUser = Depends(get_current_platform_user),
 ):
     if not service.delete_group(db, group_id):
-        raise HTTPException(status_code=404, detail="分组不存在")
-    LogService(db, current_user.id, current_user.username).log_crud("删除", "API分组", None, group_id)
+        raise HTTPException(status_code=404, detail="API group not found")
+    LogService(db, current_user.id, current_user.username).log_crud("delete", "api-group", None, group_id)
     return {"success": True}
 
 
-# ── ApiDefinition ──────────────────────────────────────────────────────────────
+@router.get("/services")
+def list_services(
+    project_id: Optional[int] = None,
+    db: Session = Depends(get_db),
+    current_user: PlatformUser = Depends(get_current_platform_user),
+):
+    return service.list_services(db, project_id=project_id)
+
 
 @router.get("/apis", response_model=ApiDefinitionListResponse)
 def list_apis(
@@ -122,7 +130,7 @@ def list_apis(
 ):
     items, total = service.list_apis(db, project_id, group_id, keyword, method, status, page=page, page_size=page_size)
     return ApiDefinitionListResponse(
-        items=[_serialize_api(a) for a in items],
+        items=[_serialize_api(item) for item in items],
         total=total,
         page=page,
         page_size=page_size,
@@ -137,7 +145,7 @@ def get_api(
 ):
     result = service.get_api(db, api_id)
     if not result:
-        raise HTTPException(status_code=404, detail="API 不存在")
+        raise HTTPException(status_code=404, detail="API definition not found")
     return _serialize_api(result)
 
 
@@ -148,7 +156,7 @@ def create_api(
     current_user: PlatformUser = Depends(get_current_platform_user),
 ):
     result = service.create_api(db, data)
-    LogService(db, current_user.id, current_user.username).log_crud("创建", "API定义", result.name, result.id)
+    LogService(db, current_user.id, current_user.username).log_crud("create", "api-definition", result.name, result.id)
     return _serialize_api(result)
 
 
@@ -161,8 +169,8 @@ def update_api(
 ):
     result = service.update_api(db, api_id, data)
     if not result:
-        raise HTTPException(status_code=404, detail="API 不存在")
-    LogService(db, current_user.id, current_user.username).log_crud("更新", "API定义", result.name, result.id)
+        raise HTTPException(status_code=404, detail="API definition not found")
+    LogService(db, current_user.id, current_user.username).log_crud("update", "api-definition", result.name, result.id)
     return _serialize_api(result)
 
 
@@ -173,8 +181,8 @@ def delete_api(
     current_user: PlatformUser = Depends(get_current_platform_user),
 ):
     if not service.delete_api(db, api_id):
-        raise HTTPException(status_code=404, detail="API 不存在")
-    LogService(db, current_user.id, current_user.username).log_crud("删除", "API定义", None, api_id)
+        raise HTTPException(status_code=404, detail="API definition not found")
+    LogService(db, current_user.id, current_user.username).log_crud("delete", "api-definition", None, api_id)
     return {"success": True}
 
 
@@ -186,11 +194,21 @@ def get_debug_payload(
 ):
     result = service.get_debug_payload(db, api_id)
     if not result:
-        raise HTTPException(status_code=404, detail="API 不存在")
+        raise HTTPException(status_code=404, detail="API definition not found")
     return result
 
 
-# ── Import / Export ──────────────────────────────────────────────────────────────
+@router.get("/apis/{api_id}/diff")
+def get_api_diff(
+    api_id: int,
+    db: Session = Depends(get_db),
+    current_user: PlatformUser = Depends(get_current_platform_user),
+):
+    result = service.diff_api_versions(db, api_id)
+    if not result:
+        raise HTTPException(status_code=404, detail="API definition not found")
+    return result
+
 
 @router.post("/import/openapi", response_model=OpenApiImportResult)
 def import_openapi(
@@ -206,12 +224,10 @@ def import_openapi(
             raw_content=request.raw_content,
             project_id=request.project_id,
         )
-        LogService(db, current_user.id, current_user.username).log(
-            "导入", "OpenAPI", f"导入 {result['imported']} 个 API"
-        )
-        return OpenApiImportResult(**result)
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+    LogService(db, current_user.id, current_user.username).log("import", "openapi", f"imported {result['imported']} apis")
+    return OpenApiImportResult(**result)
 
 
 @router.get("/export/openapi")
@@ -223,8 +239,6 @@ def export_openapi(
     return service.export_openapi(db, project_id)
 
 
-# ── Generate Case ──────────────────────────────────────────────────────────────
-
 @router.post("/apis/{api_id}/generate-case")
 def generate_case(
     api_id: int,
@@ -233,15 +247,27 @@ def generate_case(
 ):
     case = service.generate_case_from_api(db, api_id)
     if not case:
-        raise HTTPException(status_code=404, detail="API 不存在")
-    LogService(db, current_user.id, current_user.username).log_crud("生成", "测试用例", case.name, case.id)
+        raise HTTPException(status_code=404, detail="API definition not found")
+    LogService(db, current_user.id, current_user.username).log_crud("generate", "test-case", case.name, case.id)
     return {"id": case.id, "name": case.name, "auto_case_id": case.auto_case_id}
 
 
-# ── Helpers ─────────────────────────────────────────────────────────────────────
+@router.post("/apis/{api_id}/generate-baseline")
+def generate_baseline(
+    api_id: int,
+    db: Session = Depends(get_db),
+    current_user: PlatformUser = Depends(get_current_platform_user),
+):
+    result = service.generate_baseline_from_api(db, api_id)
+    if not result:
+        raise HTTPException(status_code=404, detail="API definition not found")
+    LogService(db, current_user.id, current_user.username).log("generate", "api-baseline", f"baseline generated for api {api_id}")
+    return result
+
 
 def _serialize_api(api) -> ApiDefinitionResponse:
     import json as _json
+
     tags = []
     parameters = []
     request_body = {}

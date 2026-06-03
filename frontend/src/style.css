@@ -3,6 +3,7 @@
 @import './styles/global.css';
 @import './styles/page-framework.css';
 @import './styles/element-override.css';
+@import './styles/workbench.css';
 
 /* el-segmented 选中状态高亮 - 全局应用，修复 dialog 内样式继承问题 */
 .el-segmented__item.is-selected {

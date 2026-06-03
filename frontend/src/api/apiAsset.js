@@ -22,6 +22,9 @@ export const apiAssetApi = {
   getApi(id) {
     return client.get(`/api/assets/apis/${id}`)
   },
+  listServices(params) {
+    return client.get('/api/assets/services', { params })
+  },
   createApi(data) {
     return client.post('/api/assets/apis', data)
   },
@@ -34,8 +37,14 @@ export const apiAssetApi = {
   getDebugPayload(id) {
     return client.get(`/api/assets/apis/${id}/debug-payload`)
   },
+  getDiff(id) {
+    return client.get(`/api/assets/apis/${id}/diff`)
+  },
   generateCase(id) {
     return client.post(`/api/assets/apis/${id}/generate-case`)
+  },
+  generateBaseline(id) {
+    return client.post(`/api/assets/apis/${id}/generate-baseline`)
   },
 
   // Import/Export

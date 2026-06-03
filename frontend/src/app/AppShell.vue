@@ -41,7 +41,7 @@
     <el-container direction="vertical" class="app-content">
       <el-header height="var(--header-height)" class="app-header">
         <div class="header-left">
-          <el-button text :icon="FoldIcon" @click="toggleCollapse" />
+          <el-button text :icon="foldIcon" @click="toggleCollapse" />
           <el-breadcrumb separator="/" class="header-breadcrumb">
             <el-breadcrumb-item v-for="crumb in breadcrumbs" :key="crumb">{{ crumb }}</el-breadcrumb-item>
           </el-breadcrumb>
@@ -54,11 +54,16 @@
               <el-option label="本地环境" value="local" />
               <el-option label="开发环境" value="dev" />
               <el-option label="测试环境" value="test" />
-              <el-option label="预生产" value="staging" />
+              <el-option label="预发环境" value="staging" />
             </el-select>
           </div>
           <el-button text :icon="isDark ? Sunny : Moon" @click="toggleTheme" />
-          <el-button text :icon="User" :title="`个人中心：${authStore.currentUsername || '用户'}`" @click="personalCenterRef.open()" />
+          <el-button
+            text
+            :icon="User"
+            :title="`个人中心：${authStore.currentUsername || '用户'}`"
+            @click="personalCenterRef.open()"
+          />
           <el-button text type="danger" :icon="SwitchButton" title="退出登录" @click="handleLogout" />
         </div>
       </el-header>
@@ -78,29 +83,30 @@
 
 <script setup>
 import {
+  Bell,
+  CircleCheck,
   Connection,
   CopyDocument,
+  DataLine,
   Document,
   DocumentChecked,
   DocumentCopy,
   Expand,
   Fold,
+  Folder,
+  Key,
+  List,
   Menu as MenuIcon,
   Monitor,
   Moon,
   Setting,
-  SwitchButton,
   Sunny,
-  User,
-  Folder,
-  List,
-  Warning,
-  CircleCheck,
-  Bell,
-  Key,
-  VideoPlay,
+  SwitchButton,
   TrendCharts,
-  DataLine,
+  Upload,
+  User,
+  VideoPlay,
+  Warning,
 } from '@element-plus/icons-vue'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -108,7 +114,6 @@ import { useAuthStore } from '@/stores/auth'
 import PersonalCenter from '@/views/platform/PersonalCenter.vue'
 
 const personalCenterRef = ref(null)
-
 const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
@@ -119,49 +124,59 @@ const currentEnvironment = ref(localStorage.getItem('platform_environment') || '
 const menuList = [
   { title: '工作台', icon: Monitor, path: '/' },
   {
-    title: '工具',
-    icon: MenuIcon,
-    path: '/tools',
+    title: 'API 资产',
+    icon: Connection,
+    path: '/api-workbench',
     children: [
-      { title: '终端调试台', icon: Connection, path: '/terminal' },
-      { title: '用例管理', icon: DocumentChecked, path: '/case' },
-      { title: '接口中心', icon: Connection, path: '/api-assets' },
+      { title: '终端调试', icon: VideoPlay, path: '/terminal' },
+      { title: '资产中心', icon: Connection, path: '/api-assets' },
+      { title: '导入任务', icon: Upload, path: '/api-assets/import-jobs' },
     ],
   },
   {
-    title: '测试执行',
+    title: '测试设计',
+    icon: DocumentChecked,
+    path: '/design',
+    children: [
+      { title: '用例管理', icon: DocumentChecked, path: '/case' },
+      { title: '场景管理', icon: Folder, path: '/scenario' },
+      { title: '测试计划', icon: Document, path: '/test-plans' },
+    ],
+  },
+  {
+    title: '执行中心',
     icon: VideoPlay,
     path: '/execution',
     children: [
-      { title: '场景管理', icon: Folder, path: '/scenario' },
-      { title: '执行历史', icon: List, path: '/scenario/executions' },
-      { title: '测试计划', icon: Document, path: '/test-plans' },
-      { title: '计划执行', icon: List, path: '/test-plan-runs' },
+      { title: '统一执行', icon: List, path: '/executions' },
+      { title: '场景执行历史', icon: List, path: '/scenario/executions' },
+      { title: '计划执行历史', icon: List, path: '/test-plan-runs' },
     ],
   },
   {
-    title: '质量中心',
-    icon: CircleCheck,
-    path: '/quality',
-    children: [
-      { title: '报告中心', icon: Document, path: '/report' },
-      { title: '缺陷中心', icon: Warning, path: '/defect' },
-      { title: '门禁管理', icon: Key, path: '/quality-gate' },
-      { title: '质量看板', icon: DataLine, path: '/quality-analytics' },
-    ],
-  },
-  {
-    title: 'AI 中枢',
+    title: 'AI 工作台',
     icon: TrendCharts,
     path: '/ai',
     children: [
+      { title: 'AI 总控台', icon: TrendCharts, path: '/ai/workbench' },
       { title: '模型配置', icon: Setting, path: '/ai/config' },
-      { title: 'Prompt模板', icon: Document, path: '/ai/templates' },
+      { title: 'Prompt 模板', icon: Document, path: '/ai/templates' },
       { title: '变体生成', icon: CopyDocument, path: '/ai/variant-generator' },
       { title: '断言生成', icon: CircleCheck, path: '/ai/assertion-generator' },
       { title: '失败归因', icon: Warning, path: '/ai/failure-analyzer' },
       { title: '报告总结', icon: Document, path: '/ai/report-summarizer' },
-      { title: '采纳历史', icon: List, path: '/ai/suggestion-history' },
+      { title: '建议历史', icon: List, path: '/ai/suggestion-history' },
+    ],
+  },
+  {
+    title: '质量概览',
+    icon: DataLine,
+    path: '/quality',
+    children: [
+      { title: '质量看板', icon: DataLine, path: '/quality-analytics' },
+      { title: '报告中心', icon: Document, path: '/report' },
+      { title: '缺陷中心', icon: Warning, path: '/defect' },
+      { title: '质量门禁', icon: Key, path: '/quality-gate' },
     ],
   },
   {
@@ -199,9 +214,7 @@ const menuList = [
   },
 ]
 
-const flatMenu = computed(() => {
-  return menuList.flatMap((item) => item.children?.length ? item.children : [item])
-})
+const flatMenu = computed(() => menuList.flatMap((item) => (item.children?.length ? item.children : [item])))
 
 const activeMenu = computed(() => {
   const normalizedPath = route.path === '/' ? '/' : route.path.replace(/\/$/, '')
@@ -218,18 +231,14 @@ const breadcrumbs = computed(() => {
   return parent ? [parent.title, current.title] : [current.title]
 })
 
-const sidebarWidth = computed(() => isCollapse.value ? 'var(--sidebar-width-collapsed)' : 'var(--sidebar-width)')
-const FoldIcon = computed(() => isCollapse.value ? Expand : Fold)
+const sidebarWidth = computed(() => (isCollapse.value ? 'var(--sidebar-width-collapsed)' : 'var(--sidebar-width)'))
+const foldIcon = computed(() => (isCollapse.value ? Expand : Fold))
 const isFullBleed = computed(() => ['Terminal', 'CaseManagement'].includes(route.name))
 
 function toggleTheme() {
-  setTheme(!isDark.value)
-}
-
-function setTheme(dark) {
-  isDark.value = dark
-  document.documentElement.classList.toggle('dark', dark)
-  localStorage.setItem('theme', dark ? 'dark' : 'light')
+  isDark.value = !isDark.value
+  document.documentElement.classList.toggle('dark', isDark.value)
+  localStorage.setItem('theme', isDark.value ? 'dark' : 'light')
 }
 
 function toggleCollapse() {
@@ -243,7 +252,7 @@ function handleLogout() {
 }
 
 onMounted(() => {
-  setTheme(isDark.value)
+  document.documentElement.classList.toggle('dark', isDark.value)
 })
 
 watch(currentEnvironment, (value) => {

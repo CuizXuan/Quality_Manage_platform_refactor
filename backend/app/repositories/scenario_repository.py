@@ -52,7 +52,7 @@ class ScenarioRepository:
 
         total = query.count()
         items = (
-            query.order_by(Scenario.create_at.desc())
+            query.order_by(Scenario.created_at.desc())
             .options(joinedload(Scenario.steps))
             .offset((page - 1) * page_size)
             .limit(page_size)

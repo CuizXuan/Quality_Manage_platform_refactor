@@ -34,6 +34,9 @@ class Report(Base):
     project_id = Column(Integer, nullable=True)
     version_id = Column(Integer, nullable=True)
     iteration_id = Column(Integer, nullable=True)
+    source_type = Column(String(30), default="execution")
+    source_id = Column(Integer, nullable=True)
+    version_tag = Column(String(50), default="")
 
 
 class Defect(Base):

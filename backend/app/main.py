@@ -17,6 +17,10 @@ from app.routers.quality_foundation import router as foundation_router
 from app.routers.api_asset import router as api_asset_router
 from app.routers.test_plan import router as test_plan_router
 from app.routers.quality_analytics import router as quality_analytics_router
+from app.routers.environment_asset import router as environment_router
+from app.routers.import_asset import router as import_router
+from app.routers.execution_asset import router as execution_router
+from app.routers.ai_agent import router as ai_agent_router
 
 app = FastAPI(title="Quality Manage Platform", version="2.0.0")
 
@@ -50,6 +54,10 @@ app.include_router(foundation_router)
 app.include_router(api_asset_router)
 app.include_router(test_plan_router)
 app.include_router(quality_analytics_router)
+app.include_router(environment_router)
+app.include_router(import_router)
+app.include_router(execution_router)
+app.include_router(ai_agent_router)
 
 
 @app.on_event("startup")

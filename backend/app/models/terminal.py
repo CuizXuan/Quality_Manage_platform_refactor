@@ -20,6 +20,9 @@ class DebugRequest(Base):
     body_type = Column(String(20), default="none")  # none, json, form, raw
     body = Column(Text, default="")
     environment_id = Column(Integer, ForeignKey("platform_organizations.id"), nullable=True)
+    source_id = Column(Integer, nullable=True)
+    project_id = Column(Integer, nullable=True)
+    version_tag = Column(String(50), default="")
     status = Column(String(20), default="active")  # active, favorite
     source_type = Column(String(20), default="manual")  # manual, curl, fetch
     created_by = Column(Integer, nullable=True)

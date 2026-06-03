@@ -96,9 +96,60 @@ class AISuggestion(Base):
     # e.g. variant_add, assertion_add, defect_create, fix_recommendation
     content = Column(Text, nullable=False)  # JSON string with suggestion details
     accepted = Column(Boolean, nullable=False, default=False)
+    status = Column(String(30), nullable=False, default="pending_review")
     accepted_at = Column(DateTime, nullable=True)
     accepted_by = Column(Integer, nullable=True)
     accepted_comment = Column(Text, default="")
     created_at = Column(DateTime, default=datetime.utcnow)
 
     analysis = relationship("AIAnalysis", back_populates="suggestions")
+
+
+class AIWorkflowRun(Base):
+    """多 Agent 编排工作流运行实例。"""
+
+    __tablename__ = "ai_workflow_runs"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    workflow_type = Column(String(80), nullable=False, default="requirement_to_test_design")
+    status = Column(String(20), nullable=False, default="pending")
+    # pending | running | completed | failed
+    source_name = Column(String(200), default="")
+    source_type = Column(String(30), default="other")
+    input_payload = Column(Text, default="{}")
+    result_payload = Column(Text, default="{}")
+    current_step = Column(String(80), default="")
+    created_by = Column(Integer, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    finished_at = Column(DateTime, nullable=True)
+
+    steps = relationship(
+        "AIWorkflowStep",
+        back_populates="run",
+        cascade="all, delete-orphan",
+        order_by="AIWorkflowStep.step_order",
+    )
+
+
+class AIWorkflowStep(Base):
+    """多 Agent 编排工作流的单个步骤记录。"""
+
+    __tablename__ = "ai_workflow_steps"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    run_id = Column(Integer, ForeignKey("ai_workflow_runs.id"), nullable=False)
+    step_order = Column(Integer, nullable=False, default=1)
+    agent_type = Column(String(80), nullable=False)
+    # e.g. requirement-analyst | test-designer
+    status = Column(String(20), nullable=False, default="pending")
+    # pending | running | completed | failed
+    input_payload = Column(Text, default="{}")
+    output_payload = Column(Text, default="{}")
+    suggestion_id = Column(Integer, nullable=True)
+    error_message = Column(Text, default="")
+    started_at = Column(DateTime, nullable=True)
+    finished_at = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    run = relationship("AIWorkflowRun", back_populates="steps")

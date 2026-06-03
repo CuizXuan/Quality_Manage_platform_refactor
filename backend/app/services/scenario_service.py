@@ -121,6 +121,9 @@ class ScenarioService:
             "project_id": data.get("project_id"),
             "version_id": data.get("version_id"),
             "iteration_id": data.get("iteration_id"),
+            "source_type": data.get("source_type"),
+            "source_id": data.get("source_id"),
+            "version_tag": data.get("version_tag"),
         }
         scenario = self.repo.create(self.db, scenario_data)
         self.db.flush()

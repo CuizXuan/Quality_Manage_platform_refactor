@@ -9,6 +9,7 @@ from typing import Any, Dict, List, Optional, Tuple
 from sqlalchemy.orm import Session
 
 from app.models.api_asset import ApiGroup, ApiDefinition, ApiImportRecord
+from app.models.asset_trace import AssetTrace
 from app.models.test_case import TestCase
 from app.models.api_test_case import ApiTestCase
 from app.schemas.api_asset import (
@@ -109,6 +110,34 @@ def get_api(db: Session, api_id: int) -> Optional[ApiDefinition]:
     return db.query(ApiDefinition).filter(ApiDefinition.id == api_id).first()
 
 
+def list_services(db: Session, project_id: Optional[int] = None) -> List[Dict[str, Any]]:
+    query = db.query(ApiDefinition)
+    if project_id:
+        query = query.filter(ApiDefinition.project_id == project_id)
+    apis = query.order_by(ApiDefinition.id.desc()).all()
+    services: Dict[str, Dict[str, Any]] = {}
+    for api in apis:
+        service_name = api.base_url or "default"
+        if service_name not in services:
+            services[service_name] = {
+                "service_name": service_name,
+                "api_count": 0,
+                "latest_version": api.version or "1.0.0",
+                "apis": [],
+            }
+        services[service_name]["api_count"] += 1
+        services[service_name]["apis"].append(
+            {
+                "id": api.id,
+                "name": api.name,
+                "method": api.method,
+                "path": api.path,
+                "version": api.version or "1.0.0",
+            }
+        )
+    return list(services.values())
+
+
 def create_api(db: Session, data: ApiDefinitionCreate) -> ApiDefinition:
     payload = data.model_dump()
     for field in ("tags", "parameters", "request_body", "responses"):
@@ -181,12 +210,106 @@ def get_debug_payload(db: Session, api_id: int) -> Optional[Dict[str, Any]]:
     full_url = f"{api.base_url or ''}{api.path}"
 
     return {
+        "api_id": api.id,
         "method": api.method,
         "url": full_url,
         "headers": headers,
         "query_params": params,
         "body_type": body_type,
         "body": body,
+        "project_id": api.project_id,
+        "source_type": api.source_type or "api_asset",
+        "source_id": api.source_id or api.id,
+        "version_tag": api.version_tag or api.version or "1.0.0",
+    }
+
+
+def diff_api_versions(db: Session, api_id: int) -> Optional[Dict[str, Any]]:
+    current = get_api(db, api_id)
+    if not current:
+        return None
+    previous = (
+        db.query(ApiDefinition)
+        .filter(
+            ApiDefinition.path == current.path,
+            ApiDefinition.method == current.method,
+            ApiDefinition.id != current.id,
+        )
+        .order_by(ApiDefinition.id.desc())
+        .first()
+    )
+    current_params = _loads(current.parameters, [])
+    current_body = _loads(current.request_body, {})
+    current_responses = _loads(current.responses, {})
+    if not previous:
+        return {
+            "current_id": current.id,
+            "previous_id": None,
+            "changes": {
+                "summary_changed": False,
+                "parameter_delta": len(current_params),
+                "response_code_delta": len(current_responses),
+                "request_body_changed": bool(current_body),
+            },
+        }
+    previous_params = _loads(previous.parameters, [])
+    previous_body = _loads(previous.request_body, {})
+    previous_responses = _loads(previous.responses, {})
+    return {
+        "current_id": current.id,
+        "previous_id": previous.id,
+        "changes": {
+            "summary_changed": (current.summary or "") != (previous.summary or ""),
+            "parameter_delta": len(current_params) - len(previous_params),
+            "response_code_delta": len(current_responses) - len(previous_responses),
+            "request_body_changed": current_body != previous_body,
+        },
+    }
+
+
+def generate_baseline_from_api(db: Session, api_id: int) -> Optional[Dict[str, Any]]:
+    api = get_api(db, api_id)
+    if not api:
+        return None
+    generated_case = generate_case_from_api(db, api_id)
+    if not generated_case:
+        return None
+    responses = _loads(api.responses, {})
+    request_body = _loads(api.request_body, {})
+    first_status = next(iter(responses.keys()), "200")
+    return {
+        "api_id": api.id,
+        "test_case": {
+            "id": generated_case.id,
+            "name": generated_case.name,
+            "auto_case_id": generated_case.auto_case_id,
+        },
+        "assertion_templates": [
+            {
+                "assertion_type": "status_code",
+                "field": "status_code",
+                "expected_value": first_status,
+                "description": f"Expect status code {first_status}",
+            }
+        ],
+        "scenario_draft": {
+            "name": f"{api.name} baseline scenario",
+            "description": f"Generated from API asset #{api.id}",
+            "steps": [
+                {
+                    "case_id": generated_case.id,
+                    "name": api.name,
+                    "sort_order": 0,
+                    "enabled": True,
+                    "retry_count": 0,
+                    "timeout_ms": 30000,
+                    "failure_strategy": "stop",
+                    "extract_rules": [],
+                    "inject_rules": [],
+                }
+            ],
+        },
+        "request_has_body": bool(request_body),
     }
 
 
@@ -363,6 +486,9 @@ def generate_case_from_api(db: Session, api_id: int) -> Optional[TestCase]:
         auto_case_id=auto_case_id,
         project_id=api.project_id,
         source_api_id=api.id,
+        source_type=api.source_type or "api_asset",
+        source_id=api.id,
+        version_tag=api.version_tag or api.version or "1.0.0",
     )
     db.add(case)
     db.commit()
@@ -379,6 +505,19 @@ def generate_case_from_api(db: Session, api_id: int) -> Optional[TestCase]:
         assertions="[]",
     )
     db.add(api_case)
+    db.flush()
+    db.add(
+        AssetTrace(
+            source_type=api.source_type or "api_asset",
+            source_id=api.id,
+            target_type="test_case",
+            target_id=case.id,
+            relation_type="generated_baseline",
+            project_id=api.project_id,
+            version_tag=api.version_tag or api.version or "1.0.0",
+            trace_metadata=json.dumps({"api_name": api.name, "case_name": case.name}, ensure_ascii=False),
+        )
+    )
     db.commit()
     db.refresh(case)
 

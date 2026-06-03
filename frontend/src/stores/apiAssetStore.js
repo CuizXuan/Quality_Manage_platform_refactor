@@ -5,6 +5,7 @@ import { apiAssetApi } from '@/api/apiAsset'
 export const useApiAssetStore = defineStore('apiAsset', () => {
   // State
   const groups = ref([])
+  const services = ref([])
   const apis = ref([])
   const total = ref(0)
   const page = ref(1)
@@ -86,8 +87,28 @@ export const useApiAssetStore = defineStore('apiAsset', () => {
     }
   }
 
+  async function fetchServices(params = {}) {
+    loading.value = true
+    error.value = ''
+    try {
+      const response = await apiAssetApi.listServices(params)
+      services.value = response.data || []
+      return services.value
+    } catch (err) {
+      error.value = err.response?.data?.detail || err.message || '获取服务列表失败'
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
   async function getDebugPayload(apiId) {
     const response = await apiAssetApi.getDebugPayload(apiId)
+    return response.data || response
+  }
+
+  async function getDiff(apiId) {
+    const response = await apiAssetApi.getDiff(apiId)
     return response.data || response
   }
 
@@ -99,6 +120,20 @@ export const useApiAssetStore = defineStore('apiAsset', () => {
       return response.data || response
     } catch (err) {
       error.value = err.response?.data?.detail || err.message || '生成用例失败'
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
+  async function generateBaseline(apiId) {
+    loading.value = true
+    error.value = ''
+    try {
+      const response = await apiAssetApi.generateBaseline(apiId)
+      return response.data || response
+    } catch (err) {
+      error.value = err.response?.data?.detail || err.message || '生成基线失败'
       throw err
     } finally {
       loading.value = false
@@ -175,6 +210,7 @@ export const useApiAssetStore = defineStore('apiAsset', () => {
 
   return {
     groups,
+    services,
     apis,
     total,
     page,
@@ -187,8 +223,11 @@ export const useApiAssetStore = defineStore('apiAsset', () => {
     createGroup,
     deleteGroup,
     fetchApis,
+    fetchServices,
     getDebugPayload,
+    getDiff,
     generateCase,
+    generateBaseline,
     importOpenapi,
     createApi,
     updateApi,

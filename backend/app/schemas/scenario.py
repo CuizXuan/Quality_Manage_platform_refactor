@@ -74,6 +74,10 @@ class ScenarioCreate(BaseModel):
     project_id: Optional[int] = None
     version_id: Optional[int] = None
     iteration_id: Optional[int] = None
+    # 四期加固：场景来源追溯
+    source_type: Optional[str] = Field(None, max_length=30, description="来源类型")
+    source_id: Optional[int] = Field(None, description="来源 ID")
+    version_tag: Optional[str] = Field(None, max_length=50, description="版本标签")
 
 
 class ScenarioUpdate(BaseModel):

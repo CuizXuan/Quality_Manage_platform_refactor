@@ -19,6 +19,24 @@ export const useAiStore = defineStore('ai', () => {
   const assertionResult = ref(null)
   const failureResult = ref(null)
   const summaryResult = ref(null)
+  const requirementAnalysisResult = ref(null)
+
+  // ── State: Multi-Agent Workflow ─────────────────────────────
+  const workflowRun = ref(null)
+  const workflowLoading = ref(false)
+  const workflowAdoptResult = ref(null)
+  const workflowAdoptLoading = ref(false)
+  const workflowExecutionPlan = ref(null)
+  const workflowExecutionLoading = ref(false)
+  const workflowExecutionConfirmResult = ref(null)
+  const workflowExecutionConfirmLoading = ref(false)
+  const workflowExecutionAnalysis = ref(null)
+  const workflowExecutionAnalysisLoading = ref(false)
+
+  // ── 七期 A：按业务来源 trace ────────────────────────────────
+  const workflowTraceItems = ref([])
+  const workflowTraceTotal = ref(0)
+  const workflowTraceLoading = ref(false)
 
   // ── State: Analysis ─────────────────────────────────────────
   const currentAnalysis = ref(null)
@@ -241,6 +259,222 @@ export const useAiStore = defineStore('ai', () => {
     }
   }
 
+  async function rejectSuggestion(id, comment) {
+    try {
+      await aiApi.rejectSuggestion(id, { comment })
+    } catch (err) {
+      error.value = err.response?.data?.detail || err.message || '拒绝建议失败'
+      throw err
+    }
+  }
+
+  async function runRequirementAnalysis(data) {
+    loading.value = true
+    error.value = ''
+    try {
+      const response = await aiApi.runRequirementAnalysis(data)
+      requirementAnalysisResult.value = response.data
+      return response.data
+    } catch (err) {
+      error.value = err.response?.data?.detail || err.message || '需求分析失败'
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
+  async function runAssetUnderstand(data) {
+    loading.value = true
+    try {
+      const response = await aiApi.runAssetUnderstand(data)
+      return response.data
+    } finally {
+      loading.value = false
+    }
+  }
+
+  async function runDesignTests(data) {
+    loading.value = true
+    try {
+      const response = await aiApi.runDesignTests(data)
+      return response.data
+    } finally {
+      loading.value = false
+    }
+  }
+
+  async function runFailureAgent(data) {
+    loading.value = true
+    try {
+      const response = await aiApi.runFailureAgent(data)
+      return response.data
+    } finally {
+      loading.value = false
+    }
+  }
+
+  async function runReleaseAdvice(data) {
+    loading.value = true
+    try {
+      const response = await aiApi.runReleaseAdvice(data)
+      return response.data
+    } finally {
+      loading.value = false
+    }
+  }
+
+  // ── Actions: Multi-Agent Workflow ────────────────────────────
+
+  /** 清理工作流派生态（采纳/计划/确认/分析），切换 run 时避免泄漏旧数据。 */
+  function clearWorkflowDerivedState() {
+    workflowAdoptResult.value = null
+    workflowExecutionPlan.value = null
+    workflowExecutionConfirmResult.value = null
+    workflowExecutionAnalysis.value = null
+  }
+
+  async function startRequirementWorkflow(data) {
+    workflowLoading.value = true
+    error.value = ''
+    try {
+      const response = await aiApi.startRequirementWorkflow(data)
+      // 切换到新 run：先清理派生态，再覆盖 workflowRun
+      // 避免旧 run 的 plan/confirm/analysis 在新 run 渲染时被读到
+      clearWorkflowDerivedState()
+      workflowRun.value = response.data
+      return response.data
+    } catch (err) {
+      error.value = err.response?.data?.detail || err.message || '启动工作流失败'
+      throw err
+    } finally {
+      workflowLoading.value = false
+    }
+  }
+
+  async function fetchWorkflowRun(id) {
+    workflowLoading.value = true
+    error.value = ''
+    try {
+      const response = await aiApi.getWorkflowRun(id)
+      // 切换 run（与当前 workflowRun.id 不同）时清理派生态
+      if (!workflowRun.value || workflowRun.value.id !== response.data?.id) {
+        clearWorkflowDerivedState()
+      }
+      workflowRun.value = response.data
+      return response.data
+    } catch (err) {
+      error.value = err.response?.data?.detail || err.message || '查询工作流失败'
+      throw err
+    } finally {
+      workflowLoading.value = false
+    }
+  }
+
+  async function adoptWorkflowRun(id, data) {
+    workflowAdoptLoading.value = true
+    error.value = ''
+    try {
+      const response = await aiApi.adoptWorkflowRun(id, data)
+      workflowAdoptResult.value = response.data
+      return response.data
+    } catch (err) {
+      error.value = err.response?.data?.detail || err.message || '采纳工作流失败'
+      throw err
+    } finally {
+      workflowAdoptLoading.value = false
+    }
+  }
+
+  async function planWorkflowExecution(id, data) {
+    workflowExecutionLoading.value = true
+    error.value = ''
+    try {
+      const response = await aiApi.planWorkflowExecution(id, data)
+      workflowExecutionPlan.value = response.data
+      return response.data
+    } catch (err) {
+      error.value = err.response?.data?.detail || err.message || '生成执行计划失败'
+      throw err
+    } finally {
+      workflowExecutionLoading.value = false
+    }
+  }
+
+  async function confirmWorkflowExecution(id, data) {
+    workflowExecutionConfirmLoading.value = true
+    error.value = ''
+    try {
+      const response = await aiApi.confirmWorkflowExecution(id, data)
+      workflowExecutionConfirmResult.value = response.data
+      return response.data
+    } catch (err) {
+      error.value = err.response?.data?.detail || err.message || '确认执行计划失败'
+      throw err
+    } finally {
+      workflowExecutionConfirmLoading.value = false
+    }
+  }
+
+  async function analyzeWorkflowExecution(id, data) {
+    workflowExecutionAnalysisLoading.value = true
+    error.value = ''
+    try {
+      const response = await aiApi.analyzeWorkflowExecution(id, data)
+      workflowExecutionAnalysis.value = response.data
+      return response.data
+    } catch (err) {
+      error.value = err.response?.data?.detail || err.message || '执行结果分析失败'
+      throw err
+    } finally {
+      workflowExecutionAnalysisLoading.value = false
+    }
+  }
+
+  // ── 七期 A：按业务来源查询 / 从需求启动 ──────────────────────
+
+  async function fetchWorkflowTrace(params = {}) {
+    if (!params || !params.origin_module || !params.origin_type || !params.origin_id) {
+      workflowTraceItems.value = []
+      workflowTraceTotal.value = 0
+      return { items: [], total: 0 }
+    }
+    workflowTraceLoading.value = true
+    error.value = ''
+    try {
+      const response = await aiApi.listWorkflowsBySource({
+        origin_module: params.origin_module,
+        origin_type: params.origin_type,
+        origin_id: params.origin_id,
+        limit: params.limit || 5,
+      })
+      workflowTraceItems.value = response.data?.items || []
+      workflowTraceTotal.value = response.data?.total || 0
+      return response.data
+    } catch (err) {
+      error.value = err.response?.data?.detail || err.message || '查询 workflow trace 失败'
+      throw err
+    } finally {
+      workflowTraceLoading.value = false
+    }
+  }
+
+  async function startWorkflowFromRequirements(data) {
+    workflowLoading.value = true
+    error.value = ''
+    try {
+      const response = await aiApi.startWorkflowFromRequirements(data)
+      // 与 startRequirementWorkflow 行为对齐：先清理派生态再覆盖 workflowRun
+      clearWorkflowDerivedState()
+      workflowRun.value = response.data
+      return response.data
+    } catch (err) {
+      error.value = err.response?.data?.detail || err.message || '从需求启动 workflow 失败'
+      throw err
+    } finally {
+      workflowLoading.value = false
+    }
+  }
+
   return {
     // State
     aiConfig,
@@ -254,9 +488,23 @@ export const useAiStore = defineStore('ai', () => {
     assertionResult,
     failureResult,
     summaryResult,
+    requirementAnalysisResult,
     currentAnalysis,
     suggestions,
     suggestionTotal,
+    workflowRun,
+    workflowLoading,
+    workflowAdoptResult,
+    workflowAdoptLoading,
+    workflowExecutionPlan,
+    workflowExecutionLoading,
+    workflowExecutionConfirmResult,
+    workflowExecutionConfirmLoading,
+    workflowExecutionAnalysis,
+    workflowExecutionAnalysisLoading,
+    workflowTraceItems,
+    workflowTraceTotal,
+    workflowTraceLoading,
     loading,
     error,
     // Actions: Config
@@ -277,5 +525,22 @@ export const useAiStore = defineStore('ai', () => {
     fetchAnalysis,
     fetchSuggestions,
     acceptSuggestion,
+    rejectSuggestion,
+    runRequirementAnalysis,
+    runAssetUnderstand,
+    runDesignTests,
+    runFailureAgent,
+    runReleaseAdvice,
+    // Actions: Workflow
+    startRequirementWorkflow,
+    fetchWorkflowRun,
+    clearWorkflowDerivedState,
+    adoptWorkflowRun,
+    planWorkflowExecution,
+    confirmWorkflowExecution,
+    analyzeWorkflowExecution,
+    // 七期 A
+    fetchWorkflowTrace,
+    startWorkflowFromRequirements,
   }
 })

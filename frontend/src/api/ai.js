@@ -50,6 +50,26 @@ export const aiApi = {
     return client.post('/api/ai/analyze-failure', data)
   },
 
+  runAssetUnderstand(data) {
+    return client.post('/api/ai/agents/asset-understand', data)
+  },
+
+  runDesignTests(data) {
+    return client.post('/api/ai/agents/design-tests', data)
+  },
+
+  runFailureAgent(data) {
+    return client.post('/api/ai/agents/analyze-failure', data)
+  },
+
+  runReleaseAdvice(data) {
+    return client.post('/api/ai/agents/release-advice', data)
+  },
+
+  runRequirementAnalysis(data) {
+    return client.post('/api/ai/agents/analyze-requirements', data)
+  },
+
   summarizeReport(data) {
     return client.post('/api/ai/summarize-report', data)
   },
@@ -64,7 +84,47 @@ export const aiApi = {
     return client.post(`/api/ai/suggestions/${id}/accept`, data)
   },
 
+  rejectSuggestion(id, data = {}) {
+    return client.post(`/api/ai/suggestions/${id}/reject`, data)
+  },
+
   getAnalysis(id) {
     return client.get(`/api/ai/analysis/${id}`)
+  },
+
+  // ── Multi-Agent Workflow ─────────────────────────────────────
+
+  startRequirementWorkflow(data) {
+    return client.post('/api/ai/workflows/requirement-to-test-design', data)
+  },
+
+  getWorkflowRun(id) {
+    return client.get(`/api/ai/workflows/${id}`)
+  },
+
+  adoptWorkflowRun(id, data) {
+    return client.post(`/api/ai/workflows/${id}/adopt`, data)
+  },
+
+  planWorkflowExecution(id, data) {
+    return client.post(`/api/ai/workflows/${id}/execution-plan`, data)
+  },
+
+  confirmWorkflowExecution(id, data) {
+    return client.post(`/api/ai/workflows/${id}/execution-plan/confirm`, data)
+  },
+
+  analyzeWorkflowExecution(id, data) {
+    return client.post(`/api/ai/workflows/${id}/execution-analysis`, data)
+  },
+
+  // ── 七期 A：按业务来源查询 / 从需求启动 workflow ──────────
+
+  listWorkflowsBySource(params) {
+    return client.get('/api/ai/workflows/by-source', { params })
+  },
+
+  startWorkflowFromRequirements(data) {
+    return client.post('/api/ai/workflows/from-requirements', data)
   },
 }

@@ -22,6 +22,11 @@ from app.models.quality_foundation import (
     RequirementItem,
 )
 from app.models.api_asset import ApiGroup, ApiDefinition, ApiImportRecord
+from app.models.environment_asset import Environment, VariableSet, SecretVariable
+from app.models.execution_asset import UnifiedRun, UnifiedRunItem, RunStepLog, RunArtifact
+from app.models.import_asset import ImportJob, ImportIssue
+from app.models.asset_trace import AssetTrace
+from app.models.ai import AIWorkflowRun, AIWorkflowStep
 
 __all__ = [
     "Base",
@@ -50,6 +55,18 @@ __all__ = [
     "ApiGroup",
     "ApiDefinition",
     "ApiImportRecord",
+    "Environment",
+    "VariableSet",
+    "SecretVariable",
+    "UnifiedRun",
+    "UnifiedRunItem",
+    "RunStepLog",
+    "RunArtifact",
+    "ImportJob",
+    "ImportIssue",
+    "AssetTrace",
+    "AIWorkflowRun",
+    "AIWorkflowStep",
     "Defect",
     "QualityGate",
     "Report",
